@@ -111,6 +111,7 @@ if not _G.Config then
         InstantReel = false,
         equiqRod = false,
         AutoSell = false,
+        AutoShake = false,
         ReelMode = "Legit"
     }
 end
@@ -272,7 +273,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(2.6)
+                    task.wait(2.8)
                 end
             end)
         end
@@ -320,6 +321,95 @@ local function setupGUI()
     local AutosSection = AutosTab:AddSection("Auto Sell")
     
     -- Add controls
+    local RunService = game:GetService("RunService")
+local GuiService = game:GetService("GuiService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
+
+local function Shake()
+    local function MountShakeUI(ShakeUI)
+        local SafeZone = ShakeUI:WaitForChild("safezone", 5)
+
+        local function HandleButton(Button)
+            if Button then
+                Button.Selectable = true -- Make sure the button is selectable
+                GuiService.SelectedObject = Button
+            end
+        end
+
+        if not SafeZone then
+            warn("Unable to mount shake UI.")
+            return
+        end
+
+        local Connect = SafeZone:FindFirstChild("connect")
+        if Connect then
+            Connect.Enabled = false
+        end
+        SafeZone.Size = UDim2.fromOffset(0, 0)
+        SafeZone.Position = UDim2.fromScale(0.5, 0.5)
+        SafeZone.AnchorPoint = Vector2.new(0.5, 0.5)
+
+        local Connection
+        Connection = SafeZone.ChildAdded:Connect(function(Child)
+            if Child:IsA("ImageButton") then
+                local Done = false
+
+                -- Thread to handle the button that appears
+                task.spawn(function()
+                    while Child and Child:IsDescendantOf(SafeZone) and not Done do
+                        task.wait(0.001)
+                        HandleButton(Child)
+                    end
+                end)
+                task.spawn(function()
+                    while Child and Child:IsDescendantOf(SafeZone) do
+                        task.wait(0.001)
+                    end
+                    Done = true
+                end)
+            end
+        end)
+
+        -- Main loop to handle input
+        while SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
+            task.wait(0.001)
+            if GuiService.SelectedObject and GuiService.SelectedObject:IsDescendantOf(SafeZone) then
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+            end
+            task.wait(0.001)
+        end
+
+        -- Remove event connection if no longer needed
+        if Connection then Connection:Disconnect() end
+        GuiService.SelectedObject = nil
+    end
+
+    -- Handle event when shake UI appears
+    LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
+        if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
+            task.spawn(function()
+                MountShakeUI(Child)
+            end)
+        end
+    end)
+end
+
+-- Update the AutoShakeFunc toggle to use this function
+local AutoShakeFunc = MainSection:AddToggle("Auto Shake", {
+    Title = "Auto Shake",
+    Default = false
+})
+
+AutoShakeFunc:OnChanged(function(value)
+    _G.Config.AutoShake = value
+    if value then
+        Shake() -- Start Shake if true
+    end
+end)
     local AutoCastToggle = MainSection:AddToggle("AutoCast", {Title = "Instant Bobber", Default = false})
     AutoCastToggle:OnChanged(function()
         _G.Config.AutoCast = AutoCastToggle.Value
@@ -396,22 +486,29 @@ local function setupGUI()
             AutoSell()  -- Mulai otomatisasi
         end
     end)
-    local isFishing = false
-    local StartButton = MainSection:AddButton({
-        Title = "Start/Stop BUG",
-        Description = "Toggle fishing automation",
-        Callback = function()
-            isFishing = not isFishing  -- Toggle status
-            if isFishing then
-                task.spawn(function()  -- Jalankan loop di task terpisah
-                    while isFishing do
-                        task.wait(2.3)
-                        LocalPlayer.Character.Humanoid:UnequipTools()
-                    end
-                end)
+    
+local isFishing = false  -- Inisialisasi status
+
+local FishingToggle = MainSection:AddToggle("FishingToggle", {
+    Title = "Fishing BUG",
+    Default = false
+})
+
+FishingToggle:OnChanged(function(value)
+    isFishing = value  -- Update status dari toggle
+
+    if isFishing then
+        task.spawn(function() 
+            while isFishing do
+                if PlayerGui:FindFirstChild("reel") then  
+                    LocalPlayer.Character.Humanoid:UnequipTools()
+                    task.wait(2)
+                end
+                task.wait(0.1)
             end
-        end
-    })
+        end)
+    end
+end)
     
     local StatsSection = FishingTab:AddSection("Fishing Stats")
     
