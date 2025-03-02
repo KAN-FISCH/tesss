@@ -378,7 +378,7 @@ local function Shake()
                 VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                 VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
             end
-            task.wait(0.1)
+            task.wait(0)
         end
 
         -- Remove event connection if no longer needed
