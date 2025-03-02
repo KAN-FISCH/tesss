@@ -17,6 +17,8 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Backpack = LocalPlayer:WaitForChild("Backpack")
 local RodName = ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.rod.Value
+local CoreGui = game:GetService("CoreGui")
+local Lighting = game:GetService("Lighting")
 
 -- Hook functions
 local hiddenHook = hookfunction or hookfunc
@@ -87,6 +89,7 @@ if not _G.Config then
         equipRod = false,
         AutoSell = false,
         AutoShake = false,
+        RemoveUIFisch = false,
         ReelMode = "Legit"
     }
 end
@@ -250,7 +253,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(3)
+                    task.wait(2.4)
                 end
             end)
         end
@@ -344,7 +347,6 @@ local function Shake()
     end)
 end
 
--- Character Freeze Function
 local isFrozen = false
 local frozenPosition = nil
 
@@ -568,7 +570,6 @@ local function setupGUI()
             Shake() -- Start Shake if true
         end
     end)
-    
     local FishingToggle = MainSection:AddToggle("FishingToggle", {
         Title = "Fishing BUG",
         Default = false
@@ -593,7 +594,7 @@ local function setupGUI()
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         task.wait(1)
                         reel:Destroy()
-                        task.wait(1)
+                        task.wait(0.5)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                     end
@@ -603,8 +604,6 @@ local function setupGUI()
         end        
     end)
     
-    
-    -- Auto Sell Section
     local AutoSellFunc = AutosSection:AddToggle("Auto Sell", {
         Title = "Auto Sell",
         Default = false
@@ -623,6 +622,7 @@ local function setupGUI()
     local frozenPosition1
     local freezeBlock -- Menyimpan blok yang dibuat
     local Area = {
+        { NAME = "None", CFrame = nil },
         { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11223.5098, 7033.7627) },
         { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) }
     }
@@ -691,27 +691,36 @@ local function setupGUI()
             print("[INFO] Character is now unfrozen.")
         end
     end
-
-    -- Fungsi Teleportasi + Auto Freeze
+    local previousLocation = nil
     local function teleportTo(areaName)
         local Character = LocalPlayer.Character
         if not Character then return end
-
+    
         local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
         if not HumanoidRootPart then return end
-
+    
+        -- Jika memilih "None", kembalikan ke lokasi sebelumnya
+        if areaName == "None" and previousLocation then
+            print("[INFO] Returning to previous location.")
+            HumanoidRootPart.CFrame = previousLocation
+            FreezeCharacter1(false) -- Matikan freeze
+            return
+        end
+    
         for _, v in pairs(Area) do
             if v.NAME == areaName then
                 print("[INFO] Teleporting to:", v.NAME)
+                previousLocation = HumanoidRootPart.CFrame
+    
                 HumanoidRootPart.CFrame = v.CFrame
-                FreezeCharacter1(true) -- Auto Freeze + Anti Jatuh + Blok di Bawah Kaki
+                FreezeCharacter1(true) -- Auto Freeze
                 return
             end
         end
-
+    
         print("[ERROR] Area tidak ditemukan!")
     end
-    Dropdown(Main, "Freaze Area", "None", {"Forsaken Veil", "Antlean Storm"}, false, function(selected)
+    Dropdown(Main, "Freaze Area", "None", {"None", "Forsaken Veil", "Antlean Storm"}, false, function(selected)
         teleportTo(selected)
     end)
     Toggle(Main, "Example Toggle", "Example Description", "Example Toggle")
@@ -754,6 +763,29 @@ local function setupGUI()
     SaveManager:Load("config")
 end
 
+task.spawn(function()
+    while true do
+        local pausedUI = CoreGui:FindFirstChild("RobloxNetworkPauseNotification")
+        if pausedUI then
+            pausedUI:Destroy()
+            print("[INFO] Game Paused UI telah dihapus.")
+        end
+        task.wait(0.5) -- Cek setiap 0.5 detik
+    end
+end)
+
+task.spawn(function()
+    while true do
+        -- Cari semua efek Blur di Lighting
+        for _, effect in pairs(Lighting:GetChildren()) do
+            if effect:IsA("BlurEffect") then
+                effect.Enabled = false -- Nonaktifkan Blur
+                print("[INFO] Blur dihapus.")
+            end
+        end
+        task.wait(0.5) -- Cek setiap 0.5 detik
+    end
+end)
 -- Initialize the GUI
 setupGUI()
 
