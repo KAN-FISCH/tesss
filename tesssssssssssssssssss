@@ -256,7 +256,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
                         local randomValue = math.random(971, 999) / 10
-                        Rod.events.cast:FireServer(1)
+                        Rod.events.cast:FireServer(randomValue, 1)
                         task.wait(0.4)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
@@ -273,7 +273,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(2.8)
+                    task.wait(3)
                 end
             end)
         end
@@ -340,6 +340,7 @@ local function Shake()
             end
         end        
         if not SafeZone then
+            warn("Unable to mount shake UI.")
             return
         end
 
@@ -374,14 +375,10 @@ local function Shake()
         -- Main loop to handle input
         while SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
             if GuiService.SelectedObject and GuiService.SelectedObject:IsDescendantOf(SafeZone) then
-                if GuiService.SelectedObject and GuiService.SelectedObject.Parent then
-                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-                else
-                    GuiService.SelectedObject = nil
-                end
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
             end
-            task.wait(0)
+            task.wait(0.1)
         end
 
         -- Remove event connection if no longer needed
@@ -441,6 +438,7 @@ end)
         if state then
             frozenPosition = HumanoidRootPart.CFrame
             isFrozen = true
+            print("[INFO] Character is now frozen.")
             
             task.spawn(function()
                 while isFrozen do
@@ -450,6 +448,7 @@ end)
             end)
         else
             isFrozen = false
+            print("[INFO] Character is now unfrozen.")
         end
     end
     local FreezeToggle = MainSection:AddToggle("FreezeChar", {
@@ -492,6 +491,7 @@ local FishingToggle = MainSection:AddToggle("FishingToggle", {
     Default = false
 })
 
+
 FishingToggle:OnChanged(function(value)
     isFishing = value
     IsTemporary = value
@@ -503,7 +503,7 @@ FishingToggle:OnChanged(function(value)
                     LocalPlayer.Character.Humanoid:UnequipTools()
                     task.wait(1)
                     reel:Destroy()
-                    task.wait(1.8)
+                    task.wait(1.6)
                 end
                 task.wait(0.1)
             end
@@ -513,13 +513,12 @@ FishingToggle:OnChanged(function(value)
     if IsTemporary then
         task.spawn(function()
             while IsTemporary do
-                task.wait(120)
+                task.wait(240)
                 LocalPlayer.Character.Humanoid:UnequipTools()
             end
         end)
     end
 end)
-
     
     local StatsSection = FishingTab:AddSection("Fishing Stats")
     local SettingsSection = SettingsTab:AddSection("Settings")
