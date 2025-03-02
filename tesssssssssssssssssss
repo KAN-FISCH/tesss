@@ -233,7 +233,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
                         local randomValue = math.random(971, 999) / 10
-                        Rod.events.cast:FireServer(10)
+                        Rod.events.cast:FireServer(1)
                         task.wait(0.4)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
@@ -250,7 +250,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(3.1)
+                    task.wait(3)
                 end
             end)
         end
@@ -612,7 +612,7 @@ local function setupGUI()
     local frozenPosition1
     local freezeBlock -- Menyimpan blok yang dibuat
     local Area = {
-        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11231.5098, 7033.7627) },
+        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11223.5098, 7033.7627) },
         { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) }
     }
     -- Fungsi untuk Membuat Blok di Bawah Kaki
