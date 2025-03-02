@@ -340,7 +340,6 @@ local function Shake()
             end
         end        
         if not SafeZone then
-            warn("Unable to mount shake UI.")
             return
         end
 
@@ -375,8 +374,12 @@ local function Shake()
         -- Main loop to handle input
         while SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
             if GuiService.SelectedObject and GuiService.SelectedObject:IsDescendantOf(SafeZone) then
-                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+                if GuiService.SelectedObject and GuiService.SelectedObject.Parent then
+                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+                else
+                    GuiService.SelectedObject = nil
+                end
             end
             task.wait(0)
         end
@@ -438,7 +441,6 @@ end)
         if state then
             frozenPosition = HumanoidRootPart.CFrame
             isFrozen = true
-            print("[INFO] Character is now frozen.")
             
             task.spawn(function()
                 while isFrozen do
@@ -448,7 +450,6 @@ end)
             end)
         else
             isFrozen = false
-            print("[INFO] Character is now unfrozen.")
         end
     end
     local FreezeToggle = MainSection:AddToggle("FreezeChar", {
@@ -502,7 +503,7 @@ FishingToggle:OnChanged(function(value)
                     LocalPlayer.Character.Humanoid:UnequipTools()
                     task.wait(1)
                     reel:Destroy()
-                    task.wait(1.5)
+                    task.wait(1.8)
                 end
                 task.wait(0.1)
             end
@@ -512,7 +513,7 @@ FishingToggle:OnChanged(function(value)
     if IsTemporary then
         task.spawn(function()
             while IsTemporary do
-                task.wait(240)
+                task.wait(120)
                 LocalPlayer.Character.Humanoid:UnequipTools()
             end
         end)
