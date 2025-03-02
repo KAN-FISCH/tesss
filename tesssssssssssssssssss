@@ -282,7 +282,7 @@ local function Shake()
 
         local function HandleButton(Button)
             if Button then
-                Button.Selectable = true  -- Ensure button is selectable
+                Button.Selectable = true  
                 Button.BackgroundTransparency = 1  -- Make background transparent
                 GuiService.SelectedObject = Button
             end
@@ -359,7 +359,7 @@ local function FreezeCharacter(state)
         frozenPosition = HumanoidRootPart.CFrame
         isFrozen = true
         print("[INFO] Character is now frozen.")
-        
+        print(frozenPosition)
         task.spawn(function()
             while isFrozen do
                 HumanoidRootPart.CFrame = frozenPosition 
@@ -424,6 +424,16 @@ local function TextBox(section, name, tooltip, placeholder, numberOnly, settingN
     end)
     
     return box
+end
+local function Button(section, name, callback)
+    local button = section:AddButton({
+        Title = name,
+        Callback = function()
+            callback()
+        end
+    })
+    
+    return button
 end
 
 local function Slider(section, name, min, max, roundValues, settingName)
@@ -531,7 +541,6 @@ local function setupGUI()
         Title = "Equip Rod", 
         Default = false
     })
-    
     EquiqRod:OnChanged(function(value)
         _G.Config.equipRod = value
         print("[INFO] equipRod:", value)
@@ -599,8 +608,75 @@ local function setupGUI()
     
     -- Area Tab Example
     local Main = AreaTab:AddSection('Main')
-    Dropdown(Main, "Example Dropdown", "None", {"LIST","LIST2"}, false, "Example Dropdown")
-    Dropdown(Main, "Example Dropdown Muti", {"None"}, {"LIST","LIST2"}, true, "Example Dropdown Muti")
+    local isFrozen1 = false
+    local frozenPosition1
+    local Area = {
+        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11216.5098, 7033.7627, 1,  0, 0, 0, 1, 0, 0, 0, 1) },
+        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343, 0, 0, -1, 0, 1, 0, 1, 0 ,0) } 
+    }
+    local function FreezeCharacter1(state)
+        local Character = LocalPlayer.Character
+        if not Character then return end
+    
+        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+        local Humanoid = Character:FindFirstChild("Humanoid")
+        if not HumanoidRootPart or not Humanoid then return end
+    
+        if state then
+            frozenPosition1 = HumanoidRootPart.CFrame
+            isFrozen1 = true
+    
+            -- Mencegah karakter jatuh
+            Humanoid.PlatformStand = true
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
+    
+            -- Mematikan animasi
+            local Animator = Humanoid:FindFirstChildOfClass("Animator")
+            if Animator then
+                Animator.Parent = nil
+            end
+    
+            print("[INFO] Character is now frozen.")
+    
+            task.spawn(function()
+                while isFrozen1 do
+                    if Character and Character:FindFirstChild("HumanoidRootPart") then
+                        Character.HumanoidRootPart.CFrame = frozenPosition1
+                    end
+                    task.wait(0.01)
+                end
+            end)
+        else
+            isFrozen1 = false
+            Humanoid.PlatformStand = false
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
+    
+            print("[INFO] Character is now unfrozen.")
+        end
+    end
+    
+    -- Fungsi Teleportasi + Auto Freeze
+    local function teleportTo(areaName)
+        local Character = LocalPlayer.Character
+        if not Character then return end
+    
+        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+        if not HumanoidRootPart then return end
+    
+        for _, v in pairs(Area) do
+            if v.NAME == areaName then
+                print("[INFO] Teleporting to:", v.NAME)
+                HumanoidRootPart.CFrame = v.CFrame
+                FreezeCharacter1(true) -- Auto Freeze + Anti Jatuh + Matikan Animasi
+                return
+            end
+        end
+    
+        print("[ERROR] Area tidak ditemukan!")
+    end
+    Dropdown(Main, "Freaze Area", "None", {"Forsaken Veil", "Antlean Storm"}, false, function(selected)
+        teleportTo(selected)
+    end)
     Toggle(Main, "Example Toggle", "Example Description", "Example Toggle")
     Toggle(Main, "Example Toggle Fun", "Example Description", "Example Toggle Fun", function(Value)
         print(Value)
