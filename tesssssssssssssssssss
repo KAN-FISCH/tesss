@@ -233,7 +233,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
                         local randomValue = math.random(971, 999) / 10
-                        Rod.events.cast:FireServer(1)
+                        Rod.events.cast:FireServer(10)
                         task.wait(0.4)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
@@ -610,34 +610,54 @@ local function setupGUI()
     local Main = AreaTab:AddSection('Main')
     local isFrozen1 = false
     local frozenPosition1
+    local freezeBlock -- Menyimpan blok yang dibuat
     local Area = {
-        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11216.5098, 7033.7627, 1,  0, 0, 0, 1, 0, 0, 0, 1) },
-        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343, 0, 0, -1, 0, 1, 0, 1, 0 ,0) } 
+        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11231.5098, 7033.7627) },
+        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) }
     }
+    -- Fungsi untuk Membuat Blok di Bawah Kaki
+    local function createFreezeBlock(position)
+        if freezeBlock then
+            freezeBlock:Destroy()
+        end
+        
+        freezeBlock = Instance.new("Part")
+        freezeBlock.Size = Vector3.new(10, 1, 10) -- Ukuran blok (lebar, tinggi, panjang)
+        freezeBlock.Position = position - Vector3.new(0, 3, 0) -- Posisi di bawah karakter
+        freezeBlock.Anchored = true
+        freezeBlock.Transparency = 1 -- 1 = Transparan (tidak terlihat)
+        freezeBlock.CanCollide = true
+        freezeBlock.Parent = game.Workspace
+    end
+
+    -- Fungsi untuk Freeze + Matikan Animasi
     local function FreezeCharacter1(state)
         local Character = LocalPlayer.Character
         if not Character then return end
-    
+
         local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
         local Humanoid = Character:FindFirstChild("Humanoid")
         if not HumanoidRootPart or not Humanoid then return end
-    
+
         if state then
             frozenPosition1 = HumanoidRootPart.CFrame
             isFrozen1 = true
-    
+
             -- Mencegah karakter jatuh
             Humanoid.PlatformStand = true
             Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
-    
+
             -- Mematikan animasi
             local Animator = Humanoid:FindFirstChildOfClass("Animator")
             if Animator then
                 Animator.Parent = nil
             end
-    
+
+            -- Buat blok di bawah kaki
+            createFreezeBlock(HumanoidRootPart.Position)
+
             print("[INFO] Character is now frozen.")
-    
+
             task.spawn(function()
                 while isFrozen1 do
                     if Character and Character:FindFirstChild("HumanoidRootPart") then
@@ -650,28 +670,34 @@ local function setupGUI()
             isFrozen1 = false
             Humanoid.PlatformStand = false
             Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
-    
+
+            -- Hapus blok setelah unfreeze
+            if freezeBlock then
+                freezeBlock:Destroy()
+                freezeBlock = nil
+            end
+
             print("[INFO] Character is now unfrozen.")
         end
     end
-    
+
     -- Fungsi Teleportasi + Auto Freeze
     local function teleportTo(areaName)
         local Character = LocalPlayer.Character
         if not Character then return end
-    
+
         local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
         if not HumanoidRootPart then return end
-    
+
         for _, v in pairs(Area) do
             if v.NAME == areaName then
                 print("[INFO] Teleporting to:", v.NAME)
                 HumanoidRootPart.CFrame = v.CFrame
-                FreezeCharacter1(true) -- Auto Freeze + Anti Jatuh + Matikan Animasi
+                FreezeCharacter1(true) -- Auto Freeze + Anti Jatuh + Blok di Bawah Kaki
                 return
             end
         end
-    
+
         print("[ERROR] Area tidak ditemukan!")
     end
     Dropdown(Main, "Freaze Area", "None", {"Forsaken Veil", "Antlean Storm"}, false, function(selected)
