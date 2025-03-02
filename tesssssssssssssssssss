@@ -273,7 +273,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(2.8)
+                    task.wait(3)
                 end
             end)
         end
@@ -374,11 +374,11 @@ local function Shake()
 
         -- Main loop to handle input
         while SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
-            task.wait(0)
             if GuiService.SelectedObject and GuiService.SelectedObject:IsDescendantOf(SafeZone) then
                 VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                 VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
             end
+            task.wait(0.1)
         end
 
         -- Remove event connection if no longer needed
