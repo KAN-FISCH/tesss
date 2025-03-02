@@ -273,7 +273,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(2.8)
+                    task.wait(2.5)
                 end
             end)
         end
@@ -502,7 +502,7 @@ FishingToggle:OnChanged(function(value)
             while isFishing do
                 if PlayerGui:FindFirstChild("reel") then  
                     LocalPlayer.Character.Humanoid:UnequipTools()
-                    task.wait(2)
+                    task.wait(2.3)
                 end
                 task.wait(0.1)
             end
