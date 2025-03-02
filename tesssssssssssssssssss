@@ -76,46 +76,6 @@ game.Players.LocalPlayer.Idled:Connect(function()
     VirtualUser:ClickButton2(Vector2.new())
 end)
 
--- Streamer Mode Function
-local function enableStreamerMode()
-    _G.StreamerMode = true
-    
-    local function hidePlayerName(textLabel)
-        if not textLabel or textLabel.ClassName ~= "TextLabel" then return end
-        
-        if string.find(textLabel.Text, LocalPlayer.Name) then
-            textLabel.Text = string.gsub(textLabel.Text, LocalPlayer.Name, "[Hidden]")
-            textLabel.Changed:Connect(function()
-                textLabel.Text = string.gsub(textLabel.Text, LocalPlayer.Name, "[Hidden]")
-            end)
-        end
-        
-        if string.find(textLabel.Text, LocalPlayer.DisplayName) then
-            textLabel.Text = string.gsub(textLabel.Text, LocalPlayer.DisplayName, "[Hidden]")
-            textLabel.Changed:Connect(function()
-                textLabel.Text = string.gsub(textLabel.Text, LocalPlayer.DisplayName, "[Hidden]")
-            end)
-        end
-    end
-    
-    pcall(function()
-        for _, instance in pairs(game:GetDescendants()) do
-            if instance.ClassName == "TextLabel" then
-                hidePlayerName(instance)
-            end
-        end
-        
-        -- Handle new labels
-        game.DescendantAdded:Connect(function(descendant)
-            if descendant.ClassName == "TextLabel" then
-                hidePlayerName(descendant)
-            end
-        end)
-    end)
-    
-    print("[Streamer Mode] - Enabled successfully")
-end
-
 -- Initialize Config
 if not _G.Config then
     _G.Config = {
@@ -524,10 +484,10 @@ end
 local function setupGUI()
     -- Create Window
     local Window = Fluent:CreateWindow({
-        Title = "Fishing V0.1n",
+        Title = "Fishing V0.1",
         SubTitle = "By ShielDTeam",
-        TabWidth = 160,
-        Size = UDim2.new(0, 450, 0, 300),
+        TabWidth = 140,
+        Size = UDim2.new(0, 550, 0, 350),
         Acrylic = true,
         Theme = "Dark"
     })
