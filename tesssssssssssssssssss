@@ -583,9 +583,9 @@ local function setupGUI()
                     local reel = PlayerGui and PlayerGui:FindFirstChild("reel")
                     if reel then 
                         LocalPlayer.Character.Humanoid:UnequipTools()
-                        task.wait(1)
+                        task.wait(1.3)
                         reel:Destroy()
-                        task.wait(1.8)
+                        task.wait(1.4)
                     end
                     task.wait(0.1)
                 end
