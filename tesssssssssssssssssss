@@ -256,7 +256,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
                         local randomValue = math.random(971, 999) / 10
-                        Rod.events.cast:FireServer(randomValue, 1)
+                        Rod.events.cast:FireServer(1)
                         task.wait(0.4)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
@@ -273,7 +273,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(3)
+                    task.wait(3.1)
                 end
             end)
         end
@@ -378,7 +378,7 @@ local function Shake()
                 VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                 VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
             end
-            task.wait(0)
+            task.wait(0.1)
         end
 
         -- Remove event connection if no longer needed
@@ -506,15 +506,6 @@ FishingToggle:OnChanged(function(value)
                     task.wait(1.6)
                 end
                 task.wait(0.1)
-            end
-        end)
-    end
-
-    if IsTemporary then
-        task.spawn(function()
-            while IsTemporary do
-                task.wait(120)
-                LocalPlayer.Character.Humanoid:UnequipTools()
             end
         end)
     end
