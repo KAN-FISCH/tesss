@@ -273,7 +273,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(3)
+                    task.wait(2.8)
                 end
             end)
         end
@@ -378,7 +378,7 @@ local function Shake()
                 VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                 VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
             end
-            task.wait(0.1)
+            task.wait(0)
         end
 
         -- Remove event connection if no longer needed
@@ -493,7 +493,7 @@ local FishingToggle = MainSection:AddToggle("FishingToggle", {
 
 FishingToggle:OnChanged(function(value)
     isFishing = value
-
+    IsTemporary = value
     if isFishing then
         task.spawn(function()
             while isFishing do
@@ -502,13 +502,23 @@ FishingToggle:OnChanged(function(value)
                     LocalPlayer.Character.Humanoid:UnequipTools()
                     task.wait(1)
                     reel:Destroy()
-                    task.wait(1.6)
+                    task.wait(1.5)
                 end
                 task.wait(0.1)
             end
         end)
     end
+
+    if IsTemporary then
+        task.spawn(function()
+            while IsTemporary do
+                task.wait(240)
+                LocalPlayer.Character.Humanoid:UnequipTools()
+            end
+        end)
+    end
 end)
+
     
     local StatsSection = FishingTab:AddSection("Fishing Stats")
     local SettingsSection = SettingsTab:AddSection("Settings")
