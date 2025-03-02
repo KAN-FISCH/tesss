@@ -513,7 +513,7 @@ FishingToggle:OnChanged(function(value)
     if IsTemporary then
         task.spawn(function()
             while IsTemporary do
-                task.wait(240)
+                task.wait(120)
                 LocalPlayer.Character.Humanoid:UnequipTools()
             end
         end)
