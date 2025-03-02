@@ -587,13 +587,13 @@ local function setupGUI()
                     -- Coba cari reel selama 3 detik
                     while not reel and tick() - startTime < 10 do
                         reel = PlayerGui and PlayerGui:FindFirstChild("reel")
-                        task.wait(0.25)
+                        task.wait(0.1)
                     end
                     if reel then
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         task.wait(1)
                         reel:Destroy()
-                        task.wait(1.4)
+                        task.wait(1)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                     end
