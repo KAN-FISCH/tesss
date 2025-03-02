@@ -577,21 +577,32 @@ local function setupGUI()
     FishingToggle:OnChanged(function(value)
         isFishing = value
         IsTemporary = value
+    
         if isFishing then
             task.spawn(function()
                 while isFishing do
-                    local reel = PlayerGui and PlayerGui:FindFirstChild("reel")
-                    if reel then 
+                    local reel
+                    local startTime = tick()
+        
+                    -- Coba cari reel selama 3 detik
+                    while not reel and tick() - startTime < 10 do
+                        reel = PlayerGui and PlayerGui:FindFirstChild("reel")
+                        task.wait(0.25)
+                    end
+                    if reel then
                         LocalPlayer.Character.Humanoid:UnequipTools()
-                        task.wait(1.3)
+                        task.wait(1)
                         reel:Destroy()
                         task.wait(1.4)
+                    else
+                        LocalPlayer.Character.Humanoid:UnequipTools()
                     end
                     task.wait(0.1)
                 end
             end)
-        end
+        end        
     end)
+    
     
     -- Auto Sell Section
     local AutoSellFunc = AutosSection:AddToggle("Auto Sell", {
