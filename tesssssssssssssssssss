@@ -334,11 +334,11 @@ local function Shake()
 
         local function HandleButton(Button)
             if Button then
-                Button.Selectable = true -- Make sure the button is selectable
+                Button.Selectable = true  -- Memastikan button tetap dapat dipilih
+                Button.BackgroundTransparency = 1  -- Membuat background transparan
                 GuiService.SelectedObject = Button
             end
-        end
-
+        end        
         if not SafeZone then
             warn("Unable to mount shake UI.")
             return
@@ -349,24 +349,23 @@ local function Shake()
             Connect.Enabled = false
         end
         SafeZone.Size = UDim2.fromOffset(0, 0)
-        SafeZone.Position = UDim2.fromScale(0.5, 0.5)
-        SafeZone.AnchorPoint = Vector2.new(0.5, 0.5)
+        SafeZone.Position = UDim2.fromScale(-0.2, 0.2)
+        SafeZone.AnchorPoint = Vector2.new(0.2, 0.2)  
+
 
         local Connection
         Connection = SafeZone.ChildAdded:Connect(function(Child)
             if Child:IsA("ImageButton") then
                 local Done = false
-
-                -- Thread to handle the button that appears
                 task.spawn(function()
                     while Child and Child:IsDescendantOf(SafeZone) and not Done do
-                        task.wait(0.001)
+                        task.wait(0)
                         HandleButton(Child)
                     end
                 end)
                 task.spawn(function()
                     while Child and Child:IsDescendantOf(SafeZone) do
-                        task.wait(0.001)
+                        task.wait(0)
                     end
                     Done = true
                 end)
@@ -375,20 +374,18 @@ local function Shake()
 
         -- Main loop to handle input
         while SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
-            task.wait(0.001)
+            task.wait(0)
             if GuiService.SelectedObject and GuiService.SelectedObject:IsDescendantOf(SafeZone) then
                 VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                 VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
             end
-            task.wait(0.001)
         end
 
         -- Remove event connection if no longer needed
         if Connection then Connection:Disconnect() end
         GuiService.SelectedObject = nil
     end
-
-    -- Handle event when shake UI appears
+    
     LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
         if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
             task.spawn(function()
@@ -495,14 +492,17 @@ local FishingToggle = MainSection:AddToggle("FishingToggle", {
 })
 
 FishingToggle:OnChanged(function(value)
-    isFishing = value  -- Update status dari toggle
+    isFishing = value
 
     if isFishing then
-        task.spawn(function() 
+        task.spawn(function()
             while isFishing do
-                if PlayerGui:FindFirstChild("reel") then  
+                local reel = PlayerGui and PlayerGui:FindFirstChild("reel")
+                if reel then 
                     LocalPlayer.Character.Humanoid:UnequipTools()
-                    task.wait(2)
+                    task.wait(1)
+                    reel:Destroy()
+                    task.wait(1.6)
                 end
                 task.wait(0.1)
             end
@@ -511,8 +511,6 @@ FishingToggle:OnChanged(function(value)
 end)
     
     local StatsSection = FishingTab:AddSection("Fishing Stats")
-    
-    -- Settings
     local SettingsSection = SettingsTab:AddSection("Settings")
     
     SettingsSection:AddButton({
