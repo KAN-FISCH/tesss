@@ -6,7 +6,6 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 -- Initialize Services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local VirtualUser = game:GetService("VirtualUser")
 local GuiService = game:GetService("GuiService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
@@ -19,11 +18,20 @@ local Backpack = LocalPlayer:WaitForChild("Backpack")
 local RodName = ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.rod.Value
 local CoreGui = game:GetService("CoreGui")
 local Lighting = game:GetService("Lighting")
-
+local RunService = game:GetService("RunService")
+local Terrain = workspace:FindFirstChildOfClass("Terrain")
 -- Hook functions
 local hiddenHook = hookfunction or hookfunc
 LowKeyFile = LowKeyFile or hiddenHook
 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local speaker = Players.LocalPlayer
+
+-- Fungsi untuk mendapatkan HumanoidRootPart
+local function getRoot(character)
+    return character and character:FindFirstChild("HumanoidRootPart") or nil
+end
 -- Anti-cheat bypass
 task.spawn(function()
     if LowKeyFile then
@@ -237,7 +245,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                     if Rod then
                         local randomValue = math.random(971, 999) / 10
                         Rod.events.cast:FireServer(1)
-                        task.wait(0.4)
+                        task.wait(0)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
                             local Params = RaycastParams.new()
@@ -373,7 +381,123 @@ local function FreezeCharacter(state)
         print("[INFO] Character is now unfrozen.")
     end
 end
+local function breakVelocity()
+    local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
 
+    task.delay(1, function()
+        BeenASecond = true
+    end)
+
+    while not BeenASecond do
+        if speaker.Character then
+            for _, v in ipairs(speaker.Character:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    pcall(function()
+                        v.Velocity = V3
+                        v.RotVelocity = V3
+                    end)
+                end
+            end
+        end
+        RunService.Heartbeat:Wait()  -- Lebih optimal daripada `wait()`
+    end
+end
+local function teleportToPlayer(playerName)
+    local root = getRoot(speaker.Character)
+    local targetPlayer = Players:FindFirstChild(playerName)
+
+    if root and targetPlayer and targetPlayer.Character then
+        local targetRoot = getRoot(targetPlayer.Character)
+        if targetRoot then
+            root.CFrame = targetRoot.CFrame + Vector3.new(3, 1, 0)
+        end
+    end
+    breakVelocity()
+end
+
+-- Ambil daftar pemain
+local function getPlayerNames()
+    local names = {"None"}
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= speaker then
+            table.insert(names, player.Name)
+        end
+    end
+    return names
+end
+-- BOOST FPS
+local function BoostFpsFunc(state)
+    if state then
+        if Terrain then
+            Terrain.WaterWaveSize = 0
+            Terrain.WaterWaveSpeed = 0
+            Terrain.WaterReflectance = 0
+            Terrain.WaterTransparency = 0
+        end
+        Lighting.GlobalShadows = false
+        Lighting.FogEnd = 9e9
+        pcall(function() settings().Rendering.QualityLevel = Enum.QualityLevel.Level01 end)
+
+        -- Optimasi Part dan Efek
+        for _, v in pairs(game:GetDescendants()) do
+            if v:IsA("BasePart") then
+                pcall(function()
+                    v.Material = Enum.Material.Plastic
+                    v.Reflectance = 0
+                end)
+            elseif v:IsA("Decal") then
+                pcall(function() v.Transparency = 1 end)
+            elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+                pcall(function() v.Lifetime = NumberRange.new(0) end)
+            elseif v:IsA("Explosion") then
+                pcall(function()
+                    v.BlastPressure = 1
+                    v.BlastRadius = 1
+                end)
+            end
+        end
+
+        -- Menonaktifkan efek pencahayaan
+        for _, v in pairs(Lighting:GetDescendants()) do
+            if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") 
+            or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+                pcall(function() v.Enabled = false end)
+            end
+        end
+
+        -- Hapus efek yang muncul setelahnya
+        workspace.DescendantAdded:Connect(function(child)
+            task.spawn(function()
+                if child:IsA("ForceField") or child:IsA("Sparkles") 
+                or child:IsA("Smoke") or child:IsA("Fire") then
+                    RunService.Heartbeat:Wait()
+                    pcall(function() child:Destroy() end)
+                end
+            end)
+        end)
+
+    else
+        -- Jika FPS Boost dimatikan, reset beberapa efek dasar
+        if Terrain then
+            Terrain.WaterWaveSize = 1
+            Terrain.WaterWaveSpeed = 1
+            Terrain.WaterReflectance = 0.5
+            Terrain.WaterTransparency = 0.3
+        end
+
+        Lighting.GlobalShadows = true
+        Lighting.FogEnd = 100000
+        pcall(function() settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic end)
+
+        -- Mengembalikan efek pencahayaan
+        for _, v in pairs(Lighting:GetDescendants()) do
+            if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") 
+            or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
+                pcall(function() v.Enabled = true end)
+            end
+        end
+    end
+end
 -- Auto Sell Function
 local autoSellRunning = false 
 local function AutoSell()
@@ -550,7 +674,7 @@ local function setupGUI()
         LocalPlayer.Character.Humanoid:UnequipTools()
     end)
     
-    local FreezeToggle = MainSection:AddToggle("FreezeChar", {
+    local FreezeToggle = SettingsSection:AddToggle("FreezeChar", {
         Title = "Freeze Character",
         Default = false
     })
@@ -563,7 +687,16 @@ local function setupGUI()
         Title = "Auto Shake",
         Default = false
     })
-    
+
+    local BoostFpsToggle = SettingsSection:AddToggle("BoostFps", { 
+        Title = "Boost FPS", 
+        Default = false
+    })
+
+    BoostFpsToggle:OnChanged(function(value)
+        BoostFpsFunc(value)
+    end)
+
     AutoShakeFunc:OnChanged(function(value)
         _G.Config.AutoShake = value
         if value then
@@ -624,7 +757,8 @@ local function setupGUI()
     local Area = {
         { NAME = "None", CFrame = nil },
         { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11223.5098, 7033.7627) },
-        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) }
+        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) },
+        { NAME = "Podium 3", CFrame = CFrame.new(-13589.2578, -11050.2227, 71.2485275, -0.0684822872, 8.76760069e-08, 0.997652352, 5.31155342e-09, 1, -8.75177264e-08, -0.997652352, -6.94330093e-10, -0.0684822872) }
     }
     -- Fungsi untuk Membuat Blok di Bawah Kaki
     local function createFreezeBlock(position)
@@ -698,12 +832,10 @@ local function setupGUI()
     
         local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
         if not HumanoidRootPart then return end
-    
-        -- Jika memilih "None", kembalikan ke lokasi sebelumnya
         if areaName == "None" and previousLocation then
             print("[INFO] Returning to previous location.")
             HumanoidRootPart.CFrame = previousLocation
-            FreezeCharacter1(false) -- Matikan freeze
+            FreezeCharacter1(false)
             return
         end
     
@@ -713,30 +845,55 @@ local function setupGUI()
                 previousLocation = HumanoidRootPart.CFrame
     
                 HumanoidRootPart.CFrame = v.CFrame
-                FreezeCharacter1(true) -- Auto Freeze
+                FreezeCharacter1(true)
                 return
             end
         end
     
         print("[ERROR] Area tidak ditemukan!")
     end
-    Dropdown(Main, "Freaze Area", "None", {"None", "Forsaken Veil", "Antlean Storm"}, false, function(selected)
+
+    -- **Dropdown untuk memilih pemain yang akan diteleportasi**
+    local selectedPlayer = "None"
+    local teleportPlayerDropdown
+
+    -- Fungsi untuk memperbarui dropdown pemain secara real-time
+    local function updatePlayerDropdown()
+        if teleportPlayerDropdown then
+            RemoveDropdown(teleportPlayerDropdown)  -- Hapus dropdown lama
+        end
+        teleportPlayerDropdown = Dropdown(Main, "Teleport Player", "None", getPlayerNames(), false, function(selected)
+            selectedPlayer = selected
+        end)
+    end
+
+    updatePlayerDropdown()
+
+    local teleportPlayerButton = Button(Main, "Teleport ke Pemain", function()
+        if selectedPlayer ~= "None" then
+            teleportToPlayer(selectedPlayer)
+        end
+    end)
+
+    Players.PlayerAdded:Connect(updatePlayerDropdown)
+    Players.PlayerRemoving:Connect(updatePlayerDropdown)
+    local DeleteGambarUiToggle = SettingsSection:AddToggle("DeleteGambarUi", {
+        Title = "Delete All Gambar UI",
+        Default = false
+    })
+    
+    DeleteGambarUiToggle:OnChanged(function(value)
+        if value then
+            for _, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui:GetDescendants()) do
+                if v:IsA("ImageLabel") or v:IsA("ImageButton") then
+                    v:Destroy()
+                end
+            end
+        end
+    end)
+    Dropdown(Main, "Freaze Area", "None", {"None", "Forsaken Veil", "Antlean Storm", "Podium 3"}, false, function(selected)
         teleportTo(selected)
     end)
-    Toggle(Main, "Example Toggle", "Example Description", "Example Toggle")
-    Toggle(Main, "Example Toggle Fun", "Example Description", "Example Toggle Fun", function(Value)
-        print(Value)
-    end)
-    TextBox(Main, "Example TextBox", "Example Tooltip", "Example Place Holder", false, "Example Textbox")
-    TextBox(Main, "Example TextBox Num Only", "Example Tooltip", "Example Place Holder", true, "Example Textbox Num Only")
-    Slider(Main, "Example Slider", 0, 100, false, "Example Slider")
-    Slider(Main, "Example Slider Rounding", 0, 100, true, "Example Slider Rounding")
-    Main:AddButton({
-        Title = "Text Button",
-        Callback = function()
-            -- Button action
-        end
-    })
     
     -- Settings buttons
     SettingsSection:AddButton({
@@ -764,29 +921,6 @@ local function setupGUI()
     setfpscap(240)
 end
 
-task.spawn(function()
-    while true do
-        local pausedUI = CoreGui:FindFirstChild("RobloxNetworkPauseNotification")
-        if pausedUI then
-            pausedUI:Destroy()
-            print("[INFO] Game Paused UI telah dihapus.")
-        end
-        task.wait(0.5) -- Cek setiap 0.5 detik
-    end
-end)
-
-task.spawn(function()
-    while true do
-        -- Cari semua efek Blur di Lighting
-        for _, effect in pairs(Lighting:GetChildren()) do
-            if effect:IsA("BlurEffect") then
-                effect.Enabled = false -- Nonaktifkan Blur
-                print("[INFO] Blur dihapus.")
-            end
-        end
-        task.wait(0.5) -- Cek setiap 0.5 detik
-    end
-end)
 -- Initialize the GUI
 setupGUI()
 
