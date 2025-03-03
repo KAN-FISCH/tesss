@@ -893,6 +893,21 @@ local function setupGUI()
             end
         end
     end)
+    local DeleteCharacterToggle = SettingsSection:AddToggle("DeleteCharacter", {
+        Title = "Delete All Characters",
+        Default = false
+    })
+    
+    DeleteCharacterToggle:OnChanged(function(value)
+        if value then
+            -- Hapus semua karakter pemain
+            for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                if player.Character then
+                    player.Character:Destroy()
+                end
+            end
+        end
+    end)
     Dropdown(Main, "Freaze Area", "None", {"None", "Forsaken Veil", "Antlean Storm", "Podium 3"}, false, function(selected)
         teleportTo(selected)
     end)
