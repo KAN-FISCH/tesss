@@ -878,7 +878,7 @@ local function setupGUI()
     Players.PlayerAdded:Connect(updatePlayerDropdown)
     Players.PlayerRemoving:Connect(updatePlayerDropdown)
     local DeleteGambarUiToggle = SettingsSection:AddToggle("DeleteGambarUi", {
-        Title = "Delete All Gambar UI",
+        Title = "Delete All UI",
         Default = false
     })
     
