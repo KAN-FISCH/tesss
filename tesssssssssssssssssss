@@ -238,13 +238,14 @@ end
 LocalPlayer.Character.ChildAdded:Connect(function(child)
     if child.Name == RodName then
         print("[DEBUG] Rod found in character:", child.Name)
-        if _G.Config.AutoCast == true then
+        if _G.Config.AutoCast then
             task.spawn(function() -- Jalankan di thread terpisah
                 while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
-                        Rod.events.cast:FireServer(1) -- Lempar pancing
-                        task.wait(0) -- Pastikan cast dikirim ke server
+                        Rod.events.cast:FireServer(1)
+
+                        task.wait(0)
 
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
@@ -252,23 +253,20 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                             Params.FilterType = Enum.RaycastFilterType.Include
                             Params.FilterDescendantsInstances = { workspace.Terrain }
                             local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
-
-                            -- Pindahkan Bobber langsung tanpa delay
                             if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
-                                Bobber:PivotTo(CFrame.new(RaycastResult.Position))
+                                Bobber:PivotTo(CFrame.new(RaycastResult.Position)) -- Instant move
                             end
                         end
-                        
-                        -- Membekukan karakter sebentar lalu membebaskannya
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(2.4) -- Tunggu sebelum casting ulang
+                    task.wait(0.1)
                 end
             end)
         end
     end
 end)
+
 
 -- Instant Reel handling
 PlayerGui.ChildAdded:Connect(function(child)
@@ -490,14 +488,6 @@ local function BoostFpsFunc(state)
         Lighting.GlobalShadows = true
         Lighting.FogEnd = 100000
         pcall(function() settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic end)
-
-        -- Mengembalikan efek pencahayaan
-        for _, v in pairs(Lighting:GetDescendants()) do
-            if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") 
-            or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
-                pcall(function() v.Enabled = true end)
-            end
-        end
     end
 end
 -- Auto Sell Function
