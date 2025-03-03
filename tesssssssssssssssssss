@@ -921,6 +921,13 @@ local function setupGUI()
     setfpscap(240)
 end
 
+task.spawn(function()
+    local pausedUI = CoreGui:FindFirstChild("RobloxNetworkPauseNotification")
+    if pausedUI then
+        pausedUI:Destroy()
+        print("[INFO] Game Paused UI telah dihapus.")
+    end
+end)
 -- Initialize the GUI
 setupGUI()
 
