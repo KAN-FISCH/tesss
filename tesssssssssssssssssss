@@ -239,29 +239,31 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
     if child.Name == RodName then
         print("[DEBUG] Rod found in character:", child.Name)
         if _G.Config.AutoCast == true then
-            task.spawn(function() -- Run in separate thread
+            task.spawn(function() -- Jalankan di thread terpisah
                 while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
-                        local randomValue = math.random(971, 999) / 10
-                        Rod.events.cast:FireServer(1)
-                        task.wait(0)
+                        Rod.events.cast:FireServer(1) -- Lempar pancing
+                        task.wait(0) -- Pastikan cast dikirim ke server
+
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
                             local Params = RaycastParams.new()
                             Params.FilterType = Enum.RaycastFilterType.Include
                             Params.FilterDescendantsInstances = { workspace.Terrain }
                             local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
-                            if RaycastResult then
-                                if RaycastResult.Instance:IsA("Terrain") then
-                                    Bobber:PivotTo(CFrame.new(RaycastResult.Position))
-                                end
+
+                            -- Pindahkan Bobber langsung tanpa delay
+                            if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
+                                Bobber:PivotTo(CFrame.new(RaycastResult.Position))
                             end
                         end
+                        
+                        -- Membekukan karakter sebentar lalu membebaskannya
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(2.4)
+                    task.wait(2.4) -- Tunggu sebelum casting ulang
                 end
             end)
         end
@@ -725,9 +727,9 @@ local function setupGUI()
                     end
                     if reel then
                         LocalPlayer.Character.Humanoid:UnequipTools()
-                        task.wait(1)
+                        task.wait(0)
                         reel:Destroy()
-                        task.wait(0.5)
+                        task.wait(0)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                     end
