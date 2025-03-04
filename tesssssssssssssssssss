@@ -1,5 +1,5 @@
 -- Load required libraries
-local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/Knuxy92/Ui-linoria/main/Fluent/Fluent.lua"))()
+local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/theme.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
@@ -698,7 +698,7 @@ local function setupGUI()
         end
     end)
     local FishingToggle = MainSection:AddToggle("FishingToggle", {
-        Title = "Fishing BUG",
+        Title = "Fast Mancing",
         Default = false
     })
     
