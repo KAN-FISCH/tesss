@@ -6362,7 +6362,7 @@ local MinimizeButton = New("TextButton", {
 		PaddingTop = UDim.new(0, 2),
 	}),
 	New("ImageLabel", {
-		Image = Mobile and Button_Icon or "rbxassetid://10734897102" or "",
+		Image = Mobile and Button_Icon or "rbxassetid://81098484847468" or "",
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
 	}, {
@@ -6382,8 +6382,7 @@ if Mobile then
 		Position = UDim2.new(0.45, 0, 0.025, 0),
 		BackgroundTransparency = 1,
 		ZIndex = 999999999,
-	},
-	{
+	}, {
 		New("Frame", {
 			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 			Size = UDim2.new(1, 0, 1, 0),
@@ -6397,26 +6396,36 @@ if Mobile then
 		})
 	})
 else
-	Minimizer = New("Frame", {
+	-- Logo yang muncul saat minimize di PC
+	MinimizeIcon = New("ImageButton", {
 		Parent = GUI,
-		Size = UDim2.new(0, 0, 0, 0),
-		Position = UDim2.new(0.45, 0, 0.025, 0),
+		Size = UDim2.new(0.06, 0, 0.06, 0), -- Ukuran lebih kecil agar tidak mengganggu
+		Position = UDim2.new(0.05, 0, 0.05, 0), -- Posisi agar tetap terlihat di sudut layar
 		BackgroundTransparency = 1,
+		Image = "rbxassetid://81098484847468", -- ID logo
+		Visible = false, -- Default disembunyikan
 		ZIndex = 999999999,
-	},
-	{
-		New("Frame", {
-			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-			Size = UDim2.new(0, 0, 0, 0),
-			BackgroundTransparency = 0,
-			BorderSizePixel = 0
-		}, {
-			New("UICorner", {
-				CornerRadius = UDim.new(0.25, 0),
-			}),
-			MinimizeButton
-		})
 	})
+
+	-- Fungsi untuk toggle minimize
+	function ToggleMinimize()
+		if Window.Minimized then
+			GUI.Visible = false
+			MinimizeIcon.Visible = true 
+		else
+			GUI.Visible = true
+			MinimizeIcon.Visible = false 
+		end
+	end
+	MinimizeIcon.MouseButton1Click:Connect(function()
+		Window.Minimized = false
+		ToggleMinimize()
+	end)
+
+	MinimizeButton.MouseButton1Click:Connect(function()
+		Window.Minimized = true
+		ToggleMinimize()
+	end)
 end
 
 Creator.AddSignal(Minimizer.InputBegan, function(Input)
