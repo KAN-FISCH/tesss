@@ -6,7 +6,7 @@ dsc.gg/hydrahub  |   29.01 - well well well removed last update, added "Bloody" 
 ]]--             |
 
 --- FLUENT PLUS SETTINGS ---
-local Show_Button = false -- Shows the button for toggle fluent ui manually. If "false", works only on mobile, if "true", works everytime.
+local Show_Button = true -- Shows the button for toggle fluent ui manually. If "false", works only on mobile, if "true", works everytime.
 local Button_Icon = "rbxassetid://10734897102" 
 ----------------------------
 
