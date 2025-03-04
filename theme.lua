@@ -6396,28 +6396,6 @@ if Mobile then
 		})
 	})
 else
-	if Mobile then
-	Minimizer = New("Frame", {
-		Parent = GUI,
-		Size = UDim2.new(0.06, 0, 0.15, 0),
-		Position = UDim2.new(0.45, 0, 0.025, 0),
-		BackgroundTransparency = 1,
-		ZIndex = 999999999,
-	},
-	{
-		New("Frame", {
-			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 0.5,
-			BorderSizePixel = 0
-		}, {
-			New("UICorner", {
-				CornerRadius = UDim.new(0.25, 0),
-			}),
-			MinimizeButton
-		})
-	})
-else
 	Minimizer = New("Frame", {
 		Parent = GUI,
 		Size = UDim2.new(0, 0, 0, 0),
