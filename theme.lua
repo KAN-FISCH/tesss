@@ -6350,10 +6350,12 @@ else
 	Fluent = Library
 end
 
-local MinimizeButton = New("TextButton", {
+-- Tombol minimize utama (PC & Mobile)
+MinimizeButton = New("ImageButton", {
 	BackgroundTransparency = 1,
 	Size = UDim2.new(1, 0, 1, 0),
-	BorderSizePixel = 0
+	BorderSizePixel = 0,
+	Image = "rbxassetid://81098484847468", -- Logo default untuk tombol minimize
 }, {
 	New("UIPadding", {
 		PaddingBottom = UDim.new(0, 2),
@@ -6361,20 +6363,14 @@ local MinimizeButton = New("TextButton", {
 		PaddingRight = UDim.new(0, 2),
 		PaddingTop = UDim.new(0, 2),
 	}),
-	New("ImageLabel", {
-		Image = Mobile and Button_Icon or "rbxassetid://81098484847468" or "",
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-	}, {
-		New("UIAspectRatioConstraint", {
-			AspectRatio = 1,
-			AspectType = Enum.AspectType.FitWithinMaxSize,
-		})
+	New("UIAspectRatioConstraint", {
+		AspectRatio = 1,
+		AspectType = Enum.AspectType.FitWithinMaxSize,
 	})
 })
 
 local Minimizer
-
+-- Frame minimize untuk Mobile
 if Mobile then
 	Minimizer = New("Frame", {
 		Parent = GUI,
@@ -6395,38 +6391,42 @@ if Mobile then
 			MinimizeButton
 		})
 	})
-else
-	-- Logo yang muncul saat minimize di PC
-	MinimizeIcon = New("ImageButton", {
-		Parent = GUI,
-		Size = UDim2.new(0.06, 0, 0.06, 0), -- Ukuran lebih kecil agar tidak mengganggu
-		Position = UDim2.new(0.05, 0, 0.05, 0), -- Posisi agar tetap terlihat di sudut layar
-		BackgroundTransparency = 1,
-		Image = "rbxassetid://81098484847468", -- ID logo
-		Visible = false, -- Default disembunyikan
-		ZIndex = 999999999,
-	})
-
-	-- Fungsi untuk toggle minimize
-	function ToggleMinimize()
-		if Window.Minimized then
-			GUI.Visible = false
-			MinimizeIcon.Visible = true 
-		else
-			GUI.Visible = true
-			MinimizeIcon.Visible = false 
-		end
-	end
-	MinimizeIcon.MouseButton1Click:Connect(function()
-		Window.Minimized = false
-		ToggleMinimize()
-	end)
-
-	MinimizeButton.MouseButton1Click:Connect(function()
-		Window.Minimized = true
-		ToggleMinimize()
-	end)
 end
+
+-- Logo minimize yang muncul saat minimize (PC & Mobile)
+MinimizeIcon = New("ImageButton", {
+	Parent = GUI.Parent, -- Agar tetap terlihat saat GUI disembunyikan
+	Size = UDim2.new(0.06, 0, 0.06, 0), -- Ukuran lebih kecil agar tidak mengganggu
+	Position = UDim2.new(0.05, 0, 0.05, 0), -- Posisi agar tetap terlihat di sudut layar
+	BackgroundTransparency = 1,
+	Image = "rbxassetid://81098484847468", -- ID logo
+	Visible = false, -- Default disembunyikan
+	ZIndex = 999999999,
+})
+
+-- Fungsi untuk toggle minimize (berlaku untuk PC & Mobile)
+function ToggleMinimize()
+	if Window.Minimized then
+		GUI.Visible = false
+		MinimizeIcon.Visible = true -- Tampilkan logo saat minimize
+	else
+		GUI.Visible = true
+		MinimizeIcon.Visible = false -- Sembunyikan logo saat GUI aktif
+	end
+end
+
+-- Ketika logo diklik, munculkan kembali GUI
+MinimizeIcon.MouseButton1Click:Connect(function()
+	Window.Minimized = false
+	ToggleMinimize()
+end)
+
+-- Ketika tombol minimize ditekan, sembunyikan GUI dan tampilkan logo
+MinimizeButton.MouseButton1Click:Connect(function()
+	Window.Minimized = true
+	ToggleMinimize()
+end)
+
 
 Creator.AddSignal(Minimizer.InputBegan, function(Input)
 	if
