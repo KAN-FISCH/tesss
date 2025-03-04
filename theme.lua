@@ -7,7 +7,7 @@ dsc.gg/hydrahub  |   29.01 - well well well removed last update, added "Bloody" 
 
 --- FLUENT PLUS SETTINGS ---
 local Show_Button = false -- Shows the button for toggle fluent ui manually. If "false", works only on mobile, if "true", works everytime.
-local Button_Icon = "" -- Icon of the button for toggle fluent ui
+local Button_Icon = "rbxassetid://10734897102" 
 ----------------------------
 
 local Lighting = game:GetService("Lighting")
@@ -6349,13 +6349,10 @@ if getgenv then
 else
 	Fluent = Library
 end
-
--- Tombol minimize utama (PC & Mobile)
-MinimizeButton = New("ImageButton", {
+local MinimizeButton = New("TextButton", {
 	BackgroundTransparency = 1,
 	Size = UDim2.new(1, 0, 1, 0),
-	BorderSizePixel = 0,
-	Image = "rbxassetid://81098484847468", -- Logo default untuk tombol minimize
+	BorderSizePixel = 0
 }, {
 	New("UIPadding", {
 		PaddingBottom = UDim.new(0, 2),
@@ -6363,14 +6360,20 @@ MinimizeButton = New("ImageButton", {
 		PaddingRight = UDim.new(0, 2),
 		PaddingTop = UDim.new(0, 2),
 	}),
-	New("UIAspectRatioConstraint", {
-		AspectRatio = 1,
-		AspectType = Enum.AspectType.FitWithinMaxSize,
+	New("ImageLabel", {
+		Image = Mobile and Button_Icon or "rbxassetid://10734897102" or "",
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+	}, {
+		New("UIAspectRatioConstraint", {
+			AspectRatio = 1,
+			AspectType = Enum.AspectType.FitWithinMaxSize,
+		})
 	})
 })
 
 local Minimizer
--- Frame minimize untuk Mobile
+
 if Mobile then
 	Minimizer = New("Frame", {
 		Parent = GUI,
@@ -6378,7 +6381,8 @@ if Mobile then
 		Position = UDim2.new(0.45, 0, 0.025, 0),
 		BackgroundTransparency = 1,
 		ZIndex = 999999999,
-	}, {
+	},
+	{
 		New("Frame", {
 			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 			Size = UDim2.new(1, 0, 1, 0),
@@ -6391,41 +6395,29 @@ if Mobile then
 			MinimizeButton
 		})
 	})
+else
+	Minimizer = New("Frame", {
+		Parent = GUI,
+		Size = UDim2.new(0, 0, 0, 0),
+		Position = UDim2.new(0.45, 0, 0.025, 0),
+		BackgroundTransparency = 1,
+		ZIndex = 999999999,
+	},
+	{
+		New("Frame", {
+			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+			Size = UDim2.new(0, 0, 0, 0),
+			BackgroundTransparency = 0,
+			BorderSizePixel = 0
+		}, {
+			New("UICorner", {
+				CornerRadius = UDim.new(0.25, 0),
+			}),
+			MinimizeButton
+		})
+	})
 end
 
--- Logo minimize yang muncul saat minimize (PC & Mobile)
-MinimizeIcon = New("ImageButton", {
-	Parent = GUI.Parent, -- Agar tetap terlihat saat GUI disembunyikan
-	Size = UDim2.new(0.06, 0, 0.06, 0), -- Ukuran lebih kecil agar tidak mengganggu
-	Position = UDim2.new(0.05, 0, 0.05, 0), -- Posisi agar tetap terlihat di sudut layar
-	BackgroundTransparency = 1,
-	Image = "rbxassetid://81098484847468", -- ID logo
-	Visible = false, -- Default disembunyikan
-	ZIndex = 999999999,
-})
-
--- Fungsi untuk toggle minimize (berlaku untuk PC & Mobile)
-function ToggleMinimize()
-	if Window.Minimized then
-		GUI.Visible = false
-		MinimizeIcon.Visible = true -- Tampilkan logo saat minimize
-	else
-		GUI.Visible = true
-		MinimizeIcon.Visible = false -- Sembunyikan logo saat GUI aktif
-	end
-end
-
--- Ketika logo diklik, munculkan kembali GUI
-MinimizeIcon.MouseButton1Click:Connect(function()
-	Window.Minimized = false
-	ToggleMinimize()
-end)
-
--- Ketika tombol minimize ditekan, sembunyikan GUI dan tampilkan logo
-MinimizeButton.MouseButton1Click:Connect(function()
-	Window.Minimized = true
-	ToggleMinimize()
-end)
 
 
 Creator.AddSignal(Minimizer.InputBegan, function(Input)
