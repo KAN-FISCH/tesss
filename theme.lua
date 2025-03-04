@@ -6397,25 +6397,25 @@ if Mobile then
 	})
 else
 	Minimizer = New("Frame", {
-		Parent = GUI,
-		Size = UDim2.new(0, 0, 0, 0),
-		Position = UDim2.new(0.45, 0, 0.025, 0),
-		BackgroundTransparency = 1,
-		ZIndex = 999999999,
-	},
-	{
-		New("Frame", {
-			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-			Size = UDim2.new(0, 0, 0, 0),
-			BackgroundTransparency = 0,
-			BorderSizePixel = 0
-		}, {
-			New("UICorner", {
-				CornerRadius = UDim.new(0.25, 0),
-			}),
-			MinimizeButton
-		})
-	})
+	        Parent = GUI,
+	        Size = UDim2.new(0.03, 0, 0.06, 0), -- Ukuran lebih kecil untuk PC
+	        Position = UDim2.new(0.45, 0, 0.025, 0),
+	        BackgroundTransparency = 1,
+	        ZIndex = 999999999,
+	    },
+	    {
+	        New("Frame", {
+	            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+	            Size = UDim2.new(1, 0, 1, 0),
+	            BackgroundTransparency = 0.5, -- Transparan sedikit supaya kelihatan
+	            BorderSizePixel = 0
+	        }, {
+	            New("UICorner", {
+	                CornerRadius = UDim.new(0.5, 0), -- Lebih bulat di PC
+	            }),
+	            MinimizeButton
+	        })
+	    })
 end
 
 
