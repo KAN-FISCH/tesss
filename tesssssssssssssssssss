@@ -997,6 +997,7 @@ local function setupGUI()
     
     DeleteCharacterToggle:OnChanged(function(value)
         if value then
+            -- Hapus semua karakter pemain kecuali karakter kita sendiri
             for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
                 if player ~= LocalPlayer and player.Character then
                     player.Character:Destroy()
@@ -1046,6 +1047,29 @@ task.spawn(function()
         print("[INFO] Game Paused UI telah dihapus.")
     end
 end)
+task.spawn(function()
+    while true do
+        task.wait(2) -- Tunggu 2 detik setiap loop
+        
+        local player = game:GetService("Players").LocalPlayer
+        if player and player.Character then
+            local rootPart = workspace:FindFirstChild(player.Character.Name) -- Cari karakter di workspace
+            if rootPart then
+                local humanoidRoot = rootPart:FindFirstChild("HumanoidRootPart") -- Cari HumanoidRootPart
+                
+                if humanoidRoot then
+                    for _, obj in pairs(humanoidRoot:GetChildren()) do
+                        if obj:IsA("Sound") then
+                            obj:Destroy()
+                            print("[INFO] Sound di HumanoidRootPart dihapus:", obj.Name)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
 -- Initialize the GUI
 setupGUI()
 
