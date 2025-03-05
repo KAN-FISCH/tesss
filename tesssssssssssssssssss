@@ -286,7 +286,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(0.1)
+                    task.wait(0)
                     FreezeCharacter(false)
                 end
             end)
@@ -722,7 +722,7 @@ local function setupGUI()
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         task.wait(0)
                         reel:Destroy()
-                        task.wait(2)
+                        task.wait(1.5)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                     end
