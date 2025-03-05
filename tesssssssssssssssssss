@@ -989,6 +989,93 @@ local function setupGUI()
             end
         end
     end)
+    local playerName = LocalPlayer.Name
+    local displayName = LocalPlayer.DisplayName
+    local replacementText = "ShielD"
+    local streamerModeEnabled = false
+    local originalTexts = {}
+    local function updateTextLabel(label)
+        if streamerModeEnabled then
+            if not originalTexts[label] then
+                originalTexts[label] = label.Text
+            end
+            if string.find(label.Text, playerName) then
+                label.Text = string.gsub(label.Text, playerName, replacementText)
+            end
+            if string.find(label.Text, displayName) then
+                label.Text = string.gsub(label.Text, displayName, replacementText)
+            end
+        else
+            if originalTexts[label] then
+                label.Text = originalTexts[label]
+            end
+        end
+    end
+    local function updateGUITexts()
+        local hudCoinsText = LocalPlayer.PlayerGui.hud.safezone.coins
+        local hudLevelText = LocalPlayer.PlayerGui.hud.safezone.lvl
+        
+        if streamerModeEnabled then
+            -- Replace coins text in GUI
+            if hudCoinsText then
+                if not originalTexts["coins"] then
+                    originalTexts["coins"] = hudCoinsText.Text
+                end
+                hudCoinsText.Text = replacementText
+            end
+            
+            -- Replace level text in GUI
+            if hudLevelText then
+                if not originalTexts["level"] then
+                    originalTexts["level"] = hudLevelText.Text
+                end
+                hudLevelText.Text = replacementText
+            end
+        else
+            -- Restore original text in GUI
+            if hudCoinsText and originalTexts["coins"] then
+                hudCoinsText.Text = originalTexts["coins"]
+            end
+            
+            if hudLevelText and originalTexts["level"] then
+                hudLevelText.Text = originalTexts["level"]
+            end
+            originalTexts = {}
+        end
+    end
+
+    local function toggleStreamerMode(state)
+        streamerModeEnabled = state
+        
+        -- Update all existing TextLabels
+        for _, obj in ipairs(game:GetDescendants()) do
+            if obj:IsA("TextLabel") then
+                updateTextLabel(obj)
+            end
+        end
+        
+        -- Add listener for new TextLabels
+        game.DescendantAdded:Connect(function(descendant)
+            if descendant:IsA("TextLabel") then
+                updateTextLabel(descendant)
+            end
+        end)
+        
+        -- Update GUI texts
+        updateGUITexts()
+    end
+
+    -- Create toggle in settings
+    local Protect = SettingsSection:AddToggle("Hide Username", {
+        Title = "Hide Username",
+        Default = false
+    })
+
+    -- Connect toggle to streamer mode function
+    Protect:OnChanged(function(value)
+        toggleStreamerMode(value)
+    end)
+
     local DeleteCharacterToggle = SettingsSection:AddToggle("DeleteCharacter", {
         Title = "Delete All Characters",
         Default = false
@@ -996,7 +1083,6 @@ local function setupGUI()
     
     DeleteCharacterToggle:OnChanged(function(value)
         if value then
-            -- Hapus semua karakter pemain kecuali karakter kita sendiri
             for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
                 if player ~= LocalPlayer and player.Character then
                     player.Character:Destroy()
