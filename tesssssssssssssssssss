@@ -235,87 +235,39 @@ local function FreazeChar(state)
         end
     end
 end
-local isFrozen1 = false
-    local frozenPosition1
-    local freezeBlock -- Menyimpan blok yang dibuat
-    local Area = {
-        { NAME = "None", CFrame = nil },
-        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11223.5098, 7033.7627) },
-        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) },
-        { NAME = "Podium 3", CFrame = CFrame.new(-13589.2578, -11050.2227, 71.2485275, -0.0684822872, 8.76760069e-08, 0.997652352, 5.31155342e-09, 1, -8.75177264e-08, -0.997652352, -6.94330093e-10, -0.0684822872) }
-    }
-    -- Fungsi untuk Membuat Blok di Bawah Kaki
-    local function createFreezeBlock(position)
-        if freezeBlock then
-            freezeBlock:Destroy()
-        end
-        
-        freezeBlock = Instance.new("Part")
-        freezeBlock.Size = Vector3.new(10, 1, 10) -- Ukuran blok (lebar, tinggi, panjang)
-        freezeBlock.Position = position - Vector3.new(0, 3, 0) -- Posisi di bawah karakter
-        freezeBlock.Anchored = true
-        freezeBlock.Transparency = 1 -- 1 = Transparan (tidak terlihat)
-        freezeBlock.CanCollide = true
-        freezeBlock.Parent = game.Workspace
-    end
+local isFrozen = false
+local frozenPosition = nil
 
-    -- Fungsi untuk Freeze + Matikan Animasi
-    local function FreezeCharacter1(state)
-        local Character = LocalPlayer.Character
-        if not Character then return end
+local function FreezeCharacter(state)
+    local Character = LocalPlayer.Character
+    if not Character then return end
 
-        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-        local Humanoid = Character:FindFirstChild("Humanoid")
-        if not HumanoidRootPart or not Humanoid then return end
+    local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+    if not HumanoidRootPart then return end
 
-        if state then
-            frozenPosition1 = HumanoidRootPart.CFrame
-            isFrozen1 = true
-
-            -- Mencegah karakter jatuh
-            Humanoid.PlatformStand = true
-            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
-
-            -- Mematikan animasi
-            local Animator = Humanoid:FindFirstChildOfClass("Animator")
-            if Animator then
-                Animator.Parent = nil
+    if state then
+        frozenPosition = HumanoidRootPart.CFrame
+        isFrozen = true
+        print("[INFO] Character is now frozen.")
+        print(frozenPosition)
+        task.spawn(function()
+            while isFrozen do
+                HumanoidRootPart.CFrame = frozenPosition 
+                task.wait(0.01)
             end
-
-            -- Buat blok di bawah kaki
-            createFreezeBlock(HumanoidRootPart.Position)
-
-            print("[INFO] Character is now frozen.")
-
-            task.spawn(function()
-                while isFrozen1 do
-                    if Character and Character:FindFirstChild("HumanoidRootPart") then
-                        Character.HumanoidRootPart.CFrame = frozenPosition1
-                    end
-                    task.wait(0.01)
-                end
-            end)
-        else
-            isFrozen1 = false
-            Humanoid.PlatformStand = false
-            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
-
-            -- Hapus blok setelah unfreeze
-            if freezeBlock then
-                freezeBlock:Destroy()
-                freezeBlock = nil
-            end
-
-            print("[INFO] Character is now unfrozen.")
-        end
+        end)
+    else
+        isFrozen = false
+        print("[INFO] Character is now unfrozen.")
     end
+end
 -- Rod use detection and auto-casting
 LocalPlayer.Character.ChildAdded:Connect(function(child)
     if child.Name == RodName then
         print("[DEBUG] Rod found in character:", child.Name)
         if _G.Config.AutoCast then
             task.spawn(function() 
-                FreezeCharacter1(true)
+                FreezeCharacter(true)
                 while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
@@ -335,7 +287,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(false)
                     end
                     task.wait(0.1)
-                    FreezeCharacter1(false  )
+                    FreezeCharacter(false)
                 end
             end)
         end
@@ -347,6 +299,7 @@ end)
 PlayerGui.ChildAdded:Connect(function(child)
     if child.Name == "reel" then
         task.spawn(function()
+            FreezeCharacter(true)
             while child.Parent == PlayerGui do
                 if _G.Config.InstantReel then
                     local Bar = child:FindFirstChild("bar")
@@ -357,6 +310,7 @@ PlayerGui.ChildAdded:Connect(function(child)
                 end
                 task.wait(0)
             end
+            FreezeCharacter(false)
         end)
     end
 end)
@@ -430,32 +384,7 @@ local function Shake()
     end)
 end
 
-local isFrozen = false
-local frozenPosition = nil
 
-local function FreezeCharacter(state)
-    local Character = LocalPlayer.Character
-    if not Character then return end
-
-    local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-    if not HumanoidRootPart then return end
-
-    if state then
-        frozenPosition = HumanoidRootPart.CFrame
-        isFrozen = true
-        print("[INFO] Character is now frozen.")
-        print(frozenPosition)
-        task.spawn(function()
-            while isFrozen do
-                HumanoidRootPart.CFrame = frozenPosition 
-                task.wait(0.01)
-            end
-        end)
-    else
-        isFrozen = false
-        print("[INFO] Character is now unfrozen.")
-    end
-end
 local function breakVelocity()
     local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
 
@@ -817,6 +746,80 @@ local function setupGUI()
     
     -- Area Tab Example
     local Main = AreaTab:AddSection('Main')
+    local isFrozen1 = false
+    local frozenPosition1
+    local freezeBlock -- Menyimpan blok yang dibuat
+    local Area = {
+        { NAME = "None", CFrame = nil },
+        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11223.5098, 7033.7627) },
+        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) },
+        { NAME = "Podium 3", CFrame = CFrame.new(-13589.2578, -11050.2227, 71.2485275, -0.0684822872, 8.76760069e-08, 0.997652352, 5.31155342e-09, 1, -8.75177264e-08, -0.997652352, -6.94330093e-10, -0.0684822872) }
+    }
+    -- Fungsi untuk Membuat Blok di Bawah Kaki
+    local function createFreezeBlock(position)
+        if freezeBlock then
+            freezeBlock:Destroy()
+        end
+        
+        freezeBlock = Instance.new("Part")
+        freezeBlock.Size = Vector3.new(10, 1, 10) -- Ukuran blok (lebar, tinggi, panjang)
+        freezeBlock.Position = position - Vector3.new(0, 3, 0) -- Posisi di bawah karakter
+        freezeBlock.Anchored = true
+        freezeBlock.Transparency = 1 -- 1 = Transparan (tidak terlihat)
+        freezeBlock.CanCollide = true
+        freezeBlock.Parent = game.Workspace
+    end
+
+    -- Fungsi untuk Freeze + Matikan Animasi
+    local function FreezeCharacter1(state)
+        local Character = LocalPlayer.Character
+        if not Character then return end
+
+        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+        local Humanoid = Character:FindFirstChild("Humanoid")
+        if not HumanoidRootPart or not Humanoid then return end
+
+        if state then
+            frozenPosition1 = HumanoidRootPart.CFrame
+            isFrozen1 = true
+
+            -- Mencegah karakter jatuh
+            Humanoid.PlatformStand = true
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
+
+            -- Mematikan animasi
+            local Animator = Humanoid:FindFirstChildOfClass("Animator")
+            if Animator then
+                Animator.Parent = nil
+            end
+
+            -- Buat blok di bawah kaki
+            createFreezeBlock(HumanoidRootPart.Position)
+
+            print("[INFO] Character is now frozen.")
+
+            task.spawn(function()
+                while isFrozen1 do
+                    if Character and Character:FindFirstChild("HumanoidRootPart") then
+                        Character.HumanoidRootPart.CFrame = frozenPosition1
+                    end
+                    task.wait(0.01)
+                end
+            end)
+        else
+            isFrozen1 = false
+            Humanoid.PlatformStand = false
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
+
+            -- Hapus blok setelah unfreeze
+            if freezeBlock then
+                freezeBlock:Destroy()
+                freezeBlock = nil
+            end
+
+            print("[INFO] Character is now unfrozen.")
+        end
+    end
     local previousLocation = nil
     local teleportSpots = {"None"} 
     local teleportData = {} 
