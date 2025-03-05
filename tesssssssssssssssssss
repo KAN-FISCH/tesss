@@ -235,20 +235,92 @@ local function FreazeChar(state)
         end
     end
 end
+local isFrozen1 = false
+    local frozenPosition1
+    local freezeBlock -- Menyimpan blok yang dibuat
+    local Area = {
+        { NAME = "None", CFrame = nil },
+        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11223.5098, 7033.7627) },
+        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) },
+        { NAME = "Podium 3", CFrame = CFrame.new(-13589.2578, -11050.2227, 71.2485275, -0.0684822872, 8.76760069e-08, 0.997652352, 5.31155342e-09, 1, -8.75177264e-08, -0.997652352, -6.94330093e-10, -0.0684822872) }
+    }
+    -- Fungsi untuk Membuat Blok di Bawah Kaki
+    local function createFreezeBlock(position)
+        if freezeBlock then
+            freezeBlock:Destroy()
+        end
+        
+        freezeBlock = Instance.new("Part")
+        freezeBlock.Size = Vector3.new(10, 1, 10) -- Ukuran blok (lebar, tinggi, panjang)
+        freezeBlock.Position = position - Vector3.new(0, 3, 0) -- Posisi di bawah karakter
+        freezeBlock.Anchored = true
+        freezeBlock.Transparency = 1 -- 1 = Transparan (tidak terlihat)
+        freezeBlock.CanCollide = true
+        freezeBlock.Parent = game.Workspace
+    end
 
+    -- Fungsi untuk Freeze + Matikan Animasi
+    local function FreezeCharacter1(state)
+        local Character = LocalPlayer.Character
+        if not Character then return end
+
+        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+        local Humanoid = Character:FindFirstChild("Humanoid")
+        if not HumanoidRootPart or not Humanoid then return end
+
+        if state then
+            frozenPosition1 = HumanoidRootPart.CFrame
+            isFrozen1 = true
+
+            -- Mencegah karakter jatuh
+            Humanoid.PlatformStand = true
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
+
+            -- Mematikan animasi
+            local Animator = Humanoid:FindFirstChildOfClass("Animator")
+            if Animator then
+                Animator.Parent = nil
+            end
+
+            -- Buat blok di bawah kaki
+            createFreezeBlock(HumanoidRootPart.Position)
+
+            print("[INFO] Character is now frozen.")
+
+            task.spawn(function()
+                while isFrozen1 do
+                    if Character and Character:FindFirstChild("HumanoidRootPart") then
+                        Character.HumanoidRootPart.CFrame = frozenPosition1
+                    end
+                    task.wait(0.01)
+                end
+            end)
+        else
+            isFrozen1 = false
+            Humanoid.PlatformStand = false
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
+
+            -- Hapus blok setelah unfreeze
+            if freezeBlock then
+                freezeBlock:Destroy()
+                freezeBlock = nil
+            end
+
+            print("[INFO] Character is now unfrozen.")
+        end
+    end
 -- Rod use detection and auto-casting
 LocalPlayer.Character.ChildAdded:Connect(function(child)
     if child.Name == RodName then
         print("[DEBUG] Rod found in character:", child.Name)
         if _G.Config.AutoCast then
-            task.spawn(function() -- Jalankan di thread terpisah
+            task.spawn(function() 
+                FreezeCharacter1(true)
                 while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
                         Rod.events.cast:FireServer(1)
-
                         task.wait(0)
-
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
                             local Params = RaycastParams.new()
@@ -263,6 +335,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(false)
                     end
                     task.wait(0.1)
+                    FreezeCharacter1(false  )
                 end
             end)
         end
@@ -717,10 +790,12 @@ local function setupGUI()
                         task.wait(0.1)
                     end
                     if reel then
+                        FreezeCharacter1(true)
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         task.wait(0)
                         reel:Destroy()
                         task.wait(2)
+                        FreezeCharacter1(false)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                     end
@@ -744,80 +819,6 @@ local function setupGUI()
     
     -- Area Tab Example
     local Main = AreaTab:AddSection('Main')
-    local isFrozen1 = false
-    local frozenPosition1
-    local freezeBlock -- Menyimpan blok yang dibuat
-    local Area = {
-        { NAME = "None", CFrame = nil },
-        { NAME = "Forsaken Veil", CFrame = CFrame.new(-2418.1167, -11223.5098, 7033.7627) },
-        { NAME = "Antlean Storm", CFrame = CFrame.new(-3665.85889, 141.195038, 738.876343) },
-        { NAME = "Podium 3", CFrame = CFrame.new(-13589.2578, -11050.2227, 71.2485275, -0.0684822872, 8.76760069e-08, 0.997652352, 5.31155342e-09, 1, -8.75177264e-08, -0.997652352, -6.94330093e-10, -0.0684822872) }
-    }
-    -- Fungsi untuk Membuat Blok di Bawah Kaki
-    local function createFreezeBlock(position)
-        if freezeBlock then
-            freezeBlock:Destroy()
-        end
-        
-        freezeBlock = Instance.new("Part")
-        freezeBlock.Size = Vector3.new(10, 1, 10) -- Ukuran blok (lebar, tinggi, panjang)
-        freezeBlock.Position = position - Vector3.new(0, 3, 0) -- Posisi di bawah karakter
-        freezeBlock.Anchored = true
-        freezeBlock.Transparency = 1 -- 1 = Transparan (tidak terlihat)
-        freezeBlock.CanCollide = true
-        freezeBlock.Parent = game.Workspace
-    end
-
-    -- Fungsi untuk Freeze + Matikan Animasi
-    local function FreezeCharacter1(state)
-        local Character = LocalPlayer.Character
-        if not Character then return end
-
-        local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-        local Humanoid = Character:FindFirstChild("Humanoid")
-        if not HumanoidRootPart or not Humanoid then return end
-
-        if state then
-            frozenPosition1 = HumanoidRootPart.CFrame
-            isFrozen1 = true
-
-            -- Mencegah karakter jatuh
-            Humanoid.PlatformStand = true
-            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
-
-            -- Mematikan animasi
-            local Animator = Humanoid:FindFirstChildOfClass("Animator")
-            if Animator then
-                Animator.Parent = nil
-            end
-
-            -- Buat blok di bawah kaki
-            createFreezeBlock(HumanoidRootPart.Position)
-
-            print("[INFO] Character is now frozen.")
-
-            task.spawn(function()
-                while isFrozen1 do
-                    if Character and Character:FindFirstChild("HumanoidRootPart") then
-                        Character.HumanoidRootPart.CFrame = frozenPosition1
-                    end
-                    task.wait(0.01)
-                end
-            end)
-        else
-            isFrozen1 = false
-            Humanoid.PlatformStand = false
-            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
-
-            -- Hapus blok setelah unfreeze
-            if freezeBlock then
-                freezeBlock:Destroy()
-                freezeBlock = nil
-            end
-
-            print("[INFO] Character is now unfrozen.")
-        end
-    end
     local previousLocation = nil
     local teleportSpots = {"None"} 
     local teleportData = {} 
@@ -1060,8 +1061,6 @@ local function setupGUI()
                 updateTextLabel(descendant)
             end
         end)
-        
-        -- Update GUI texts
         updateGUITexts()
     end
 
@@ -1070,8 +1069,6 @@ local function setupGUI()
         Title = "Hide Username",
         Default = false
     })
-
-    -- Connect toggle to streamer mode function
     Protect:OnChanged(function(value)
         toggleStreamerMode(value)
     end)
@@ -1114,7 +1111,6 @@ local function setupGUI()
         end
     })
     
-    -- Configure save managers
     SaveManager:SetLibrary(Fluent)
     InterfaceManager:SetLibrary(Fluent)
     SaveManager:SetFolder("SHIELDTEAM")
@@ -1138,9 +1134,9 @@ task.spawn(function()
         
         local player = game:GetService("Players").LocalPlayer
         if player and player.Character then
-            local rootPart = workspace:FindFirstChild(player.Character.Name) -- Cari karakter di workspace
+            local rootPart = workspace:FindFirstChild(player.Character.Name)
             if rootPart then
-                local humanoidRoot = rootPart:FindFirstChild("HumanoidRootPart") -- Cari HumanoidRootPart
+                local humanoidRoot = rootPart:FindFirstChild("HumanoidRootPart")
                 
                 if humanoidRoot then
                     for _, obj in pairs(humanoidRoot:GetChildren()) do
