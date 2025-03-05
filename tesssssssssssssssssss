@@ -347,7 +347,6 @@ end)
 PlayerGui.ChildAdded:Connect(function(child)
     if child.Name == "reel" then
         task.spawn(function()
-            FreezeCharacter1(true)
             while child.Parent == PlayerGui do
                 if _G.Config.InstantReel then
                     local Bar = child:FindFirstChild("bar")
@@ -358,8 +357,6 @@ PlayerGui.ChildAdded:Connect(function(child)
                 end
                 task.wait(0)
             end
-            
-            FreezeCharacter1(false)
         end)
     end
 end)
