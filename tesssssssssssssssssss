@@ -282,7 +282,7 @@ PlayerGui.ChildAdded:Connect(function(child)
                     end
                     ReplicatedStorage.events["reelfinished "]:FireServer(100, true)
                 end
-                task.wait(0.0001)
+                task.wait(0)
             end
         end)
     end
@@ -701,7 +701,6 @@ local function setupGUI()
         Title = "Fast Mancing",
         Default = false
     })
-    
     FishingToggle:OnChanged(function(value)
         isFishing = value
         IsTemporary = value
@@ -721,7 +720,7 @@ local function setupGUI()
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         task.wait(0)
                         reel:Destroy()
-                        task.wait(2.1)
+                        task.wait(2)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                     end
