@@ -615,7 +615,7 @@ local function setupGUI()
     -- Create Window
     local Window = Fluent:CreateWindow({
         Title = "Fishing V0.1",
-        SubTitle = "By ShielDTeam",
+        SubTitle = "By ShielDTeam // Nero",
         TabWidth = 140,
         Size = UDim2.new(0, 550, 0, 350),
         Acrylic = true,
@@ -991,7 +991,7 @@ local function setupGUI()
     end)
     local playerName = LocalPlayer.Name
     local displayName = LocalPlayer.DisplayName
-    local replacementText = "ShielD"
+    local replacementText = "ShielD // Nero"
     local streamerModeEnabled = false
     local originalTexts = {}
     local function updateTextLabel(label)
