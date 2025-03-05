@@ -266,8 +266,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
     if child.Name == RodName then
         print("[DEBUG] Rod found in character:", child.Name)
         if _G.Config.AutoCast then
-            task.spawn(function() 
-                FreezeCharacter(true)
+            task.spawn(function()
                 while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
@@ -287,7 +286,6 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(false)
                     end
                     task.wait(0)
-                    FreezeCharacter(false)
                 end
             end)
         end
