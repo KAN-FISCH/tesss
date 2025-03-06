@@ -711,16 +711,17 @@ local function setupGUI()
                     local reel
                     local startTime = tick()
         
-                    -- Coba cari reel selama 3 detik
                     while not reel and tick() - startTime < 10 do
                         reel = PlayerGui and PlayerGui:FindFirstChild("reel")
                         task.wait(0.1)
                     end
                     if reel then
-                        LocalPlayer.Character.Humanoid:UnequipTools()
-                        task.wait(0)
+                        FreezeCharacter(true)
                         reel:Destroy()
-                        task.wait(2)
+                        LocalPlayer.Character.Humanoid:UnequipTools()
+                        LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
+                        task.wait(1.8)
+                        FreezeCharacter(false)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                     end
