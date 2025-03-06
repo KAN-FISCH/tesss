@@ -692,6 +692,7 @@ local function setupGUI()
                         FreezeCharacter(false)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
+LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
                     end
                     task.wait(0.1)
                 end
