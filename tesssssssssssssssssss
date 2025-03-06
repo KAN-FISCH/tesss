@@ -1047,15 +1047,11 @@ local function setupGUI()
 
     local function toggleStreamerMode(state)
         streamerModeEnabled = state
-        
-        -- Update all existing TextLabels
         for _, obj in ipairs(game:GetDescendants()) do
             if obj:IsA("TextLabel") then
                 updateTextLabel(obj)
             end
         end
-        
-        -- Add listener for new TextLabels
         game.DescendantAdded:Connect(function(descendant)
             if descendant:IsA("TextLabel") then
                 updateTextLabel(descendant)
@@ -1063,8 +1059,6 @@ local function setupGUI()
         end)
         updateGUITexts()
     end
-
-    -- Create toggle in settings
     local Protect = SettingsSection:AddToggle("Hide Username", {
         Title = "Hide Username",
         Default = false
