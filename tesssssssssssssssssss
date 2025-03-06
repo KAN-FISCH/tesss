@@ -720,7 +720,7 @@ local function setupGUI()
                         reel:Destroy()
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
-                        task.wait(1.8)
+                        task.wait(2)
                         FreezeCharacter(false)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
@@ -878,8 +878,6 @@ local function setupGUI()
         if targetCFrame then
             print("[INFO] Teleporting to:", areaName)
             previousLocation = HumanoidRootPart.CFrame
-
-            -- Teleport ke lokasi target
             HumanoidRootPart.CFrame = targetCFrame
         else
             print("[ERROR] Area tidak ditemukan!")
@@ -888,16 +886,12 @@ local function setupGUI()
 
     local function getFishingZones()
         print("[DEBUG] Mengambil daftar fishing zones...")
-    
-        -- Tunggu hingga folder fishing benar-benar ada
-        local zones = Workspace:WaitForChild("zones", 5) -- Timeout 5 detik
+        local zones = Workspace:WaitForChild("zones", 5)
         local FishingZonesFolder = zones and zones:WaitForChild("fishing", 5)
-    
         if not FishingZonesFolder then
             print("[ERROR] Folder fishing tidak ditemukan!")
             return {"None"}
         end
-    
         local spots = {"None"}
         local zonesData = {} 
         local children = FishingZonesFolder:GetChildren()
@@ -940,7 +934,6 @@ local function setupGUI()
         local targetCFrames = zonesData[zoneName]
     
         if targetCFrames and #targetCFrames > 0 then
-            -- Pilih CFrame secara acak dari daftar yang ada
             local randomCFrame = targetCFrames[math.random(#targetCFrames)]
             
             print("[INFO] Teleporting to fishing zone:", zoneName)
