@@ -720,7 +720,7 @@ local function setupGUI()
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         task.wait(0)
                         reel:Destroy()
-                        task.wait(1.6)
+                        task.wait(2)
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                     end
