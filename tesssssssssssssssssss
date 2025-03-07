@@ -682,10 +682,14 @@ local function setupGUI()
             end
             if reel then
                 LocalPlayer.Character.Humanoid:UnequipTools()
+                task.wait(0.1)
+
                 LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
                 reel:Destroy()
             else
                 LocalPlayer.Character.Humanoid:UnequipTools()
+                task.wait(0.1)
+
                 LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
             end
             task.wait(1.8)
