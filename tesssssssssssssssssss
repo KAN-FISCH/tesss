@@ -251,7 +251,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         task.wait(0.1)
                         
                     end
-                    task.wait(1.4)
+                    task.wait(1)
                 end
             end)
         end
@@ -669,42 +669,27 @@ local function setupGUI()
         Title = "Fast Mancing",
         Default = false
     })
-    FishingToggle:OnChanged(function(value)
+    FishingToggle:OnChanged(function(value)         
         isFishing = value
-        IsTemporary = value
-        
-        if isFishing then
-            task.spawn(function()
-                -- Use a single loop with cleaner flow control
-                while isFishing do
-                    local reel
-                    local startTime = tick()
-                    while not reel and tick() - startTime < 4 do
-                        if PlayerGui then
-                            reel = PlayerGui:FindFirstChild("reel")
-                            if reel then break end
-                        end
-                        task.wait(0.1) 
-                    end
-                    if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-                        LocalPlayer.Character.Humanoid:UnequipTools()
-                        local rod = Backpack and Backpack:FindFirstChild(RodName)
-                        if rod then
-                            if reel then
-                                -- Freeze only when necessary
-                                LocalPlayer.Character.Humanoid:EquipTool(rod)
-                                task.wait(1.8)
-                                reel:Destroy()
-                            else
-                                LocalPlayer.Character.Humanoid:EquipTool(rod)
-                                task.wait(1.2)
-                            end
-                        end
-                    end
-                    task.wait(0.1)
-                end
-            end)
-        end
+        while isFishing do
+            local reel
+            local startTime = tick()
+
+            -- Coba cari reel selama 3 detik
+            while not reel and tick() - startTime < 10 do
+                reel = PlayerGui and PlayerGui:FindFirstChild("reel")
+                task.wait(0.1)
+            end
+            if reel then
+                LocalPlayer.Character.Humanoid:UnequipTools()
+                LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
+                reel:Destroy()
+            else
+                LocalPlayer.Character.Humanoid:UnequipTools()
+                LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
+            end
+            task.wait(1.8)
+        end         
     end)
     
     local AutoSellFunc = AutosSection:AddToggle("Auto Sell", {
