@@ -244,8 +244,9 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         --     end
                         -- end
                          FreazeChar(true)
-                         task.wait(0.5)
                          FreazeChar(false)
+                         task.wait(0.1)
+
                     end
                     task.wait(1)
                 end
