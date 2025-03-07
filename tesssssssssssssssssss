@@ -245,10 +245,10 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         -- end
                          FreazeChar(true)
                          FreazeChar(false)
-                         task.wait(0.1)
+                         task.wait(0.2)
 
                     end
-                    task.wait(1)
+                    task.wait(1.4)
                 end
             end)
         end
@@ -627,7 +627,6 @@ local function setupGUI()
         _G.Config.equipRod = value
     
         if value then
-            -- Jika rod ada di backpack dan belum di-equip, equip tool
             local Rod = Backpack:FindFirstChild(RodName)
             if Rod and not LocalPlayer.Character:FindFirstChild(RodName) then
                 LocalPlayer.Character.Humanoid:EquipTool(Rod)
