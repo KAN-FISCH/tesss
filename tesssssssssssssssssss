@@ -235,7 +235,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                     if Rod then
                         Rod.events.cast:FireServer(1)
 
-                        task.wait(0.1)
+                        task.wait(0.3)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
                             local Params = RaycastParams.new()
@@ -627,15 +627,13 @@ local function setupGUI()
     EquipRod:OnChanged(function(value)
         _G.Config.equipRod = value
     
-        if value then
+        if value and not LocalPlayer.Character:FindFirstChild(RodName) then
             local Rod = Backpack:FindFirstChild(RodName)
-            if Rod and not LocalPlayer.Character:FindFirstChild(RodName) then
+            if Rod then
                 LocalPlayer.Character.Humanoid:EquipTool(Rod)
             end
-        else
         end
-    end)
-    
+    end)    
     
     local FreezeToggle = SettingsSection:AddToggle("FreezeChar", {
         Title = "Freeze Character",
@@ -686,17 +684,15 @@ local function setupGUI()
                     end
                     if reel then
                         FreezeCharacter(true)
+                        LocalPlayer.Character.Humanoid:UnequipTools()
+                        LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
+                        task.wait(1.8)
+                        FreezeCharacter(false)
                         reel:Destroy()
-                        LocalPlayer.Character.Humanoid:UnequipTools()
-                        LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
-                        task.wait(1.8)
-                        FreezeCharacter(false)
                     else
-                        FreezeCharacter(true)
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
                         task.wait(1.8)
-                        FreezeCharacter(false)
                     end
                     task.wait(0.1)
                 end
@@ -924,20 +920,22 @@ local function setupGUI()
 
     Players.PlayerAdded:Connect(updatePlayerDropdown)
     Players.PlayerRemoving:Connect(updatePlayerDropdown)
-    local DeleteGambarUiToggle = SettingsSection:AddToggle("DeleteGambarUi", {
-        Title = "Delete All UI",
+    local DeleteBackpackUiToggle = SettingsSection:AddToggle("DeleteBackpackUi", {
+        Title = "Delete Backpack UI",
         Default = false
     })
     
-    DeleteGambarUiToggle:OnChanged(function(value)
+    DeleteBackpackUiToggle:OnChanged(function(value)
         if value then
-            for _, v in ipairs(game:GetService("Players").LocalPlayer.PlayerGui:GetDescendants()) do
-                if v:IsA("ImageLabel") or v:IsA("ImageButton") then
-                    v:Destroy()
-                end
+            local player = game:GetService("Players").LocalPlayer
+            local backpackUI = player:FindFirstChildOfClass("PlayerGui") and player.PlayerGui:FindFirstChild("Backpack")
+    
+            if backpackUI then
+                backpackUI:Destroy()
             end
         end
     end)
+    
     local playerName = LocalPlayer.Name
     local displayName = LocalPlayer.DisplayName
     local replacementText = "ShielD // Nero"
@@ -1072,7 +1070,6 @@ task.spawn(function()
 end)
 task.spawn(function()
     while true do
-        task.wait(3) -- Tunggu 2 detik setiap loop
         local player = game:GetService("Players").LocalPlayer
         if player and player.Character then
             local rootPart = workspace:FindFirstChild(player.Character.Name)
@@ -1088,7 +1085,9 @@ task.spawn(function()
                 end
             end
         end
+        task.wait(100) -- Tunggu 2 detik setiap loop
     end
+    
 end)
 
 -- Initialize the GUI
