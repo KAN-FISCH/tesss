@@ -247,7 +247,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                     end
-                    task.wait(0)
+                    task.wait(1)
                 end
             end)
         end
@@ -463,7 +463,7 @@ local function AutoSell()
     task.spawn(function()
         while _G.Config.AutoSell do  
             ReplicatedStorage.events.SellAll:InvokeServer()
-            task.wait(0.1)  
+            task.wait(3)  
         end
         autoSellRunning = false 
     end)
@@ -1071,8 +1071,7 @@ task.spawn(function()
 end)
 task.spawn(function()
     while true do
-        task.wait(2) -- Tunggu 2 detik setiap loop
-        
+        task.wait(3) -- Tunggu 2 detik setiap loop
         local player = game:GetService("Players").LocalPlayer
         if player and player.Character then
             local rootPart = workspace:FindFirstChild(player.Character.Name)
