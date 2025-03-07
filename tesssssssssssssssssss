@@ -234,18 +234,18 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                     if Rod then
                         Rod.events.cast:FireServer(1)
                         task.wait(0)
-                        local Bobber = Rod:FindFirstChild("bobber")
-                        if Bobber then
-                            local Params = RaycastParams.new()
-                            Params.FilterType = Enum.RaycastFilterType.Include
-                            Params.FilterDescendantsInstances = { workspace.Terrain }
-                            local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
-                            if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
-                                Bobber:PivotTo(CFrame.new(RaycastResult.Position)) -- Instant move
-                            end
-                        end
-                        FreazeChar(true)
-                        FreazeChar(false)
+                        -- local Bobber = Rod:FindFirstChild("bobber")
+                        -- if Bobber then
+                        --     local Params = RaycastParams.new()
+                        --     Params.FilterType = Enum.RaycastFilterType.Include
+                        --     Params.FilterDescendantsInstances = { workspace.Terrain }
+                        --     local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
+                        --     if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
+                        --         Bobber:PivotTo(CFrame.new(RaycastResult.Position)) -- Instant move
+                        --     end
+                        -- end
+                        -- FreazeChar(true)
+                        -- FreazeChar(false)
                     end
                     task.wait(1.8)
                 end
