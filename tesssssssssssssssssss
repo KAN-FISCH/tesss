@@ -232,7 +232,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                 while _G.Config.AutoCast do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
-                        Rod.events.cast:FireServer(98)
+                        Rod.events.cast:FireServer(1)
                         task.wait(0)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
