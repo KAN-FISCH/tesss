@@ -251,7 +251,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         task.wait(0.1)
                         
                     end
-                    task.wait(1)
+                    task.wait(1.4)
                 end
             end)
         end
@@ -659,7 +659,6 @@ local function setupGUI()
     BoostFpsToggle:OnChanged(function(value)
         BoostFpsFunc(value)
     end)
-
     AutoShakeFunc:OnChanged(function(value)
         _G.Config.AutoShake = value
         if value then
@@ -673,33 +672,45 @@ local function setupGUI()
     FishingToggle:OnChanged(function(value)
         isFishing = value
         IsTemporary = value
-    
+        
         if isFishing then
             task.spawn(function()
+                -- Use a single loop with cleaner flow control
                 while isFishing do
                     local reel
                     local startTime = tick()
-        
-                    while not reel and tick() - startTime < 5 do
-                        reel = PlayerGui and PlayerGui:FindFirstChild("reel")
-                        task.wait(0.2)
+                    
+                    -- More efficient reel detection with timeout
+                    while not reel and tick() - startTime < 3 do -- Reduced timeout from 5 to 3
+                        if PlayerGui then
+                            reel = PlayerGui:FindFirstChild("reel")
+                            if reel then break end
+                        end
+                        task.wait(0.1) -- Reduced wait time from 0.2 to 0.1
                     end
-                    if reel then
-                        FreezeCharacter(true)
+                    if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
                         LocalPlayer.Character.Humanoid:UnequipTools()
-                        LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
-                        task.wait(1.8)
-                        FreezeCharacter(false)
-                        reel:Destroy()
-                    else
-                        LocalPlayer.Character.Humanoid:UnequipTools()
-                        LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
-                        task.wait(1.4)
+                        
+                        -- Check Backpack before trying to equip
+                        local rod = Backpack and Backpack:FindFirstChild(RodName)
+                        if rod then
+                            if reel then
+                                -- Freeze only when necessary
+                                FreezeCharacter(true)
+                                LocalPlayer.Character.Humanoid:EquipTool(rod)
+                                task.wait(1.5) -- Slightly reduced wait time
+                                FreezeCharacter(false)
+                                reel:Destroy()
+                            else
+                                LocalPlayer.Character.Humanoid:EquipTool(rod)
+                                task.wait(1.2)
+                            end
+                        end
                     end
                     task.wait(0.1)
                 end
             end)
-        end        
+        end
     end)
     
     local AutoSellFunc = AutosSection:AddToggle("Auto Sell", {
