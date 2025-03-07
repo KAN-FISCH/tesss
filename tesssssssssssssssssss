@@ -224,12 +224,11 @@ local function FreezeCharacter(state)
         isFrozen = false
     end
 end
--- Rod use detection and auto-casting
 LocalPlayer.Character.ChildAdded:Connect(function(child)
     if child.Name == RodName then
         print("[DEBUG] Rod found in character:", child.Name)
         if _G.Config.AutoCast then
-            task.spawn(function() -- Jalankan di thread terpisah
+            task.spawn(function()
                 while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
@@ -251,7 +250,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         task.wait(0.1)
                         
                     end
-                    task.wait(1)
+                    task.wait(0.1)
                 end
             end)
         end
@@ -674,8 +673,6 @@ local function setupGUI()
         while isFishing do
             local reel
             local startTime = tick()
-
-            -- Coba cari reel selama 3 detik
             while not reel and tick() - startTime < 10 do
                 reel = PlayerGui and PlayerGui:FindFirstChild("reel")
                 task.wait(0.1)
