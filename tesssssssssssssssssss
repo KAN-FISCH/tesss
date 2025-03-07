@@ -248,6 +248,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         end
                         FreazeChar(true)
                         FreazeChar(false)
+                        task.wait(0.1)
                         
                     end
                     task.wait(1)
@@ -693,7 +694,7 @@ local function setupGUI()
                     else
                         LocalPlayer.Character.Humanoid:UnequipTools()
                         LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
-                        task.wait(1.8)
+                        task.wait(1.4)
                     end
                     task.wait(0.1)
                 end
