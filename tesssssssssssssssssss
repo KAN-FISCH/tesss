@@ -228,43 +228,34 @@ end
 LocalPlayer.Character.ChildAdded:Connect(function(child)
     if child.Name == RodName then
         print("[DEBUG] Rod found in character:", child.Name)
-        
         if _G.Config.AutoCast then
-            task.spawn(function()
-                local lastRaycastTime = 0
-                local raycastCooldown = 0.5 -- Reduce raycast frequency
-                
-                while _G.Config.AutoCast and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild(RodName) do
+            task.spawn(function() -- Jalankan di thread terpisah
+                while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
-                    
                     if Rod then
                         Rod.events.cast:FireServer(1)
-                        task.wait(0.3)
-                        
+                        task.wait(0.1)
                         local Bobber = Rod:FindFirstChild("bobber")
-                        if Bobber and (tick() - lastRaycastTime) > raycastCooldown then
-                            lastRaycastTime = tick()
-                            
+                        if Bobber then
+                        task.wait(0.1)
+
                             local Params = RaycastParams.new()
                             Params.FilterType = Enum.RaycastFilterType.Include
                             Params.FilterDescendantsInstances = { workspace.Terrain }
-                            
                             local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
                             if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
-                                Bobber:PivotTo(CFrame.new(RaycastResult.Position))
+                                Bobber:PivotTo(CFrame.new(RaycastResult.Position)) 
                             end
-                            FreazeChar(true)
-                            task.wait(0.1) -- Small delay between freeze/unfreeze
-                            FreazeChar(false)
                         end
+                        FreazeChar(true)
+                        FreazeChar(false)
                     end
-                    
-                    task.wait(1.8) -- Slightly longer wait time
+                    task.wait(1.4)
                 end
             end)
         end
     end
-end)
+end) 
 
 
 -- Instant Reel handling
