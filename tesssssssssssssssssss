@@ -237,8 +237,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         task.wait(0.1)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
-                        task.wait(0.1)
-
+                            task.wait(0.1)
                             local Params = RaycastParams.new()
                             Params.FilterType = Enum.RaycastFilterType.Include
                             Params.FilterDescendantsInstances = { workspace.Terrain }
@@ -249,8 +248,9 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         end
                         FreazeChar(true)
                         FreazeChar(false)
+                        
                     end
-                    task.wait(1.4)
+                    task.wait(1)
                 end
             end)
         end
