@@ -692,10 +692,8 @@ local function setupGUI()
                         if rod then
                             if reel then
                                 -- Freeze only when necessary
-                                FreezeCharacter(true)
                                 LocalPlayer.Character.Humanoid:EquipTool(rod)
-                                task.wait(1.8) 
-                                FreezeCharacter(false)
+                                task.wait(1.8)
                                 reel:Destroy()
                             else
                                 LocalPlayer.Character.Humanoid:EquipTool(rod)
