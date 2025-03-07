@@ -679,9 +679,9 @@ local function setupGUI()
                     local reel
                     local startTime = tick()
         
-                    while not reel and tick() - startTime < 10 do
+                    while not reel and tick() - startTime < 5 do
                         reel = PlayerGui and PlayerGui:FindFirstChild("reel")
-                        task.wait(0.3)
+                        task.wait(0.2)
                     end
                     if reel then
                         FreezeCharacter(true)
