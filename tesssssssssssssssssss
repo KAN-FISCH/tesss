@@ -679,26 +679,22 @@ local function setupGUI()
                 while isFishing do
                     local reel
                     local startTime = tick()
-                    
-                    -- More efficient reel detection with timeout
-                    while not reel and tick() - startTime < 3 do -- Reduced timeout from 5 to 3
+                    while not reel and tick() - startTime < 4 do
                         if PlayerGui then
                             reel = PlayerGui:FindFirstChild("reel")
                             if reel then break end
                         end
-                        task.wait(0.1) -- Reduced wait time from 0.2 to 0.1
+                        task.wait(0.1) 
                     end
                     if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
                         LocalPlayer.Character.Humanoid:UnequipTools()
-                        
-                        -- Check Backpack before trying to equip
                         local rod = Backpack and Backpack:FindFirstChild(RodName)
                         if rod then
                             if reel then
                                 -- Freeze only when necessary
                                 FreezeCharacter(true)
                                 LocalPlayer.Character.Humanoid:EquipTool(rod)
-                                task.wait(1.5) -- Slightly reduced wait time
+                                task.wait(1.8) 
                                 FreezeCharacter(false)
                                 reel:Destroy()
                             else
