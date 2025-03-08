@@ -702,8 +702,89 @@ local function setupGUI()
             AutoSell()
         end
     end)
-    
-    -- Area Tab Example
+    local useTotemDay = false
+    local useTotemNight = false
+    local hasEquippedDay = false
+    local hasEquippedNight = false
+
+    local VirtualInputManager = game:GetService("VirtualInputManager")
+
+    -- Fungsi untuk equip dan klik
+    local function equipAndClick(totem)
+        if totem then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(totem)
+            wait(0.1) -- Beri sedikit jeda sebelum klik
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Klik kiri mouse
+            wait(0.1)
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Lepaskan klik
+        end
+    end
+
+    -- Dropdown untuk Sundial Totem (siang)
+    Dropdown(AutosSection, "Used Totem Day", "None", {"None", "Sundial Totem"}, false, function(selected)
+        useTotemDay = selected ~= "None"
+        hasEquippedDay = false
+
+        spawn(function()
+            while useTotemDay do
+                task.wait(3)
+                local cycle = game:GetService("ReplicatedStorage"):FindFirstChild("world") and game:GetService("ReplicatedStorage").world:FindFirstChild("cycle")
+
+                if cycle and cycle.Value == "Day" then
+                    if not hasEquippedDay then
+                        local backpack = game.Players.LocalPlayer:FindFirstChild("Backpack")
+                        if backpack then
+                            _G.Config.equipRod = false
+                            task.wait(0)
+                            local sundialTotem = backpack:FindFirstChild("Sundial Totem")
+                            task.wait(0)
+                            equipAndClick(sundialTotem)
+                            task.wait(0)
+                            LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
+                            task.wait(0)
+                            _G.Config.equipRod = true
+                            task.wait(0)
+                            hasEquippedDay = true
+                        end
+                    end
+                else
+                    hasEquippedDay = false
+                end
+            end
+        end)
+    end)
+    Dropdown(AutosSection, "Used Totem Night", "None", {"None", "Aurora Totem"}, false, function(selected)
+        useTotemNight = selected ~= "None"
+        hasEquippedNight = false
+
+        spawn(function()
+            while useTotemNight do
+                task.wait(3)
+                local cycle = game:GetService("ReplicatedStorage"):FindFirstChild("world") and game:GetService("ReplicatedStorage").world:FindFirstChild("cycle")
+                if cycle and cycle.Value == "Night" then
+                    if not hasEquippedNight then
+                        local backpack = game.Players.LocalPlayer:FindFirstChild("Backpack")
+                        if backpack then
+                            _G.Config.equipRod = false
+                            task.wait(0)
+                            local auroraTotem = backpack:FindFirstChild("Aurora Totem")
+                            task.wait(0)
+                            equipAndClick(auroraTotem)
+                            task.wait(0)
+                            LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
+                            task.wait(0)
+                            _G.Config.equipRod = true
+                            task.wait(0)
+                            hasEquippedNight = true
+                        end
+                    end
+                else
+                    hasEquippedNight = false
+                end
+            end
+        end)
+    end)
+
     local Main = AreaTab:AddSection('Main')
     local isFrozen1 = false
     local frozenPosition1
