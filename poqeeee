@@ -226,7 +226,6 @@ local function FreezeCharacter(state)
 end
 LocalPlayer.Character.ChildAdded:Connect(function(child)
     if child.Name == RodName then
-        print("[DEBUG] Rod found in character:", child.Name)
         if _G.Config.AutoCast then
             task.spawn(function()
                 while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
@@ -258,7 +257,6 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
 end) 
 
 
--- Instant Reel handling
 PlayerGui.ChildAdded:Connect(function(child)
     if child.Name == "reel" then
         task.spawn(function()
@@ -281,29 +279,34 @@ end)
 -- Auto-Shake Function
 local function Shake()
     local function MountShakeUI(ShakeUI)
-        local SafeZone = ShakeUI:WaitForChild("safezone", 5)
+        local SafeZone = ShakeUI:FindFirstChild("safezone", 4)
 
         local function HandleButton(Button)
             if Button then
-                Button.Selectable = true  
-                Button.BackgroundTransparency = 1  -- Make background transparent
-                GuiService.SelectedObject = Button
+                pcall(function() 
+                    Button.Selectable = true  
+                    Button.BackgroundTransparency = 1  
+                    GuiService.SelectedObject = Button
+                end)
             end
         end        
         
         if not SafeZone then
-            warn("Unable to mount shake UI.")
-            return
+            return 
         end
 
         local Connect = SafeZone:FindFirstChild("connect")
         if Connect then
-            Connect.Enabled = false
+            pcall(function()
+                Connect.Enabled = false
+            end)
         end
         
-        SafeZone.Size = UDim2.fromOffset(0, 0)
-        SafeZone.Position = UDim2.fromScale(-0.2, 0.2)
-        SafeZone.AnchorPoint = Vector2.new(0.2, 0.2)  
+        pcall(function()
+            SafeZone.Size = UDim2.fromOffset(0, 0)
+            SafeZone.Position = UDim2.fromScale(-0.2, 0.2)
+            SafeZone.AnchorPoint = Vector2.new(0.2, 0.2)  
+        end)
 
         local Connection
         Connection = SafeZone.ChildAdded:Connect(function(Child)
@@ -323,21 +326,23 @@ local function Shake()
                 end)
             end
         end)
-
-        -- Main loop to handle input
-        while SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
-            if GuiService.SelectedObject and GuiService.SelectedObject:IsDescendantOf(SafeZone) then
-                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-            end
+        while SafeZone and SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
+            pcall(function()
+                local selected = GuiService.SelectedObject
+                if selected and selected:IsA("GuiObject") and selected:IsDescendantOf(SafeZone) then
+                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+                elseif not selected or not selected:IsA("GuiObject") then
+                    GuiService.SelectedObject = nil
+                end
+            end)
             task.wait(0)
         end
-
-        -- Remove event connection if no longer needed
-        if Connection then Connection:Disconnect() end
-        GuiService.SelectedObject = nil
+        pcall(function()
+            if Connection then Connection:Disconnect() end
+            GuiService.SelectedObject = nil
+        end)
     end
-    
     LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
         if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
             task.spawn(function()
@@ -346,7 +351,6 @@ local function Shake()
         end
     end)
 end
-
 
 local function breakVelocity()
     local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
@@ -627,7 +631,6 @@ local function setupGUI()
     
     EquipRod:OnChanged(function(value)
         _G.Config.equipRod = value
-    
         if value and not LocalPlayer.Character:FindFirstChild(RodName) then
             local Rod = Backpack:FindFirstChild(RodName)
             if Rod then
