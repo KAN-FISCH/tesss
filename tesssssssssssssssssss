@@ -3,7 +3,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 
 local function executeAgain()
     local scriptSource = [[
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/sauma1/userscript/refs/heads/main/script%20fisch",  true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/poqeeee",  true))()
     ]]
     local success, err = pcall(function()
         loadstring(scriptSource)()
