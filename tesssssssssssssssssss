@@ -1000,8 +1000,7 @@ local function setupGUI()
     DeleteBackpackUiToggle:OnChanged(function(value)
         if value then
             local player = game:GetService("Players").LocalPlayer
-            local backpackUI = player:FindFirstChildOfClass("PlayerGui") and player.PlayerGui:FindFirstChild("Backpack")
-    
+            local backpackUI = game:GetService("Players").LocalPlayer.PlayerGui.hud.safezone.backpack
             if backpackUI then
                 backpackUI:Destroy()
             end
@@ -1157,7 +1156,7 @@ task.spawn(function()
                 end
             end
         end
-        task.wait(100) -- Tunggu 2 detik setiap loop
+        task.wait(100)
     end
     
 end)
