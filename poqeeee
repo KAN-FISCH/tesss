@@ -950,27 +950,19 @@ local function setupGUI()
     local teleportData = {} 
 
     local function getTpSpots()
-
         local world = Workspace:WaitForChild("world", 5) 
         local spawns = world and world:WaitForChild("spawns", 5)
         local TpSpotsFolder = spawns and spawns:WaitForChild("TpSpots", 5)
-
+    
         if not TpSpotsFolder then
             return {"None"}
         end
-
-        local spots = {"None"} -- Awali dengan "None"
-
-        -- Debugging: cek apakah folder memiliki anak
+    
+        local spots = {}
         local children = TpSpotsFolder:GetChildren()
-        
-
         for _, spot in pairs(children) do
-
             if spot:IsA("Part") or spot:IsA("CFrameValue") then
                 table.insert(spots, spot.Name)
-
-                -- Simpan data posisi teleport
                 if spot:IsA("Part") then
                     teleportData[spot.Name] = spot.CFrame
                 elseif spot:IsA("CFrameValue") then
@@ -978,7 +970,8 @@ local function setupGUI()
                 end
             end
         end
-
+        table.sort(spots)
+        table.insert(spots, 1, "None")
         return spots
     end
     local function teleportTo(areaName)
@@ -1004,15 +997,18 @@ local function setupGUI()
     end
 
     local function getFishingZones()
+        -- Cek folder zona memancing
         local zones = Workspace:WaitForChild("zones", 5)
         local FishingZonesFolder = zones and zones:WaitForChild("fishing", 5)
         if not FishingZonesFolder then
             return {"None"}
         end
-        local spots = {"None"}
+    
+        local spots = {}  -- Tidak langsung memasukkan "None" agar sorting tidak terpengaruh
         local zonesData = {} 
         local children = FishingZonesFolder:GetChildren()
     
+        -- Kumpulkan data zona memancing
         for _, spot in pairs(children) do
             if spot:IsA("Part") then
                 if not zonesData[spot.Name] then
@@ -1022,7 +1018,17 @@ local function setupGUI()
                 table.insert(zonesData[spot.Name], spot.CFrame)
             end
         end
-        return spots, zonesData
+
+        table.sort(spots)
+        table.insert(spots, 1, "None")
+        local sortedZonesData = {}
+        for _, name in ipairs(spots) do
+            if zonesData[name] then
+                sortedZonesData[name] = zonesData[name]
+            end
+        end
+    
+        return spots, sortedZonesData
     end
     
     local function teleportToFishingZone(zoneName)
@@ -1048,14 +1054,14 @@ local function setupGUI()
         if targetCFrames and #targetCFrames > 0 then
             local randomCFrame = targetCFrames[math.random(#targetCFrames)]
             previousLocation = HumanoidRootPart.CFrame
-
-            -- Teleport ke lokasi target dan naik sedikit agar tidak terjebak di dalam air
-            HumanoidRootPart.CFrame = randomCFrame + Vector3.new(0, 3, 0)
+            local heightOffset = (zoneName == "Forsaken Veil") and 80 or 10
+            HumanoidRootPart.CFrame = randomCFrame + Vector3.new(0, heightOffset, 0)
+    
             FreezeCharacter1(true)
         else
             print("[ERROR] Zona memancing tidak ditemukan!")
         end
-    end
+    end    
 
     local selectedPlayer = "None"
     local teleportPlayerDropdown
