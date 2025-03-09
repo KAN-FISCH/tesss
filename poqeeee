@@ -277,79 +277,133 @@ PlayerGui.ChildAdded:Connect(function(child)
 end)
 
 -- Auto-Shake Function
+local Utils = {}
+local Connections = {}
+
+-- Function to safely check if an instance is valid
+local function EnsureInstance(instance)
+    return instance and instance:IsA("GuiObject") and instance:IsDescendantOf(game)
+end
+
+-- Function to collect connections for cleanup
+local function Collect(connection)
+    table.insert(Connections, connection)
+    return connection
+end
+
+-- Toggle functions (assuming these exist elsewhere)
+local function GetToggleValue(toggleName)
+    -- Replace with your actual toggle implementation
+    return true -- Default to true for this example
+end
+
+local function dbgwarn(message)
+    warn(message)
+end
+
 local function Shake()
-    local function MountShakeUI(ShakeUI)
-        local SafeZone = ShakeUI:FindFirstChild("safezone", 4)
-
+    function Utils.MountShakeUI(ShakeUI)
+        if not ShakeUI or not ShakeUI:IsA("ScreenGui") then return end
+        
+        local SafeZone = ShakeUI:WaitForChild("safezone", 5)
+        
         local function HandleButton(Button)
-            if Button then
-                pcall(function() 
-                    Button.Selectable = true  
-                    Button.BackgroundTransparency = 1  
+            if not Button or not Button:IsA("ImageButton") then return end
+            
+            pcall(function()
+                Button.Selectable = true -- For some reason this is false for the first 0.2 seconds.
+                
+                if EnsureInstance(Button) then
                     GuiService.SelectedObject = Button
-                end)
-            end
-        end        
-        
-        if not SafeZone then
-            return 
-        end
-
-        local Connect = SafeZone:FindFirstChild("connect")
-        if Connect then
-            pcall(function()
-                Connect.Enabled = false
-            end)
-        end
-        
-        pcall(function()
-            SafeZone.Size = UDim2.fromOffset(0, 0)
-            SafeZone.Position = UDim2.fromScale(-0.2, 0.2)
-            SafeZone.AnchorPoint = Vector2.new(0.2, 0.2)  
-        end)
-
-        local Connection
-        Connection = SafeZone.ChildAdded:Connect(function(Child)
-            if Child:IsA("ImageButton") then
-                local Done = false
-                task.spawn(function()
-                    while Child and Child:IsDescendantOf(SafeZone) and not Done do
-                        task.wait(0)
-                        HandleButton(Child)
-                    end
-                end)
-                task.spawn(function()
-                    while Child and Child:IsDescendantOf(SafeZone) do
-                        task.wait(0)
-                    end
-                    Done = true
-                end)
-            end
-        end)
-        while SafeZone and SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
-            pcall(function()
-                local selected = GuiService.SelectedObject
-                if selected and selected:IsA("GuiObject") and selected:IsDescendantOf(SafeZone) then
-                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-                elseif not selected or not selected:IsA("GuiObject") then
-                    GuiService.SelectedObject = nil
                 end
             end)
-            task.wait(0)
         end
-        pcall(function()
-            if Connection then Connection:Disconnect() end
-            GuiService.SelectedObject = nil
-        end)
-    end
-    LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
-        if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
-            task.spawn(function()
-                MountShakeUI(Child)
+        
+        if not SafeZone then
+            dbgwarn("Unable to mount shake UI.")
+            return
+        end
+        
+        if GetToggleValue("CenterShake") then
+            local Connect = SafeZone:FindFirstChild("connect")
+            
+            if Connect then
+                pcall(function()
+                    Connect.Enabled = false -- this script locks the size of the safezone, so we disable it.
+                end)
+            end
+            
+            pcall(function()
+                SafeZone.Size = UDim2.fromOffset(0, 0)
+                SafeZone.Position = UDim2.fromScale(-0.2, 0.2)
+                SafeZone.AnchorPoint = Vector2.new(0.5, 0.5)
             end)
         end
-    end)
+        
+        if GetToggleValue("AutoShake") then
+            local Connection
+            Connection = Collect(SafeZone.ChildAdded:Connect(function(Child)
+                if Child:IsA("ImageButton") then
+                    local Done = false
+                    
+                    task.spawn(function()
+                        while Child and Child:IsDescendantOf(SafeZone) and not Done do
+                            RunService.RenderStepped:Wait()
+                            HandleButton(Child)
+                        end
+                    end)
+                    
+                    task.spawn(function()
+                        while Child and Child:IsDescendantOf(SafeZone) do
+                            RunService.RenderStepped:Wait()
+                        end
+                        Done = true
+                    end)
+                end
+            end))
+            
+            -- Main processing loop
+            task.spawn(function()
+                while SafeZone and SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
+                    RunService.RenderStepped:Wait()
+                    pcall(function()
+                        local selected = GuiService.SelectedObject
+                        if selected and selected:IsA("GuiObject") and selected:IsDescendantOf(SafeZone) then
+                            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+                        elseif not EnsureInstance(selected) and GuiService.SelectedObject ~= nil then
+                            GuiService.SelectedObject = nil
+                        end
+                    end)
+                    RunService.RenderStepped:Wait()
+                end
+                pcall(function()
+                    if Connection then Connection:Disconnect() end
+                    if GuiService.SelectedObject ~= nil then
+                        GuiService.SelectedObject = nil
+                    end
+                end)
+            end)
+        end
+    end
+    Collect(LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
+        if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
+            Utils.MountShakeUI(Child)
+        end
+    end))
+    for _, Child in pairs(LocalPlayer.PlayerGui:GetChildren()) do
+        if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
+            task.spawn(function()
+                Utils.MountShakeUI(Child)
+            end)
+        end
+    end
+    return function()
+        for _, connection in ipairs(Connections) do
+            pcall(function() connection:Disconnect() end)
+        end
+        table.clear(Connections)
+    end
 end
 
 local function breakVelocity()
