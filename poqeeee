@@ -1054,15 +1054,31 @@ local function setupGUI()
         Default = false
     })
     
+    local player = game:GetService("Players").LocalPlayer
+    local backpackUI = player:WaitForChild("PlayerGui"):WaitForChild("hud"):WaitForChild("safezone"):WaitForChild("backpack")
+    local originalBackpackUI = backpackUI:Clone()
+    
     DeleteBackpackUiToggle:OnChanged(function(value)
+        local playerGui = player:FindFirstChild("PlayerGui")
+        if not playerGui then return end
+    
+        local safezone = playerGui:FindFirstChild("hud") and playerGui.hud:FindFirstChild("safezone")
+        if not safezone then return end
+    
+        local backpackUI = safezone:FindFirstChild("backpack")
+    
         if value then
-            local player = game:GetService("Players").LocalPlayer
-            local backpackUI = game:GetService("Players").LocalPlayer.PlayerGui.hud.safezone.backpack
             if backpackUI then
                 backpackUI:Destroy()
             end
+        else
+            if not safezone:FindFirstChild("backpack") then
+                originalBackpackUI.Parent = safezone
+                originalBackpackUI = originalBackpackUI:Clone()
+            end
         end
     end)
+    
     
     local playerName = LocalPlayer.Name
     local displayName = LocalPlayer.DisplayName
@@ -1218,6 +1234,12 @@ task.spawn(function()
     
 end)
 
+RunService.Heartbeat:Connect(function()
+    local fishUI = workspace:FindFirstChild("active")
+    if fishUI then
+        fishUI:Destroy()
+    end
+end)
 -- Initialize the GUI
 setupGUI()
 
