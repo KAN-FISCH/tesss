@@ -300,7 +300,6 @@ end
 local function dbgwarn(message)
     warn(message)
 end
-
 local function Shake()
     function Utils.MountShakeUI(ShakeUI)
         if not ShakeUI or not ShakeUI:IsA("ScreenGui") then return end
@@ -311,9 +310,8 @@ local function Shake()
             if not Button or not Button:IsA("ImageButton") then return end
             
             pcall(function()
-                Button.Selectable = true -- For some reason this is false for the first 0.2 seconds.
-                
-                if EnsureInstance(Button) then
+                Button.Selectable = true
+                if EnsureInstance(Button) and Button:IsDescendantOf(game) then
                     GuiService.SelectedObject = Button
                 end
             end)
@@ -329,14 +327,37 @@ local function Shake()
             
             if Connect then
                 pcall(function()
-                    Connect.Enabled = false -- this script locks the size of the safezone, so we disable it.
+                    Connect.Enabled = false
                 end)
             end
             
             pcall(function()
                 SafeZone.Size = UDim2.fromOffset(0, 0)
-                SafeZone.Position = UDim2.fromScale(-0.2, 0.2)
                 SafeZone.AnchorPoint = Vector2.new(0.5, 0.5)
+                SafeZone.Position = UDim2.fromScale(1, 1)
+                SafeZone.Text = " "
+                if SafeZone:IsA("GuiObject") then
+                    SafeZone.BackgroundTransparency = 1
+                end
+                
+                -- Buat semua anak menjadi sepenuhnya tidak terlihat
+                local function makeInvisible(obj)
+                    if obj:IsA("GuiObject") then
+                        obj.BackgroundTransparency = 1
+                        if obj:IsA("ImageButton") or obj:IsA("ImageLabel") then
+                            obj.ImageTransparency = 1
+                        end
+                        if obj:IsA("TextButton") or obj:IsA("TextLabel") or obj:IsA("TextBox") then
+                            obj.TextTransparency = 1
+                        end
+                        for _, child in pairs(obj:GetChildren()) do
+                            makeInvisible(child)
+                        end
+                    end
+                end
+                for _, child in pairs(SafeZone:GetChildren()) do
+                    makeInvisible(child)
+                end
             end)
         end
         
@@ -348,34 +369,41 @@ local function Shake()
                     
                     task.spawn(function()
                         while Child and Child:IsDescendantOf(SafeZone) and not Done do
-                            RunService.RenderStepped:Wait()
+                            task.wait(0)
                             HandleButton(Child)
                         end
                     end)
                     
                     task.spawn(function()
                         while Child and Child:IsDescendantOf(SafeZone) do
-                            RunService.RenderStepped:Wait()
+                            task.wait(0)
                         end
                         Done = true
                     end)
                 end
             end))
-            
-            -- Main processing loop
             task.spawn(function()
                 while SafeZone and SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
-                    RunService.RenderStepped:Wait()
+                    task.wait(0)
                     pcall(function()
                         local selected = GuiService.SelectedObject
-                        if selected and selected:IsA("GuiObject") and selected:IsDescendantOf(SafeZone) then
-                            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-                        elseif not EnsureInstance(selected) and GuiService.SelectedObject ~= nil then
+                        
+                        if selected and 
+                           selected:IsA("GuiObject") and 
+                           selected:IsDescendantOf(SafeZone) and
+                           EnsureInstance(selected) then
+                            for i = 1, 2 do
+                                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+                            end
+                        elseif GuiService.SelectedObject ~= nil and not (
+                            GuiService.SelectedObject:IsA("GuiObject") and 
+                            EnsureInstance(GuiService.SelectedObject)
+                        ) then
                             GuiService.SelectedObject = nil
                         end
                     end)
-                    RunService.RenderStepped:Wait()
+                    task.wait(0)
                 end
                 pcall(function()
                     if Connection then Connection:Disconnect() end
@@ -386,11 +414,13 @@ local function Shake()
             end)
         end
     end
+    
     Collect(LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
         if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
             Utils.MountShakeUI(Child)
         end
     end))
+    
     for _, Child in pairs(LocalPlayer.PlayerGui:GetChildren()) do
         if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
             task.spawn(function()
@@ -398,6 +428,7 @@ local function Shake()
             end)
         end
     end
+    
     return function()
         for _, connection in ipairs(Connections) do
             pcall(function() connection:Disconnect() end)
@@ -405,6 +436,7 @@ local function Shake()
         table.clear(Connections)
     end
 end
+
 
 local function breakVelocity()
     local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
@@ -949,7 +981,6 @@ local function setupGUI()
 
         return spots
     end
-
     local function teleportTo(areaName)
         local Character = LocalPlayer.Character
         if not Character then return end
@@ -991,7 +1022,6 @@ local function setupGUI()
                 table.insert(zonesData[spot.Name], spot.CFrame)
             end
         end
-    
         return spots, zonesData
     end
     
@@ -1064,9 +1094,7 @@ local function setupGUI()
     
         local safezone = playerGui:FindFirstChild("hud") and playerGui.hud:FindFirstChild("safezone")
         if not safezone then return end
-    
         local backpackUI = safezone:FindFirstChild("backpack")
-    
         if value then
             if backpackUI then
                 backpackUI:Destroy()
