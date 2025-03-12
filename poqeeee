@@ -231,22 +231,22 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                 while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
-                        Rod.events.cast:FireServer(1)
-                        task.wait(0)
+                        local randomValue = math.random() * (99 - 96.1) + 96.1
+                        Rod.events.cast:FireServer(randomValue, 1)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
-                            local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                            if humanoidRootPart then
-                                local targetPosition = humanoidRootPart.Position - Vector3.new(0, 20, 0)
-                                Bobber:PivotTo(CFrame.new(targetPosition))
+                            local Params = RaycastParams.new()
+                            Params.FilterType = Enum.RaycastFilterType.Include
+                            Params.FilterDescendantsInstances = { workspace.Terrain }
+                            local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
+                            if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
+                                Bobber:PivotTo(CFrame.new(RaycastResult.Position)) 
                             end
                         end
                         FreazeChar(true)
                         FreazeChar(false)
-                        task.wait(0)
-                        
+                        task.wait(0.1)
                     end
-                    task.wait(0)
                 end
             end)
         end
