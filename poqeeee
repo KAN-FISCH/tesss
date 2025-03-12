@@ -232,7 +232,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                     local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                     if Rod then
                         Rod.events.cast:FireServer(1)
-                        task.wait(0.1)
+                        task.wait(0)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
                             local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -244,9 +244,7 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         FreazeChar(true)
                         FreazeChar(false)
                         task.wait(0.1)
-                        
                     end
-                    task.wait(0.1)
                 end
             end)
         end
