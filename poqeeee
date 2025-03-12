@@ -235,13 +235,10 @@ LocalPlayer.Character.ChildAdded:Connect(function(child)
                         task.wait(0.1)
                         local Bobber = Rod:FindFirstChild("bobber")
                         if Bobber then
-                            task.wait(0.1)
-                            local Params = RaycastParams.new()
-                            Params.FilterType = Enum.RaycastFilterType.Include
-                            Params.FilterDescendantsInstances = { workspace.Terrain }
-                            local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
-                            if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
-                                Bobber:PivotTo(CFrame.new(RaycastResult.Position)) 
+                            local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                            if humanoidRootPart then
+                                local targetPosition = humanoidRootPart.Position - Vector3.new(0, 20, 0)
+                                Bobber:PivotTo(CFrame.new(targetPosition))
                             end
                         end
                         FreazeChar(true)
