@@ -267,7 +267,7 @@ PlayerGui.ChildAdded:Connect(function(child)
                     if Bar then
                         Bar:Destroy()
                     end
-                    ReplicatedStorage.events["reelfinished "]:FireServer(100, true)
+                    ReplicatedStorage.events["reelfinished "]:FireServer(100, math.random(0, 1) == 1)
                 end
                 task.wait(0)
             end
