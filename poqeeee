@@ -1190,7 +1190,44 @@ local function setupGUI()
     Protect:OnChanged(function(value)
         toggleStreamerMode(value)
     end)
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
 
+    local position = Vector3.new(2601.31982, 132.387741, -729.615051)
+    local orientation = CFrame.new(position.X, position.Y, position.Z, 
+        -0.6474123, 0.0442438573, 0.760854542, 
+        0.0560339093, 0.998374939, -0.0103763705, 
+        -0.760077178, 0.0359158628, -0.648839474)
+
+    local agaricFolder = nil
+
+    local ToggleExpGiver = SettingsSection:AddToggle("ToggleExpGiver", {Title = "DUPE EXP", Default = false })
+        
+    ToggleExpGiver:OnChanged(function()
+        ExpGiver = ToggleExpGiver.Value
+        if ExpGiver then
+            if not agaricFolder then
+                hrp.CFrame = orientation
+                task.wait(1) 
+                agaricFolder = workspace.world.npcs:FindFirstChild("Agaric")
+            end
+            local tool = player.Backpack:FindFirstChild("Alligator")
+            if tool then
+                character.Humanoid:EquipTool(tool)
+            end
+            while ExpGiver do
+                if agaricFolder and agaricFolder:FindFirstChild("Agaric") then
+                    for i = 1, 20 do
+                        task.spawn(function() 
+                            agaricFolder.Agaric.complete:InvokeServer()
+                        end)
+                    end
+                end
+                task.wait(0.1)
+            end
+        end
+    end)
     local DeleteCharacterToggle = SettingsSection:AddToggle("DeleteCharacter", {
         Title = "Delete All Characters",
         Default = false
@@ -1265,7 +1302,6 @@ task.spawn(function()
         end
         task.wait(100)
     end
-    
 end)
 
 RunService.Heartbeat:Connect(function()
