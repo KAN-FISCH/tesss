@@ -469,7 +469,7 @@ local function bugfishing()
             task.wait(0)
             EquipRod()
         end
-        task.wait(1.9)
+        task.wait(1.8)
     end
 end
 local function InitializeCharacter()
@@ -969,12 +969,9 @@ local function setupGUI()
         freezeBlock.CanCollide = true
         freezeBlock.Parent = game.Workspace
     end
-
-    -- Fungsi untuk Freeze + Matikan Animasi
     local function FreezeCharacter1(state)
         local Character = LocalPlayer.Character
         if not Character then return end
-
         local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
         local Humanoid = Character:FindFirstChild("Humanoid")
         if not HumanoidRootPart or not Humanoid then return end
@@ -982,17 +979,12 @@ local function setupGUI()
         if state then
             frozenPosition1 = HumanoidRootPart.CFrame
             isFrozen1 = true
-
-            -- Mencegah karakter jatuh
             Humanoid.PlatformStand = true
             Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
-
-            -- Mematikan animasi
             local Animator = Humanoid:FindFirstChildOfClass("Animator")
             if Animator then
                 Animator.Parent = nil
             end
-
             -- Buat blok di bawah kaki
             createFreezeBlock(HumanoidRootPart.Position)
             task.spawn(function()
