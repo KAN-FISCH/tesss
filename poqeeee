@@ -966,22 +966,18 @@ local AutoTotemToggle =
     }
 )
 
--- Function to equip and use an item
 local function equipAndClick(tool)
-    -- Ensure we have a character
-    if not LocalPlayer.Character then return end
-    
-    -- Equip the tool
+    local originalAutoCast = _G.Config.AutoCast
+    _G.Config.AutoCast = false
+    if not LocalPlayer.Character then 
+        _G.Config.AutoCast = originalAutoCast
+        return 
+    end
     LocalPlayer.Character.Humanoid:EquipTool(tool)
-    
-    -- Wait a short time for equip animation
     task.wait(0.5)
-    
-    -- Activate the tool
     tool:Activate()
-    
-    -- Wait for activation animation
     task.wait(1)
+    _G.Config.AutoCast = originalAutoCast
 end
 
 -- Function to run the automation
