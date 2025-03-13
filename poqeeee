@@ -303,47 +303,65 @@ local function dbgwarn(message)
 end
 local function Shake()
     local function MountShakeUI(ShakeUI)
-        local SafeZone = ShakeUI:WaitForChild("safezone", 5)
-
+        local SafeZone = ShakeUI:WaitForChild("safezone", 1) -- Reduced timeout for faster response
+        
         if not SafeZone then
             warn("Unable to mount shake UI.")
             return
         end
         
-        -- 🔥 Instantly press the button when it appears
+        -- 🔥 TURBO MODE: Instant button pressing
         local Connection
         Connection = SafeZone.ChildAdded:Connect(function(Child)
             if Child:IsA("ImageButton") then
-                task.spawn(function()
-                    Child.Selectable = true
-                    GuiService.SelectedObject = Child
-                    
-                    -- 🔥 Rapid-fire keypress for instant activation
-                    for i = 1, 3 do
-                        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-                        task.wait(0.01)
-                    end
-                end)
+                -- ULTRA-FAST: No task.spawn, execute immediately
+                Child.Selectable = true
+                GuiService.SelectedObject = Child
+                
+                -- 🚀 HYPER-RAPID keypress volley
+                for i = 1, 5 do -- Increased to 5 presses for guaranteed activation
+                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+                    -- No wait between presses for maximum speed
+                end
             end
         end)
         
-        -- 🔄 Backup method: scan & press buttons continuously
+        -- 🔄 TWIN TURBO: Dual-thread continuous scanning
+        -- Thread 1: RenderStepped (highest priority)
+        local renderConnection = RunService.RenderStepped:Connect(function()
+            for _, child in pairs(SafeZone:GetChildren()) do
+                if child:IsA("ImageButton") then
+                    child.Selectable = true
+                    GuiService.SelectedObject = child
+                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+                end
+            end
+        end)
+        
+        -- Thread 2: Heartbeat (backup thread)
+        local heartbeatConnection = RunService.Heartbeat:Connect(function()
+            for _, child in pairs(SafeZone:GetChildren()) do
+                if child:IsA("ImageButton") then
+                    child.Selectable = true
+                    GuiService.SelectedObject = child
+                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+                end
+            end
+        end)
+        
+        -- 🔄 Cleanup monitor
         task.spawn(function()
             while SafeZone and SafeZone:IsDescendantOf(LocalPlayer.PlayerGui) do
-                for _, child in pairs(SafeZone:GetChildren()) do
-                    if child:IsA("ImageButton") then
-                        child.Selectable = true
-                        GuiService.SelectedObject = child
-                        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-                    end
-                end
-                task.wait(0.01) -- Minimal wait to avoid game freezing
+                task.wait(0.1) -- Only check every 0.1s to avoid overhead
             end
-
+            
             -- 🛑 Cleanup on exit
             if Connection then Connection:Disconnect() end
+            if renderConnection then renderConnection:Disconnect() end
+            if heartbeatConnection then heartbeatConnection:Disconnect() end
             GuiService.SelectedObject = nil
         end)
     end
@@ -351,18 +369,14 @@ local function Shake()
     -- 🔄 Auto-detect shake UI when added
     LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
         if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
-            task.spawn(function()
-                MountShakeUI(Child)
-            end)
+            MountShakeUI(Child) -- No task.spawn for faster execution
         end
     end)
-
+    
     -- 🔎 Check existing "shakeui" if it's already present
     for _, Child in pairs(LocalPlayer.PlayerGui:GetChildren()) do
         if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
-            task.spawn(function()
-                MountShakeUI(Child)
-            end)
+            MountShakeUI(Child) -- No task.spawn for faster execution
         end
     end
 end
