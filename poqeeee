@@ -451,6 +451,92 @@ local function EquipRod()
         warn("Rod tidak ditemukan di Character atau Backpack!")
     end
 end
+
+--ZONE EVENT
+local teleportEnabled = false
+local previousPosition = nil
+local lastSelectedEvent = nil
+local velocity = nilJ
+
+
+-- Fungsi untuk mengikuti entitas yang bergerak (Orca, Blue Whale, dll.)
+local function trackMovingEntity(WorldEvent, entityName)
+    local entity = WorldEvent:FindFirstChild(entityName)
+    if entity then
+        game:GetService("RunService").Heartbeat:Connect(function()
+            if entity and entity.Parent then
+                -- Hapus freeze movement (BodyVelocity) saat mengikuti target
+                if velocity then velocity:Destroy() end
+
+                -- Hitung arah menuju target
+                local direction = (entity.Position - HumanoidRootPart.Position).unit
+
+                -- Buat BodyVelocity untuk bergerak menuju target
+                local moveVelocity = Instance.new("BodyVelocity")
+                moveVelocity.Velocity = direction * 50 -- Kecepatan bergerak
+                moveVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                moveVelocity.Parent = HumanoidRootPart
+            end
+        end)
+    end
+end
+
+local function teleportToEvent(Values)
+    if not Values or #Values == 0 then return end
+
+    local eventPositions = {
+        ["Kraken Pool"] = {name = "Kraken Pool", offset = Vector3.new(0, 105, 0)},  
+        ["Blue Whale"] = {name = "Blue Whale", offset = Vector3.new(0, 105, 0)},  
+        ["Orcas Pool"] = {name = "Orcas Pool", offset = Vector3.new(0, 105, 0)}, 
+        ["Strange Whirlpool"] = {name = "Isonade", offset = Vector3.new(25, 115, 25)},
+        ["Great Hammerhead Shark"] = {name = "Great Hammerhead Shark", offset = Vector3.new(0, 115, 0)},
+        ["Great White Shark"] = {name = "Great White Shark", offset = Vector3.new(0, 115, 0)},
+        ["Whale Shark"] = {name = "Whale Shark", offset = Vector3.new(0, 115, 0)},
+        ["The Depths - Serpent"] = {name = "The Depths - Serpent", offset = Vector3.new(0, 50, 0)},
+        ["Megalodon"] = {name = "Megalodon Default", offset = Vector3.new(0, 50, 0)},
+        ["Ancient Algae Pool"] = {name = "Ancient Algae Pool", offset = Vector3.new(0, 115, 0)},
+        ["Mushgrove Algae Pool"] = {name = "Mushgrove Algae Pool", offset = Vector3.new(0, 115, 0)},
+        ["Forsaken Algae Pool"] = {name = "Forsaken Algae Pool", offset = Vector3.new(0, 50, 0)},
+        ["Snowcap Algae Pool"] = {name = "Snowcap Algae Pool", offset = Vector3.new(0, 50, 0)},
+    }
+
+    -- Simpan posisi sebelum teleport
+    previousPosition = HumanoidRootPart.CFrame
+    lastSelectedEvent = Values -- Simpan daftar event yang dipilih
+
+    for _, Value in ipairs(Values) do
+        local eventInfo = eventPositions[Value]
+        if not eventInfo then 
+            ShowNotification("Event not found: " .. Value)
+            return
+        end
+
+        local WorldEvent = game.Workspace.zones.fishing:FindFirstChild(eventInfo.name)
+        if not WorldEvent then 
+            ShowNotification("Not found: " .. Value)
+            return
+        end
+
+        -- 🚀 Teleportasi ke setiap event dengan offset
+        HumanoidRootPart.CFrame = CFrame.new(WorldEvent.Position + eventInfo.offset)
+
+        -- 🧊 Freeze karakter setelah teleport jika toggle aktif
+        if teleportEnabled then
+            if velocity then velocity:Destroy() end
+            velocity = Instance.new("BodyVelocity")
+            velocity.Velocity = Vector3.new(0, 0, 0) -- Menghentikan gerakan
+            velocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge) 
+            velocity.Parent = HumanoidRootPart
+        end
+
+        -- Jika event memiliki NPC yang bergerak, ikuti pergerakan mereka
+        if Value == "Orcas Pool" then
+            trackMovingEntity(WorldEvent, "Orca")
+        elseif Value == "Blue Whale" then
+            trackMovingEntity(WorldEvent, "BlueWhale")
+        end
+    end
+end
 local function bugfishing()
     while isFishing do
         local reel
@@ -469,7 +555,7 @@ local function bugfishing()
             task.wait(0)
             EquipRod()
         end
-        task.wait(1.8)
+        task.wait(1.5)
     end
 end
 local function InitializeCharacter()
@@ -1314,6 +1400,46 @@ local function setupGUI()
     teleportSpots = getTpSpots() 
     Dropdown(Main, "TP Area", "None", teleportSpots, false, function(selected)
         teleportTo(selected)
+    end)
+    local WorldEventTPDropdownUI = FishingZone:AddDropdown("WorldEventTPDropdownUI", {
+        Title = "Select World Event",
+        Values = {
+            "Blue Whale", "Orcas Pool", "Strange Whirlpool", "Great Hammerhead Shark", "Great White Shark", "Whale Shark", 
+            "The Depths - Serpent", "Megalodon", "Ancient Algae Pool", "Mushgrove Algae Pool", 
+            "Forsaken Algae Pool", "Snowcap Algae Pool"
+        },
+        Multi = true,
+        Default = {},
+        Callback = function(selected)
+            print("Selected events:", table.concat(selected, ", "))
+        end
+    })
+    
+    -- Toggle untuk Auto Teleport
+    local WorldEventTPToggle = FishingZone:AddToggle("WorldEventTPToggle", {
+        Title = "Auto Teleport",
+        Default = teleportEnabled,
+        Callback = function(Value)
+            teleportEnabled = Value
+            if teleportEnabled and lastSelectedEvent then
+                teleportToEvent(lastSelectedEvent)
+            elseif not teleportEnabled and previousPosition then
+                HumanoidRootPart.CFrame = previousPosition
+                previousPosition = nil
+                if velocity then
+                    velocity:Destroy()
+                    velocity = nil
+                end
+            end
+        end
+    })
+    
+    -- Event ketika Dropdown diubah
+    WorldEventTPDropdownUI:OnChanged(function(Values)
+        lastSelectedEvent = Values
+        if teleportEnabled then
+            teleportToEvent(Values)
+        end
     end)
     -- Settings buttons
     SettingsSection:AddButton({
