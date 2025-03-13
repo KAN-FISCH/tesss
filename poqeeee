@@ -519,7 +519,23 @@ local function teleportToPlayer(playerName)
     end
     breakVelocity()
 end
+-- Buy Item
 
+local ItemFolder = game:GetService("ReplicatedStorage").resources.items.items
+local event = game:GetService("ReplicatedStorage").events.purchase
+local itemNames = {}
+for _, item in pairs(ItemFolder:GetChildren()) do
+    if item:IsA("Folder") then
+        table.insert(itemNames, item.Name)
+    end
+end
+local rodsFolder = game:GetService("ReplicatedStorage").resources.items.rods
+local rodNames = {}
+for _, rod in pairs(rodsFolder:GetChildren()) do
+    if rod:IsA("Folder") then
+        table.insert(rodNames, rod.Name)
+    end
+end
 -- Ambil daftar pemain
 local function getPlayerNames()
     local names = {"None"}
@@ -733,7 +749,9 @@ local function setupGUI()
     local SettingsTab = Window:AddTab({ Title = "Setting", Icon = "⚙️" })
     
     -- Create Sections
-    local MainSection = FishingTab:AddSection("Fishing Controls")
+    local MainSection = FishingTab:AddSection("Fishing")
+    local FishingZone = FishingTab:AddSection("Fishing Zone")
+    local ShopItem = ShopTab:AddSection("Shop Item")
     local AutosSection = AutosTab:AddSection("Auto Sell")
     local StatsSection = FishingTab:AddSection("Fishing Stats")
     local SettingsSection = SettingsTab:AddSection("Settings")
@@ -765,7 +783,45 @@ local function setupGUI()
     FreezeToggle:OnChanged(function(value)
         FreezeCharacter(value)
     end)
+    local ItemDropdown = ShopItem:AddDropdown("ItemSelection", {
+        Title = "Select an Item",
+        Description = "Choose an item from the shop to purchase.", 
+        Values = itemNames,
+        Multi = false,
+        Default = nil,
+    })
+    ShopItem:AddButton({
+        Title = "Buy Selected Item",
+        Description = "Click this button to purchase the selected item.", 
+        Callback = function()
+            local selectedItem = ItemDropdown.Value
+            if selectedItem then
+                event:FireServer(selectedItem, "Item", nil, 1)
+            else
+                warn("No Item selected!")
+            end
+        end
+    })
+    local RodDropdown = ShopItem:AddDropdown("RodSelection", {
+        Title = "Select a Rod",
+        Description = "Choose a fishing rod from the shop to purchase.", 
+        Values = rodNames,
+        Multi = false,
+        Default = nil,
+    })
     
+    ShopItem:AddButton({
+        Title = "Buy Selected Rod",
+        Description = "Click this button to purchase the selected fishing rod.", 
+        Callback = function()
+            local selectedRod = RodDropdown.Value
+            if selectedRod then
+                event:FireServer(selectedRod, "Rod", nil, 1)
+            else
+                warn("No Rod selected!")
+            end
+        end
+    })
     local AutoShakeFunc = MainSection:AddToggle("Auto Shake", {
         Title = "Auto Shake",
         Default = false
@@ -819,9 +875,9 @@ local function setupGUI()
         if totem then
             game.Players.LocalPlayer.Character.Humanoid:EquipTool(totem)
             wait(0.1) -- Beri sedikit jeda sebelum klik
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Klik kiri mouse
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             wait(0.1)
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Lepaskan klik
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
         end
     end
 
@@ -829,7 +885,6 @@ local function setupGUI()
     Dropdown(AutosSection, "Used Totem Day", "None", {"None", "Sundial Totem"}, false, function(selected)
         useTotemDay = selected ~= "None"
         hasEquippedDay = false
-
         spawn(function()
             while useTotemDay do
                 task.wait(3)
@@ -907,10 +962,10 @@ local function setupGUI()
         end
         
         freezeBlock = Instance.new("Part")
-        freezeBlock.Size = Vector3.new(10, 1, 10) -- Ukuran blok (lebar, tinggi, panjang)
-        freezeBlock.Position = position - Vector3.new(0, 3, 0) -- Posisi di bawah karakter
+        freezeBlock.Size = Vector3.new(10, 1, 10) 
+        freezeBlock.Position = position - Vector3.new(0, 3, 0) 
         freezeBlock.Anchored = true
-        freezeBlock.Transparency = 1 -- 1 = Transparan (tidak terlihat)
+        freezeBlock.Transparency = 1
         freezeBlock.CanCollide = true
         freezeBlock.Parent = game.Workspace
     end
@@ -1259,8 +1314,9 @@ local function setupGUI()
             end
         end
     end)
+    
     local fishingSpots, _ = getFishingZones()
-    Dropdown(Main, "Fishing Zone", "None", fishingSpots, false, function(selected)
+    Dropdown(FishingZone, "Fishing Zone", "None", fishingSpots, false, function(selected)
         teleportToFishingZone(selected)
     end)
     teleportSpots = getTpSpots() 
