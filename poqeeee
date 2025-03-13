@@ -832,6 +832,7 @@ local function setupGUI()
     local ShopTab = Window:AddTab({ Title = "Shop", Icon = "⚙️" })
     local AutosTab = Window:AddTab({ Title = "Autos", Icon = "⚙️" })
     local AreaTab = Window:AddTab({ Title = "Area/TP", Icon = "⚙️" })
+    local Misc = Window:AddTab({ Title = "Misc", Icon = "⚙️" })
     local SettingsTab = Window:AddTab({ Title = "Setting", Icon = "⚙️" })
     
     -- Create Sections
@@ -839,7 +840,7 @@ local function setupGUI()
     local FishingZone = FishingTab:AddSection("Fishing Zone")
     local ShopItem = ShopTab:AddSection("Shop Item")
     local AutosSection = AutosTab:AddSection("Auto Sell")
-    local StatsSection = FishingTab:AddSection("Fishing Stats")
+    local MiscSection = Misc:AddSection(" ")
     local SettingsSection = SettingsTab:AddSection("Settings")
     local CreditsSection = SettingsTab:AddSection("Credits")
     
@@ -861,7 +862,7 @@ local function setupGUI()
     SuperReelToggle:OnChanged(function()
         _G.Config.InstantReel = SuperReelToggle.Value
     end)
-    local FreezeToggle = SettingsSection:AddToggle("FreezeChar", {
+    local FreezeToggle = MiscSection:AddToggle("FreezeChar", {
         Title = "Freeze Character",
         Default = false
     })
@@ -869,6 +870,44 @@ local function setupGUI()
     FreezeToggle:OnChanged(function(value)
         FreezeCharacter(value)
     end)
+    local DisableOxygen = MiscSection:AddToggle("DisableOxygen", {Title = "Infinite Oxygen", Default = true })
+    DisableOxygen:OnChanged(function(state)
+        local function DisableOxygenScript()
+            local char = LocalPlayer.Character
+            if char then
+                local resources = char:FindFirstChild("Resources")
+                if resources then
+                    local oxygen = resources:FindFirstChild("oxygen(peaks)")
+                    if oxygen and oxygen:IsA("LocalScript") then
+                        oxygen.Disabled = state
+                        print("✅ Oxygen " .. (state and "Dimatikan" or "Diaktifkan"))
+                    end
+                end
+            end
+        end
+        DisableOxygenScript()
+        LocalPlayer.CharacterAdded:Connect(function()
+            task.wait(1)
+            DisableOxygenScript()
+        end)
+    end)
+    local Toggle = MiscSection:AddToggle("FishingCollide", {Title = "Walk On Water", Description = "if you are underwater and turn this on, it will automatically be above", Default = false})
+
+    function updateCanCollide(value)
+        local fishingZone = workspace:FindFirstChild("zones"):FindFirstChild("fishing")
+        if fishingZone then
+            for _, descendant in ipairs(fishingZone:GetDescendants()) do
+                if descendant:IsA("Part") then
+                    descendant.CanCollide = value
+                end
+            end
+        end
+    end
+
+    Toggle:OnChanged(function(value)
+        updateCanCollide(value)
+    end)
+
     local ItemDropdown = ShopItem:AddDropdown("ItemSelection", {
         Title = "Select an Item",
         Description = "Choose an item from the shop to purchase.", 
