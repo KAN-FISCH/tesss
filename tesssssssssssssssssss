@@ -20,8 +20,3 @@ local function executeAgain()
 end
 
 executeAgain()
-
-player.CharacterAdded:Connect(function()
-    task.wait(1) 
-    executeAgain()
-end)
