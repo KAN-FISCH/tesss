@@ -21,6 +21,7 @@ local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local Terrain = workspace:FindFirstChildOfClass("Terrain")
 local FishingZonesFolder = Workspace:FindFirstChild("zones"):WaitForChild("fishing")
+local BackpackEquipEvent = ReplicatedStorage:WaitForChild("packages"):WaitForChild("Net"):WaitForChild("RE/Backpack/Equip")
 
 -- Hook functions
 local hiddenHook = hookfunction or hookfunc
@@ -224,60 +225,63 @@ local function FreezeCharacter(state)
         isFrozen = false
     end
 end
-LocalPlayer.Character.ChildAdded:Connect(function(child)
-    if child.Name == RodName then
-        if _G.Config.AutoCast then
-            task.spawn(function()
-                while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
-                    local Rod = LocalPlayer.Character:FindFirstChild(RodName)
-                    if Rod then
-                        local randomValue = math.random() * (99 - 96.1) + 96.1
-                        Rod.events.cast:FireServer(randomValue, 1)
-                        local Bobber = Rod:FindFirstChild("bobber")
-                        if Bobber then
-                            local Params = RaycastParams.new()
-                            Params.FilterType = Enum.RaycastFilterType.Include
-                            Params.FilterDescendantsInstances = { workspace.Terrain }
-                            local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
-                            if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
-                                Bobber:PivotTo(CFrame.new(RaycastResult.Position)) 
+local function dropbobber()
+    LocalPlayer.Character.ChildAdded:Connect(function(child)
+        if child.Name == RodName then
+            if _G.Config.AutoCast then
+                task.spawn(function()
+                    while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
+                        local Rod = LocalPlayer.Character:FindFirstChild(RodName)
+                        if Rod then
+                            local randomValue = math.random() * (99 - 96.1) + 96.1
+                            Rod.events.cast:FireServer(randomValue, 1)
+                            local Bobber = Rod:FindFirstChild("bobber")
+                            if Bobber then
+                                local Params = RaycastParams.new()
+                                Params.FilterType = Enum.RaycastFilterType.Include
+                                Params.FilterDescendantsInstances = { workspace.Terrain }
+                                local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
+                                if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
+                                    Bobber:PivotTo(CFrame.new(RaycastResult.Position)) 
+                                end
                             end
+                            FreazeChar(true)
+                            FreazeChar(false)
+                            task.wait(0.1)
                         end
-                        FreazeChar(true)
-                        FreazeChar(false)
-                        task.wait(0.1)
                     end
+                end)
+            end  
+        end
+    end)
+end
+
+
+local function supereel()
+    PlayerGui.ChildAdded:Connect(function(child)
+        if child.Name == "reel" then
+            task.spawn(function()
+                FreezeCharacter(true)
+                while child.Parent == PlayerGui do
+                    if _G.Config.InstantReel then
+                        local Bar = child:FindFirstChild("bar")
+                        if Bar then
+                            Bar:Destroy()
+                        end
+                        ReplicatedStorage.events["reelfinished "]:FireServer(100, math.random(0, 1) == 1)
+                    end
+                    task.wait(0)
                 end
+                FreezeCharacter(false)
             end)
         end
-    end
-end) 
+    end)
+end
 
 
-PlayerGui.ChildAdded:Connect(function(child)
-    if child.Name == "reel" then
-        task.spawn(function()
-            FreezeCharacter(true)
-            while child.Parent == PlayerGui do
-                if _G.Config.InstantReel then
-                    local Bar = child:FindFirstChild("bar")
-                    if Bar then
-                        Bar:Destroy()
-                    end
-                    ReplicatedStorage.events["reelfinished "]:FireServer(100, math.random(0, 1) == 1)
-                end
-                task.wait(0)
-            end
-            FreezeCharacter(false)
-        end)
-    end
-end)
-
--- Auto-Shake Function
 local Utils = {}
 local Connections = {}
 
--- Function to safely check if an instance is valid
 local function EnsureInstance(instance)
     return instance and instance:IsA("GuiObject") and instance:IsDescendantOf(game)
 end
@@ -433,7 +437,54 @@ local function Shake()
         table.clear(Connections)
     end
 end
+local function GetRod()
+    local RodName = ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.rod.Value
+    local Rod = LocalPlayer.Character:FindFirstChild(RodName) or LocalPlayer.Backpack:FindFirstChild(RodName)
+    return Rod
+end
+local function EquipRod()
+    local Rod = GetRod()
+    if Rod then
+        local args = { [1] = Rod }
+        BackpackEquipEvent:FireServer(unpack(args))
+    else
+        warn("Rod tidak ditemukan di Character atau Backpack!")
+    end
+end
+local function bugfishing()
+    while isFishing do
+        local reel
+        local startTime = tick()
+        while not reel and tick() - startTime < 10 do
+            reel = PlayerGui and PlayerGui:FindFirstChild("reel")
+            task.wait(0.1)
+        end
+        if reel then
+            LocalPlayer.Character.Humanoid:UnequipTools()
+            task.wait(0)
+            EquipRod()
+            reel:Destroy()
+        else
+            LocalPlayer.Character.Humanoid:UnequipTools()
+            task.wait(0)
+            EquipRod()
+        end
+        task.wait(1.9)
+    end
+end
+local function InitializeCharacter()
+    task.wait(0.1)
+    dropbobber()
+    supereel()
+    Shake()
+    task.spawn(bugfishing)
+end
 
+LocalPlayer.CharacterAdded:Connect(InitializeCharacter)
+
+if LocalPlayer.Character then
+    InitializeCharacter()
+end
 
 local function breakVelocity()
     local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
@@ -706,22 +757,6 @@ local function setupGUI()
     SuperReelToggle:OnChanged(function()
         _G.Config.InstantReel = SuperReelToggle.Value
     end)
-    
-    local EquipRod = MainSection:AddToggle("EquipRod", {
-        Title = "Equip Rod",
-        Default = false
-    })
-    
-    EquipRod:OnChanged(function(value)
-        _G.Config.equipRod = value
-        if value and not LocalPlayer.Character:FindFirstChild(RodName) then
-            local Rod = Backpack:FindFirstChild(RodName)
-            if Rod then
-                LocalPlayer.Character.Humanoid:EquipTool(Rod)
-            end
-        end
-    end)    
-    
     local FreezeToggle = SettingsSection:AddToggle("FreezeChar", {
         Title = "Freeze Character",
         Default = false
@@ -754,27 +789,11 @@ local function setupGUI()
         Title = "Fast Mancing",
         Default = false
     })
-    FishingToggle:OnChanged(function(value)         
+    FishingToggle:OnChanged(function(value)
         isFishing = value
-        while isFishing do
-            local reel
-            local startTime = tick()
-            while not reel and tick() - startTime < 10 do
-                reel = PlayerGui and PlayerGui:FindFirstChild("reel")
-                task.wait(0.1)
-            end
-            if reel then
-                LocalPlayer.Character.Humanoid:UnequipTools()
-                task.wait(0)
-                LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
-                reel:Destroy()
-            else
-                LocalPlayer.Character.Humanoid:UnequipTools()
-                task.wait(0)
-                LocalPlayer.Character.Humanoid:EquipTool(Backpack:FindFirstChild(RodName))
-            end
-            task.wait(1.8)
-        end         
+        if isFishing then
+            task.spawn(bugfishing)
+        end
     end)
     
     local AutoSellFunc = AutosSection:AddToggle("Auto Sell", {
