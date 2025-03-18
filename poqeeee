@@ -233,16 +233,15 @@ local function dropbobber()
                     while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                         local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                         if Rod then
+                            -- Cast the fishing rod with a random value
                             local randomValue = math.random() * (99 - 96.1) + 96.1
                             Rod.events.cast:FireServer(randomValue, 1)
                             local Bobber = Rod:FindFirstChild("bobber")
                             if Bobber then
-                                local Params = RaycastParams.new()
-                                Params.FilterType = Enum.RaycastFilterType.Include
-                                Params.FilterDescendantsInstances = { workspace.Terrain }
-                                local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
-                                if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
-                                    Bobber:PivotTo(CFrame.new(RaycastResult.Position)) 
+                                local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                if humanoidRootPart then
+                                    local targetPosition = humanoidRootPart.Position - Vector3.new(0, 10, 0)
+                                    Bobber:PivotTo(CFrame.new(targetPosition))
                                 end
                             end
                             FreazeChar(true)
@@ -251,7 +250,7 @@ local function dropbobber()
                         end
                     end
                 end)
-            end  
+            end
         end
     end)
 end
@@ -813,6 +812,75 @@ local function setupGUI()
     FreezeToggle:OnChanged(function(value)
         FreezeCharacter(value)
     end)
+    local Connections2
+    MainSection:AddToggle("AutoBalanceNuke", {
+        Title = "Auto Balance Nuke",
+        Default = true,
+        Description = "",
+        Callback = function(isEnabled)
+            AutoBalanceNuke = isEnabled
+            
+            local StartMinigame
+
+            if getgc then
+            task.spawn(function()
+                for i, v in pairs(getgc(true)) do
+                    if type(v) == "function" then
+                        local name = debug.info(v, "n")
+
+                        if name == "StartMinigame" then
+                            task.spawn(function()
+                                -- v()
+                            end)
+
+                            StartMinigame = v
+                        elseif name == "LoopMinigame" then
+                            if debug.setupvalue then
+                                task.spawn(function()
+                                    while true do
+                                        if true then -- Toggle to balance nuke : )
+                                            local success, result = pcall(function()
+                                                debug.setupvalue(v, 13, os.clock() - 10)
+                                            end)
+
+                                            if not success then
+                                                break
+                                            end
+                                        end
+
+                                        task.wait()
+                                    end
+                                end)
+                            end
+                        end
+                    end
+                end
+        end)
+            else
+                local LocalPlayer = game.Players.LocalPlayer
+                if AutoBalanceNuke then
+                    task.wait(1)
+                    if LocalPlayer.PlayerGui:FindFirstChild("NukeMinigame") then
+                        Connections2.AutoBalanceNuke = LocalPlayer.PlayerGui.NukeMinigame.Center.Marker.Pointer.Frame:GetPropertyChangedSignal("AbsoluteRotation"):Connect(function()
+                            local rot = LocalPlayer.PlayerGui.NukeMinigame.Center.Marker.Pointer.Frame.AbsoluteRotation
+                            if rot < -35 then
+                                VIM:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+                                VIM:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+                            elseif rot > 35 then
+                                VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game)
+                                VIM:SendKeyEvent(false, Enum.KeyCode.Q, false, game)
+                            end
+                        end)
+                    end
+                else
+                    if Connections2.AutoBalanceNuke then
+                        Connections2.AutoBalanceNuke:Disconnect()
+                        Connections2.AutoBalanceNuke = nil
+                    end
+                end
+            end
+        end
+    })
     local DisableOxygen = MiscSection:AddToggle("DisableOxygen", {Title = "Infinite Oxygen", Default = true })
     DisableOxygen:OnChanged(function(state)
         local function DisableOxygenScript()
