@@ -22,6 +22,7 @@ local RunService = game:GetService("RunService")
 local Terrain = workspace:FindFirstChildOfClass("Terrain")
 local FishingZonesFolder = Workspace:FindFirstChild("zones"):WaitForChild("fishing")
 local BackpackEquipEvent = ReplicatedStorage:WaitForChild("packages"):WaitForChild("Net"):WaitForChild("RE/Backpack/Equip")
+local workspace = game:GetService("Workspace")
 
 -- Hook functions
 local hiddenHook = hookfunction or hookfunc
@@ -781,6 +782,7 @@ local function setupGUI()
     local MainSection = FishingTab:AddSection("Fishing")
     local FishingZone = FishingTab:AddSection("Fishing Zone")
     local ShopItem = ShopTab:AddSection("Shop Item")
+    local Merlin = ShopTab:AddSection("Merlin Luck/Relic")
     local AutosSection = AutosTab:AddSection("Auto Sell")
     local MiscSection = Misc:AddSection(" ")
     local SettingsSection = SettingsTab:AddSection("Settings")
@@ -955,6 +957,40 @@ local function setupGUI()
                 event:FireServer(selectedRod, "Rod", nil, 1)
             else
                 warn("No Rod selected!")
+            end
+        end
+    })
+    local selectedMerlin = "Enchant Relic" -- Default value
+    local MerlinDropdown = Merlin:AddDropdown("MerlinSelection", {
+        Title = "Merlin Magic",
+        Description = "Select a magic option to purchase",
+        Values = {"Enchant Relic", "Luck"},
+        Multi = false,
+        Default = selectedMerlin,
+    })
+
+    -- Purchase button for Merlin
+    Merlin:AddButton({
+        Title = "Purchase - Merlin",
+        Description = "Click this button to purchase the selected item.",
+        Callback = function()
+            local selection = MerlinDropdown.Value -- Get value directly from dropdown object
+            print("Attempting to purchase:", selection)
+            
+            if selection == "Enchant Relic" then
+                if ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.coins.Value < 11000 then
+                    print("Not enough coins for Enchant Relic")
+                    return
+                end
+                workspace:WaitForChild("world"):WaitForChild("npcs"):WaitForChild("Merlin"):WaitForChild("Merlin"):WaitForChild("power"):InvokeServer()
+            elseif selection == "Luck" then
+                if ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.coins.Value < 5000 then
+                    print("Not enough coins for Luck")
+                    return
+                end
+                workspace:WaitForChild("world"):WaitForChild("npcs"):WaitForChild("Merlin"):WaitForChild("Merlin"):WaitForChild("luck"):InvokeServer()
+            else
+                print("No valid selection")
             end
         end
     })
