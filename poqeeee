@@ -324,21 +324,14 @@ local function Shake()
         
         Connection = SafeZone.ChildAdded:Connect(function(Child)
             if Child:IsA("ImageButton") then
-                -- ULTRA-FAST: No task.spawn, execute immediately
                 Child.Selectable = true
                 GuiService.SelectedObject = Child
-                
-                -- 🚀 HYPER-RAPID keypress volley
-                for i = 1, 7 do -- Increased to 5 presses for guaranteed activation
+                for i = 1, 7 do 
                     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-                    -- No wait between presses for maximum speed
                 end
             end
         end)
-        
-        -- 🔄 TWIN TURBO: Dual-thread continuous scanning
-        -- Thread 1: RenderStepped (highest priority)
         local renderConnection = RunService.RenderStepped:Connect(function()
             for _, child in pairs(SafeZone:GetChildren()) do
                 if child:IsA("ImageButton") then
@@ -349,8 +342,6 @@ local function Shake()
                 end
             end
         end)
-        
-        -- Thread 2: Heartbeat (backup thread)
         local heartbeatConnection = RunService.Heartbeat:Connect(function()
             for _, child in pairs(SafeZone:GetChildren()) do
                 if child:IsA("ImageButton") then
@@ -437,7 +428,8 @@ end
 
 local function teleportToEvent(Values)
     if not Values or #Values == 0 then return end
-
+    local Character = LocalPlayer.Character
+    local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
     local eventPositions = {
         ["Kraken Pool"] = {name = "Kraken Pool", offset = Vector3.new(0, 105, 0)},  
         ["Blue Whale"] = {name = "Blue Whale", offset = Vector3.new(0, 105, 0)},  
