@@ -817,14 +817,27 @@ local function setupGUI()
     SuperReelToggle:OnChanged(function()
         _G.Config.InstantReel = SuperReelToggle.Value
     end)
-    local FreezeToggle = MiscSection:AddToggle("FreezeChar", {
+    MiscSection:AddToggle("FreezeCharacter", {
         Title = "Freeze Character",
-        Default = false
+        Default = false,
+        Description = "",
+        Callback = function(isEnabled)
+            V_FreezeCharacter = isEnabled
+            local oldpos = nil
+            while V_FreezeCharacter do
+                local player = LocalPlayer
+                local character = player.Character or player.CharacterAdded:Wait()
+                local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+            
+                if oldpos == nil then
+                    oldpos = humanoidRootPart.CFrame
+                end
+                humanoidRootPart.CFrame = oldpos
+                humanoidRootPart.Velocity = Vector3.zero
+                task.wait() 
+            end
+        end
     })
-    
-    FreezeToggle:OnChanged(function(value)
-        FreezeCharacter(value)
-    end)
     local Connections2
     MainSection:AddToggle("AutoBalanceNuke", {
         Title = "Auto Balance Nuke",
