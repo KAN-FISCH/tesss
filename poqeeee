@@ -23,7 +23,7 @@ local Terrain = workspace:FindFirstChildOfClass("Terrain")
 local FishingZonesFolder = Workspace:FindFirstChild("zones"):WaitForChild("fishing")
 local BackpackEquipEvent = ReplicatedStorage:WaitForChild("packages"):WaitForChild("Net"):WaitForChild("RE/Backpack/Equip")
 local workspace = game:GetService("Workspace")
-local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+local VIM = game:GetService('VirtualInputManager')
 
 -- Hook functions
 local hiddenHook = hookfunction or hookfunc
@@ -1564,6 +1564,8 @@ AutoTotemToggle:OnChanged(
             end
         end
     })
+    
+    -- Event ketika Dropdown diubah
     WorldEventTPDropdownUI:OnChanged(function(Values)
         lastSelectedEvent = Values
         if teleportEnabled then
