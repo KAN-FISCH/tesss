@@ -311,8 +311,17 @@ local function Shake()
             return
         end
         
-        -- 🔥 TURBO MODE: Instant button pressing
+        local button = LocalPlayer.PlayerGui:WaitForChild("shakeui", 1):WaitForChild("safezone", 1):WaitForChild("button", 1)
+        
+        if not button then
+            warn("Button not found in shake UI.")
+            return
+        end
+        
+        button.Selectable = true
+        GuiService.SelectedObject = button
         local Connection
+        
         Connection = SafeZone.ChildAdded:Connect(function(Child)
             if Child:IsA("ImageButton") then
                 -- ULTRA-FAST: No task.spawn, execute immediately
@@ -320,7 +329,7 @@ local function Shake()
                 GuiService.SelectedObject = Child
                 
                 -- 🚀 HYPER-RAPID keypress volley
-                for i = 1, 5 do -- Increased to 5 presses for guaranteed activation
+                for i = 1, 7 do -- Increased to 5 presses for guaranteed activation
                     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
                     -- No wait between presses for maximum speed
@@ -368,7 +377,7 @@ local function Shake()
     end
     
     -- 🔄 Auto-detect shake UI when added
-    LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
+    local uiAddedConnection = LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child)
         if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
             MountShakeUI(Child) -- No task.spawn for faster execution
         end
@@ -380,6 +389,7 @@ local function Shake()
             MountShakeUI(Child) -- No task.spawn for faster execution
         end
     end
+    return uiAddedConnection
 end
 local function GetRod()
     local RodName = ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.rod.Value
