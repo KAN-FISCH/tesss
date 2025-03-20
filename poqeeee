@@ -242,9 +242,13 @@ local function dropbobber()
                             if Bobber then
                                 local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                                 if humanoidRootPart then
-                                    local targetPosition = humanoidRootPart.Position - Vector3.new(0, 10, 0)
+                                    local rootPosition = humanoidRootPart.Position
+                                    local targetPosition = rootPosition 
+                                        + (humanoidRootPart.CFrame.LookVector * 15)
+                                        - Vector3.new(0, 10, 0)
                                     Bobber:PivotTo(CFrame.new(targetPosition))
                                 end
+                                
                             end
                             FreazeChar(true)
                             FreazeChar(false)
@@ -1611,14 +1615,53 @@ AutoTotemToggle:OnChanged(
     SaveManager:Load("config")
     setfpscap(240)
 end
-
-task.spawn(function()
-    local pausedUI = CoreGui:FindFirstChild("RobloxNetworkPauseNotification")
-    if pausedUI then
-        pausedUI:Destroy()
-        
+local isExecutors = function(txt)
+    local exec = string.lower(__f['__executor'])
+    return exec == tostring(txt) or string.find(exec, tostring(txt))
+end
+local Service = game:GetService("TextChatService")
+function detectRobloxExecutorName()
+    local exec = "Unknown"
+    if identifyexecutor then
+        exec = identifyexecutor()
+    elseif getexecutorname and type(getexecutorname) == "function" then
+        exec = getexecutorname()
+    elseif syn and syn.executor and type(syn.executor) == "string" then
+        exec = syn.executor
+    elseif is_sirhurt_closure then
+        exec = "SirHurt"
+    elseif is_protosmasher_closure then
+        exec = "ProtoSmasher"
+    elseif KRNL_LOADED then
+        exec = "KRNL"
+    elseif SENTINEL_LOADED then
+        exec = "Sentinel"
+    elseif is_synapse_function then
+        exec = "Synapse X"
+    elseif debug and debug.getregistry then
+        -- Deteksi tambahan untuk executor yang tidak dikenal
+        for _, v in ipairs(debug.getregistry()) do
+            if type(v) == "table" and rawget(v, "luadecomp") then
+                exec = "Luna"
+            end
+        end
     end
-end)
+    if exec == "NX" or string.find(exec:lower(), "nx") then
+        exec = "Luna"
+    end
+
+    return exec
+end
+
+local executorName = detectRobloxExecutorName()
+print("Executor yang digunakan:", executorName)
+
+-- Jika menggunakan Luna, kick pemain
+if executorName == "Luna" then
+    game.Players.LocalPlayer:Kick("⚠️ Detect Luna, This executor is not supported. Please use a high UNC executor. ⚠️")
+end
+
+
 task.spawn(function()
     while true do
         local player = game:GetService("Players").LocalPlayer
