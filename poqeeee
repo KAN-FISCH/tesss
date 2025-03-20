@@ -235,20 +235,20 @@ local function dropbobber()
                     while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
                         local Rod = LocalPlayer.Character:FindFirstChild(RodName)
                         if Rod then
-                            -- Cast the fishing rod with a random value
-                            local randomValue = math.random() * (99 - 96.1) + 96.1
-                            Rod.events.cast:FireServer(randomValue, 1)
                             local Bobber = Rod:FindFirstChild("bobber")
                             if Bobber then
                                 local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                                if humanoidRootPart then
+                                local player = game.Players.LocalPlayer
+                                local character = player.Character or player.CharacterAdded:Wait()
+                                local head = character:WaitForChild("Head")
+                                if humanoidRootPart and head then
                                     local forwardDirection = humanoidRootPart.CFrame.LookVector
-                                    forwardDirection = Vector3.new(forwardDirection.X, 0, forwardDirection.Z).Unit
-                                    local rootPosition = humanoidRootPart.Position
-                                    local targetPosition = rootPosition + (forwardDirection * 10) - Vector3.new(0, 5, 0)
-                                    Bobber:PivotTo(CFrame.new(targetPosition))
+                                    local bobberPos = head.Position + (forwardDirection * 15) - Vector3.new(0, 11, 0)
+                                    Bobber.CFrame = CFrame.new(bobberPos)
                                 end
                             end
+                            local randomValue = math.random() * (99 - 96.1) + 96.1
+                            Rod.events.cast:FireServer(randomValue, 1)
                             FreazeChar(true)
                             FreazeChar(false)
                             task.wait(0.1)
