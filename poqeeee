@@ -15,7 +15,7 @@ local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Backpack = LocalPlayer:WaitForChild("Backpack")
-local RodName = ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.rod.Value
+local RodName = workspace.PlayerStats[LocalPlayer.Name].T[LocalPlayer.Name].Stats.rod.Value
 local CoreGui = game:GetService("CoreGui")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
@@ -386,7 +386,6 @@ local function Shake()
     return uiAddedConnection
 end
 local function GetRod()
-    local RodName = ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.rod.Value
     local Rod = LocalPlayer.Character:FindFirstChild(RodName) or LocalPlayer.Backpack:FindFirstChild(RodName)
     return Rod
 end
@@ -997,13 +996,13 @@ local function setupGUI()
             print("Attempting to purchase:", selection)
             
             if selection == "Enchant Relic" then
-                if ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.coins.Value < 11000 then
+                if workspace.PlayerStats[LocalPlayer.Name].T[LocalPlayer.Name].Stats.coins.Value < 11000 then
                     print("Not enough coins for Enchant Relic")
                     return
                 end
                 workspace:WaitForChild("world"):WaitForChild("npcs"):WaitForChild("Merlin"):WaitForChild("Merlin"):WaitForChild("power"):InvokeServer()
             elseif selection == "Luck" then
-                if ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.coins.Value < 5000 then
+                if workspace.PlayerStats[LocalPlayer.Name].T[LocalPlayer.Name].Stats.coins.Value < 5000 then
                     print("Not enough coins for Luck")
                     return
                 end
@@ -1108,7 +1107,7 @@ local function autoTotemLoop()
     while AutoAuroraTotem do
         task.wait(1)
         
-        local rodName = ReplicatedStorage.playerstats[LocalPlayer.Name].Stats.rod.Value
+        local rodName = workspace.PlayerStats[LocalPlayer.Name].T[LocalPlayer.Name].Stats.rod.Value
         local cycleObj = 
             game:GetService("ReplicatedStorage"):FindFirstChild("world") and
             game:GetService("ReplicatedStorage").world:FindFirstChild("cycle")
