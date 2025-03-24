@@ -91,6 +91,40 @@ game.Players.LocalPlayer.Idled:Connect(function()
     VirtualUser:ClickButton2(Vector2.new())
 end)
 
+local Service = game:GetService("TextChatService")
+function detectRobloxExecutorName()
+    local exec = "Unknown"
+    if identifyexecutor then
+        exec = identifyexecutor()
+    elseif getexecutorname and type(getexecutorname) == "function" then
+        exec = getexecutorname()
+    elseif syn and syn.executor and type(syn.executor) == "string" then
+        exec = syn.executor
+    elseif is_sirhurt_closure then
+        exec = "SirHurt"
+    elseif is_protosmasher_closure then
+        exec = "ProtoSmasher"
+    elseif KRNL_LOADED then
+        exec = "KRNL"
+    elseif SENTINEL_LOADED then
+        exec = "Sentinel"
+    elseif is_synapse_function then
+        exec = "Synapse X"
+    elseif debug and debug.getregistry then
+        for _, v in ipairs(debug.getregistry()) do
+            if type(v) == "table" and rawget(v, "luadecomp") then
+                exec = "Luna"
+            end
+        end
+    end
+    if exec == "NX" or string.find(exec:lower(), "nx") then
+        exec = "Luna"
+    end
+
+    return exec
+end
+
+local executorName = detectRobloxExecutorName()
 -- Initialize Config
 if not _G.Config then
     _G.Config = {
@@ -232,26 +266,49 @@ local function dropbobber()
         if child.Name == RodName then
             if _G.Config.AutoCast then
                 task.spawn(function()
-                    while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
-                        local Rod = LocalPlayer.Character:FindFirstChild(RodName)
-                        if Rod then
-                            local Bobber = Rod:FindFirstChild("bobber")
-                            if Bobber then
-                                local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                                local player = game.Players.LocalPlayer
-                                local character = player.Character or player.CharacterAdded:Wait()
-                                local head = character:WaitForChild("Head")
-                                if humanoidRootPart and head then
-                                    local forwardDirection = humanoidRootPart.CFrame.LookVector
-                                    local bobberPos = head.Position + (forwardDirection * 15) - Vector3.new(0, 11, 0)
-                                    Bobber.CFrame = CFrame.new(bobberPos)
+                    if executorName ~= "Xeno" then
+                        while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
+                            local Rod = LocalPlayer.Character:FindFirstChild(RodName)
+                            if Rod then
+                                local Bobber = Rod:FindFirstChild("bobber")
+                                if Bobber then
+                                    local Params = RaycastParams.new()
+                                    Params.FilterType = Enum.RaycastFilterType.Include
+                                    Params.FilterDescendantsInstances = {workspace.Terrain}
+                                    local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
+                                    if RaycastResult and RaycastResult.Instance:IsA("Terrain") then
+                                    Bobber:PivotTo(CFrame.new(RaycastResult.Position))
+                                    end
                                 end
+                                local randomValue = math.random() * (99 - 96.1) + 96.1
+                                Rod.events.cast:FireServer(randomValue, 1)
+                                FreazeChar(true)
+                                FreazeChar(false)
+                                task.wait(0.1)
                             end
-                            local randomValue = math.random() * (99 - 96.1) + 96.1
-                            Rod.events.cast:FireServer(randomValue, 1)
-                            FreazeChar(true)
-                            FreazeChar(false)
-                            task.wait(0.1)
+                        end
+                    else
+                        while _G.Config.AutoCast and LocalPlayer.Character:FindFirstChild(RodName) do
+                            local Rod = LocalPlayer.Character:FindFirstChild(RodName)
+                            if Rod then
+                                local Bobber = Rod:FindFirstChild("bobber")
+                                if Bobber then
+                                    local player = game.Players.LocalPlayer
+                                    local character = player.Character or player.CharacterAdded:Wait()
+                                    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+                                    local head = character:WaitForChild("Head")
+                                    if humanoidRootPart and head then
+                                        local forwardDirection = humanoidRootPart.CFrame.LookVector
+                                        local bobberPos = head.Position + (forwardDirection * 15) - Vector3.new(0, 11, 0)
+                                        Bobber.CFrame = CFrame.new(bobberPos)
+                                    end
+                                end
+                                local randomValue = math.random() * (99 - 96.1) + 96.1
+                                Rod.events.cast:FireServer(randomValue, 1)
+                                FreazeChar(true)
+                                FreazeChar(false)
+                                task.wait(0.1)
+                            end
                         end
                     end
                 end)
@@ -329,7 +386,7 @@ local function Shake()
             if Child:IsA("ImageButton") then
                 Child.Selectable = true
                 GuiService.SelectedObject = Child
-                for i = 1, 7 do 
+                for i = 1, 1 do 
                     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
                 end
@@ -1617,41 +1674,7 @@ local isExecutors = function(txt)
     local exec = string.lower(__f['__executor'])
     return exec == tostring(txt) or string.find(exec, tostring(txt))
 end
-local Service = game:GetService("TextChatService")
-function detectRobloxExecutorName()
-    local exec = "Unknown"
-    if identifyexecutor then
-        exec = identifyexecutor()
-    elseif getexecutorname and type(getexecutorname) == "function" then
-        exec = getexecutorname()
-    elseif syn and syn.executor and type(syn.executor) == "string" then
-        exec = syn.executor
-    elseif is_sirhurt_closure then
-        exec = "SirHurt"
-    elseif is_protosmasher_closure then
-        exec = "ProtoSmasher"
-    elseif KRNL_LOADED then
-        exec = "KRNL"
-    elseif SENTINEL_LOADED then
-        exec = "Sentinel"
-    elseif is_synapse_function then
-        exec = "Synapse X"
-    elseif debug and debug.getregistry then
-        -- Deteksi tambahan untuk executor yang tidak dikenal
-        for _, v in ipairs(debug.getregistry()) do
-            if type(v) == "table" and rawget(v, "luadecomp") then
-                exec = "Luna"
-            end
-        end
-    end
-    if exec == "NX" or string.find(exec:lower(), "nx") then
-        exec = "Luna"
-    end
 
-    return exec
-end
-
-local executorName = detectRobloxExecutorName()
 print("Executor yang digunakan:", executorName)
 
 -- Jika menggunakan Luna, kick pemain
