@@ -21,4 +21,4 @@ local function executeAgain()
     end
 end
 -- print("SHUTDOWN SCRIPT SHIELD TEAM")
-game.Players.LocalPlayer:Kick("SHUTDOWN BY OWNER SCRIPT")
+game.Players.LocalPlayer:Kick("SHUTDOWN BY OWNER SCRIPT, THE SCRIPT HAS BEEN SHUTDOWN SHIELDTEAM")
