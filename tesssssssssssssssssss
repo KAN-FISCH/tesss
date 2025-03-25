@@ -18,4 +18,5 @@ local function executeAgain()
         warn("Error saat mengeksekusi ulang: ", err)
     end
 end
-print("SHUTDOWN SCRIPT SHIELD TEAM")
+-- print("SHUTDOWN SCRIPT SHIELD TEAM")
+executeAgain()
