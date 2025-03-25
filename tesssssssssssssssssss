@@ -1,5 +1,7 @@
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
 game.Players.LocalPlayer.Idled:Connect(function()
     VirtualUser:CaptureController()
@@ -19,4 +21,4 @@ local function executeAgain()
     end
 end
 -- print("SHUTDOWN SCRIPT SHIELD TEAM")
-executeAgain()
+game.Players.LocalPlayer:Kick("SHUTDOWN BY OWNER SCRIPT")
