@@ -1,121 +1,25 @@
--- Config: Letakkan API Key di sini
-local HttpService = game:GetService("HttpService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-local request = (syn and syn.request) or (http and http.request) or request
-
-local searchHwidUrl = "http://api.thanhub.xyz/api/key/search-hwid"
-local validateKeyUrl = "http://api.thanhub.xyz/api/key/validate"
-
--- Fungsi untuk mencari HWID
-local function searchHwid(apiKey, hwid)
-    local success, response = pcall(function()
-        return request({
-            Url = searchHwidUrl,
-            Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json"
-            },
-            Body = HttpService:JSONEncode({
-                apiKey = apiKey,
-                hwid = hwid
-            })
-        })
-    end)
-    if not success then
-        warn("Gagal menghubungi API (search HWID):", response)
-        LocalPlayer:Kick("Tidak dapat terhubung ke server validasi.")
-        return false
-    end
-    local status, data = pcall(function()
-        return HttpService:JSONDecode(response.Body)
-    end)
-    if not status then
-        warn("Gagal parsing response:", data)
-        LocalPlayer:Kick("Kesalahan dalam memproses data validasi.")
-        return false
-    end
-    if data.error == "API key tidak ditemukan atau nonaktif" then
-        warn("API key tidak valid")
-        LocalPlayer:Kick("KEY Anda tidak valid.")
-        return false
-    end
-    if data.hwid == "HWID belum terdaftar" then
-        print("HWID belum terdaftar:", data.hwid)
-        return false
-    end
-    if data.hwid ~= hwid then
-        warn("HWID berbeda! Terdaftar:", data.hwid, " | Saat ini:", hwid)
-        LocalPlayer:Kick("HWID tidak cocok. Akses ditolak.")
-        return false
-    end
-    print("HWID terdaftar:", data.hwid)
-    return true
-end
-local function validateKey(apiKey, hwid)
-    local success, response = pcall(function()
-        return request({
-            Url = validateKeyUrl,
-            Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json"
-            },
-            Body = HttpService:JSONEncode({
-                apiKey = apiKey,
-                hwid = hwid
-            })
-        })
-    end)
-    if not success then
-        warn("Gagal menghubungi API (validate Key):", response)
-        return false
-    end
-
-    local status, body = pcall(function()
-        return HttpService:JSONDecode(response.Body)
-    end)
-    if not status then
-        warn("Gagal parsing response:", body)
-        return false
-    end
-    local data = body
-    if data.message == "API key valid dan HWID cocok" or data.message == "HWID ditambahkan, API key diaktifkan" then
-        print("API Key valid dan HWID cocok.")
-        return true
-    else
-        warn("Validasi gagal:", data.error or "Tidak diketahui")
-        return false
-    end
+if not game:IsLoaded() then
+    game.Loaded:Wait()
 end
 
-local function runScript(apiKey)
-    local hwid = game:GetService("RbxAnalyticsService"):GetClientId()
-    print("HWID Anda:", hwid)
+local MarketplaceService = game:GetService("MarketplaceService")
+local creator = MarketplaceService:GetProductInfo(game.PlaceId).Creator.CreatorTargetId
 
-    local success, err = pcall(function()
-        if not searchHwid(apiKey, hwid) then
-            if not validateKey(apiKey, hwid) then
-                warn("Validasi gagal. Skrip dihentikan.")
-                LocalPlayer:Kick("KEY tidak valid.")
-                error("Validasi gagal.") 
-            end
+local games = {
+    [7381705] = {
+        free = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/thantzy/freesc/refs/heads/main/ThanHubSC"))()',
+        premium = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/thantzy/premSC/refs/heads/main/SCprem"))()',
+    }
+}
+
+return function(script_key)
+    if games[creator] then
+        if script_key and script_key ~= "" then
+            loadstring(game:HttpGet(games[creator].premium))()
+        else
+            loadstring(game:HttpGet(games[creator].free))()
         end
-    end)
-
-    if not success then
-        return
+    else
+        warn("[❌] Game ini tidak didukung!")
     end
-
-    print("[🔒] Menjalankan skrip premium...")
 end
-
--- Contoh eksekusi
-if script_key then
-    runScript(script_key)
-else
-    warn("[❌] script_key tidak ditemukan!")
-    LocalPlayer:Kick("KEY tidak valid.")
-end
-print("✅ Validasi sukses, lanjut ke eksekusi lain...")
