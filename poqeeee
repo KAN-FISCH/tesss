@@ -282,8 +282,6 @@ local function dropbobber()
                                 end
                                 local randomValue = math.random() * (99 - 96.1) + 96.1
                                 Rod.events.cast:FireServer(randomValue, 1)
-                                FreazeChar(true)
-                                FreazeChar(false)
                                 task.wait(0.1)
                             end
                         end
@@ -305,8 +303,6 @@ local function dropbobber()
                                 end
                                 local randomValue = math.random() * (99 - 96.1) + 96.1
                                 Rod.events.cast:FireServer(randomValue, 1)
-                                FreazeChar(true)
-                                FreazeChar(false)
                                 task.wait(0.1)
                             end
                         end
@@ -322,7 +318,6 @@ local function supereel()
     PlayerGui.ChildAdded:Connect(function(child)
         if child.Name == "reel" then
             task.spawn(function()
-                FreezeCharacter(true)
                 while child.Parent == PlayerGui do
                     if _G.Config.InstantReel then
                         local Bar = child:FindFirstChild("bar")
@@ -333,7 +328,6 @@ local function supereel()
                     end
                     task.wait(0)
                 end
-                FreezeCharacter(false)
             end)
         end
     end)
@@ -364,7 +358,7 @@ local function dbgwarn(message)
 end
 local function Shake()
     local function MountShakeUI(ShakeUI)
-        local SafeZone = ShakeUI:WaitForChild("safezone", 1) -- Reduced timeout for faster response
+        local SafeZone = ShakeUI:WaitForChild("safezone") -- Reduced timeout for faster response
         
         if not SafeZone then
             warn("Unable to mount shake UI.")
@@ -1417,28 +1411,28 @@ AutoTotemToggle:OnChanged(
         end
     end    
 
-    -- local selectedPlayer = "None"
-    -- local teleportPlayerDropdown
+    local selectedPlayer = "None"
+    local teleportPlayerDropdown
 
-    -- local function updatePlayerDropdown()
-    --     if teleportPlayerDropdown then
-    --         RemoveDropdown(teleportPlayerDropdown)  -- Hapus dropdown lama
-    --     end
-    --     teleportPlayerDropdown = Dropdown(Main, "Teleport Player", "None", getPlayerNames(), false, function(selected)
-    --         selectedPlayer = selected
-    --     end)
-    -- end
+    local function updatePlayerDropdown()
+        if teleportPlayerDropdown then
+            RemoveDropdown(teleportPlayerDropdown)  -- Hapus dropdown lama
+        end
+        teleportPlayerDropdown = Dropdown(Main, "Teleport Player", "None", getPlayerNames(), false, function(selected)
+            selectedPlayer = selected
+        end)
+    end
 
-    -- updatePlayerDropdown()
+    updatePlayerDropdown()
 
-    -- local teleportPlayerButton = Button(Main, "Teleport ke Pemain", function()
-    --     if selectedPlayer ~= "None" then
-    --         teleportToPlayer(selectedPlayer)
-    --     end
-    -- end)
+    local teleportPlayerButton = Button(Main, "Teleport ke Pemain", function()
+        if selectedPlayer ~= "None" then
+            teleportToPlayer(selectedPlayer)
+        end
+    end)
 
-    -- Players.PlayerAdded:Connect(updatePlayerDropdown)
-    -- Players.PlayerRemoving:Connect(updatePlayerDropdown)
+    Players.PlayerAdded:Connect(updatePlayerDropdown)
+    Players.PlayerRemoving:Connect(updatePlayerDropdown)
     local DeleteBackpackUiToggle = SettingsSection:AddToggle("DeleteBackpackUi", {
         Title = "Delete Backpack UI",
         Default = false
@@ -1543,6 +1537,39 @@ AutoTotemToggle:OnChanged(
     })
     Protect:OnChanged(function(value)
         toggleStreamerMode(value)
+    end)
+    local ToggleDisableAnimator = SettingsSection:AddToggle("ToggleDisableAnimator", {Title = "Disable Animation", Default = false})
+
+    local isDisableAnimator = false
+
+    local function DisableAnimator(state)
+        isDisableAnimator = state
+        local Character = LocalPlayer.Character
+        if Character then
+            local Humanoid = Character:FindFirstChild("Humanoid")
+            local Animator = Humanoid and Humanoid:FindFirstChild("Animator")
+            local AnimateScript = Character:FindFirstChild("Animate")
+
+            if isDisableAnimator then
+                if Animator then
+                    Animator:Destroy()
+                end
+                if AnimateScript then
+                    AnimateScript.Disabled = true
+                end
+            else
+                if Humanoid and not Humanoid:FindFirstChild("Animator") then
+                    local NewAnimator = Instance.new("Animator")
+                    NewAnimator.Parent = Humanoid
+                end
+                if AnimateScript then
+                    AnimateScript.Disabled = false
+                end
+            end
+        end
+    end
+    ToggleDisableAnimator:OnChanged(function()
+        DisableAnimator(ToggleDisableAnimator.Value)
     end)
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -1704,6 +1731,30 @@ task.spawn(function()
     end
 end)
 
+local NetFolder = ReplicatedStorage:FindFirstChild("packages") and ReplicatedStorage.packages:FindFirstChild("Net")
+local EventsFolder = ReplicatedStorage:FindFirstChild("events")
+if NetFolder and EventsFolder then
+    local RequestCutsceneSync = NetFolder:FindFirstChild("RE/RequestCutsceneSync")
+    local RequestCutscene = NetFolder:FindFirstChild("RE/RequestCutscene")
+    local RequestCutNotif = EventsFolder:FindFirstChild("seraphiclaser")
+
+    if RequestCutsceneSync then
+        RequestCutsceneSync:Destroy()
+        print("Deleted RequestCutsceneSync")
+    end
+
+    if RequestCutscene then
+        RequestCutscene:Destroy()
+        print("Deleted RequestCutscene")
+    end
+
+    if RequestCutNotif then
+        RequestCutNotif:Destroy()
+        print("Deleted RequestCutNotif")
+    end
+else
+    warn("Net folder not found in ReplicatedStorage")
+end
 RunService.Heartbeat:Connect(function()
     local fishUI = workspace:FindFirstChild("active")
     if fishUI then
