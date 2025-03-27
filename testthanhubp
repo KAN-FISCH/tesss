@@ -15,6 +15,7 @@ local games = {
 local function executeScript(script_key)
     if games[creator] then
         if script_key then
+            script_key = script_key
             loadstring(game:HttpGet(games[creator].premium))()
         else
             loadstring(game:HttpGet(games[creator].free))()
