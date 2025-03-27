@@ -20,7 +20,6 @@ local function executeScript(script_key)
             loadstring(game:HttpGet(games[creator].free))()
         end
     else
-        warn("[❌] Game ini tidak didukung!")
         return
     end
 end
