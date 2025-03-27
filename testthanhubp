@@ -93,31 +93,29 @@ end
 local function runScript(apiKey)
     local hwid = game:GetService("RbxAnalyticsService"):GetClientId()
     print("HWID Anda:", hwid)
-    if not searchHwid(apiKey, hwid) then
-        if not validateKey(apiKey, hwid) then
-            warn("Validasi gagal. Skrip dihentikan.")
-            LocalPlayer:Kick("KEY tidak valid.")
-            return
+
+    local success, err = pcall(function()
+        if not searchHwid(apiKey, hwid) then
+            if not validateKey(apiKey, hwid) then
+                warn("Validasi gagal. Skrip dihentikan.")
+                LocalPlayer:Kick("KEY tidak valid.")
+                error("Validasi gagal.") 
+            end
         end
+    end)
+
+    if not success then
+        return
     end
+
     print("[🔒] Menjalankan skrip premium...")
 end
 
-function executeScript()
-    if script_key then
-        local success, err = pcall(function()
-            runScript(script_key)
-        end)
-
-        if not success then
-            warn("[❌] Terjadi kesalahan:", err)
-            return
-        end
-    else
-        return
-    end
+-- Contoh eksekusi
+if script_key then
+    runScript(script_key)
+else
+    warn("[❌] script_key tidak ditemukan!")
+    LocalPlayer:Kick("KEY tidak valid.")
 end
-
-executeScript()
-
-print("tes")
+print("✅ Validasi sukses, lanjut ke eksekusi lain...")
