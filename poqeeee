@@ -282,7 +282,9 @@ local function dropbobber()
                                 end
                                 local randomValue = math.random() * (99 - 96.1) + 96.1
                                 Rod.events.cast:FireServer(randomValue, 1)
-                                task.wait(0.1)
+                                FreazeChar(true)
+                                FreazeChar(false)
+                                task.wait(0)
                             end
                         end
                     else
@@ -303,7 +305,9 @@ local function dropbobber()
                                 end
                                 local randomValue = math.random() * (99 - 96.1) + 96.1
                                 Rod.events.cast:FireServer(randomValue, 1)
-                                task.wait(0.1)
+                                FreazeChar(true)
+                                FreazeChar(false)
+                                task.wait(0)
                             end
                         end
                     end
@@ -1540,39 +1544,6 @@ AutoTotemToggle:OnChanged(
     Protect:OnChanged(function(value)
         toggleStreamerMode(value)
     end)
-    local ToggleDisableAnimator = SettingsSection:AddToggle("ToggleDisableAnimator", {Title = "Disable Animation", Default = false})
-
-    local isDisableAnimator = false
-
-    local function DisableAnimator(state)
-        isDisableAnimator = state
-        local Character = LocalPlayer.Character
-        if Character then
-            local Humanoid = Character:FindFirstChild("Humanoid")
-            local Animator = Humanoid and Humanoid:FindFirstChild("Animator")
-            local AnimateScript = Character:FindFirstChild("Animate")
-
-            if isDisableAnimator then
-                if Animator then
-                    Animator:Destroy()
-                end
-                if AnimateScript then
-                    AnimateScript.Disabled = true
-                end
-            else
-                if Humanoid and not Humanoid:FindFirstChild("Animator") then
-                    local NewAnimator = Instance.new("Animator")
-                    NewAnimator.Parent = Humanoid
-                end
-                if AnimateScript then
-                    AnimateScript.Disabled = false
-                end
-            end
-        end
-    end
-    ToggleDisableAnimator:OnChanged(function()
-        DisableAnimator(ToggleDisableAnimator.Value)
-    end)
     
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -1745,6 +1716,22 @@ game:GetService("RunService").Heartbeat:Connect(function()
         end
     end
 end)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Navigate to the target folder
+local fishingFolder = ReplicatedStorage:FindFirstChild("resources")
+    and ReplicatedStorage.resources:FindFirstChild("sounds")
+    and ReplicatedStorage.resources.sounds:FindFirstChild("sfx")
+    and ReplicatedStorage.resources.sounds.sfx:FindFirstChild("fishing")
+
+-- Delete the folder if it exists
+if fishingFolder then
+    fishingFolder:Destroy()
+    print("Fishing folder deleted successfully.")
+else
+    warn("Fishing folder not found.")
+end
+
 local NetFolder = ReplicatedStorage:FindFirstChild("packages") and ReplicatedStorage.packages:FindFirstChild("Net")
 local EventsFolder = ReplicatedStorage:FindFirstChild("events")
 if NetFolder and EventsFolder then
