@@ -12,7 +12,7 @@ local games = {
     }
 }
 
-return function(script_key)
+local function executeScript(script_key)
     if games[creator] then
         if script_key and script_key ~= "" then
             loadstring(game:HttpGet(games[creator].premium))()
@@ -21,5 +21,8 @@ return function(script_key)
         end
     else
         warn("[❌] Game ini tidak didukung!")
+        return
     end
 end
+
+executeScript(script_key)
