@@ -108,6 +108,7 @@ end
 function executeScript(script_key)
     if script_key then
         runScript(script_key)
+        print(script_key)
     end
 end
 
