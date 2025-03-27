@@ -7,8 +7,8 @@ local creator = MarketplaceService:GetProductInfo(game.PlaceId).Creator.CreatorT
 
 local games = {
     [7381705] = {
-        free = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/thantzy/freesc/refs/heads/main/ThanHubSC"))()',
-        premium = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/thantzy/premSC/refs/heads/main/SCprem"))()',
+        free = "https://raw.githubusercontent.com/thantzy/freesc/refs/heads/main/ThanHubSC",
+        premium = "https://raw.githubusercontent.com/thantzy/premSC/refs/heads/main/SCprem",
     }
 }
 
@@ -20,6 +20,7 @@ local function executeScript(script_key)
             loadstring(game:HttpGet(games[creator].free))()
         end
     else
+        warn("[❌] Game ini tidak didukung!")
         return
     end
 end
