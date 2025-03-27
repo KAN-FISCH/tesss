@@ -318,6 +318,7 @@ local function supereel()
     PlayerGui.ChildAdded:Connect(function(child)
         if child.Name == "reel" then
             task.spawn(function()
+                FreezeCharacter(true)
                 while child.Parent == PlayerGui do
                     if _G.Config.InstantReel then
                         local Bar = child:FindFirstChild("bar")
@@ -328,6 +329,7 @@ local function supereel()
                     end
                     task.wait(0)
                 end
+                FreezeCharacter(false)
             end)
         end
     end)
@@ -1571,6 +1573,7 @@ AutoTotemToggle:OnChanged(
     ToggleDisableAnimator:OnChanged(function()
         DisableAnimator(ToggleDisableAnimator.Value)
     end)
+    
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")
@@ -1730,7 +1733,18 @@ task.spawn(function()
         task.wait(100)
     end
 end)
+game:GetService("RunService").Heartbeat:Connect(function()
+    local Character = LocalPlayer.Character
+    if Character then
+        local Humanoid = Character:FindFirstChild("Humanoid")
+        local Animator = Humanoid and Humanoid:FindFirstChild("Animator")
 
+        if isDisableAnimator and not Animator then
+            local NewAnimator = Instance.new("Animator")
+            NewAnimator.Parent = Humanoid
+        end
+    end
+end)
 local NetFolder = ReplicatedStorage:FindFirstChild("packages") and ReplicatedStorage.packages:FindFirstChild("Net")
 local EventsFolder = ReplicatedStorage:FindFirstChild("events")
 if NetFolder and EventsFolder then
