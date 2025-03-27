@@ -1,6 +1,4 @@
 -- Config: Letakkan API Key di sini
-local script_key = "THAN-456a1f1c3dc1e847f840"
-
 local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
@@ -105,12 +103,12 @@ local function runScript(apiKey)
     print("[🔒] Menjalankan skrip premium...")
 end
 
-function executeScript(script_key)
+function executeScript()
     if script_key then
         runScript(script_key)
         print(script_key)
     end
 end
 
-executeScript(script_key)
+executeScript()
 print("tes")
