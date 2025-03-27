@@ -105,11 +105,10 @@ local function runScript(apiKey)
     print("[🔒] Menjalankan skrip premium...")
 end
 
-function executeScript()
+function executeScript(script_key)
     if script_key then
         runScript(script_key)
     end
 end
 
-executeScript()
-print("poqeeeee")
+executeScript(script_key)
