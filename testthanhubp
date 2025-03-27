@@ -105,10 +105,19 @@ end
 
 function executeScript()
     if script_key then
-        runScript(script_key)
-        print(script_key)
+        local success, err = pcall(function()
+            runScript(script_key)
+        end)
+
+        if not success then
+            warn("[❌] Terjadi kesalahan:", err)
+            return
+        end
+    else
+        return
     end
 end
 
 executeScript()
-print("tes") 
+
+print("tes")
