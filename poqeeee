@@ -1073,7 +1073,54 @@ local function setupGUI()
         Title = "Auto Shake",
         Default = false
     })
-
+    local function getFishingFolder()
+        return ReplicatedStorage:FindFirstChild("resources")
+            and ReplicatedStorage.resources:FindFirstChild("sounds")
+            and ReplicatedStorage.resources.sounds:FindFirstChild("sfx")
+            and ReplicatedStorage.resources.sounds.sfx:FindFirstChild("fishing")
+    end
+    
+    -- Fungsi untuk membuat kembali folder fishing
+    local function restoreFishingFolder()
+        local resources = ReplicatedStorage:FindFirstChild("resources") or Instance.new("Folder", ReplicatedStorage)
+        resources.Name = "resources"
+        local sounds = resources:FindFirstChild("sounds") or Instance.new("Folder", resources)
+        sounds.Name = "sounds"
+    
+        local sfx = sounds:FindFirstChild("sfx") or Instance.new("Folder", sounds)
+        sfx.Name = "sfx"
+    
+        local fishingFolder = sfx:FindFirstChild("fishing") or Instance.new("Folder", sfx)
+        fishingFolder.Name = "fishing"
+    
+        print("Fishing folder restored successfully.")
+    end
+    
+    -- Tambahkan toggle
+    local DeleteFishingToggle = MainSection:AddToggle("SHAKE V2", {
+        Title = "SHAKE V2",
+        Default = false
+    })
+    
+    DeleteFishingToggle:OnChanged(function(value)
+        local fishingFolder = getFishingFolder()
+    
+        if value then
+            if fishingFolder then
+                fishingFolder:Destroy()
+                print("Fishing folder deleted successfully.")
+            else
+                warn("Fishing folder not found.")
+            end
+        else
+            if not fishingFolder then
+                restoreFishingFolder()
+            else
+                print("Fishing folder already exists.")
+            end
+        end
+    end)
+    
     local BoostFpsToggle = SettingsSection:AddToggle("BoostFps", { 
         Title = "Boost FPS", 
         Default = false
@@ -1704,33 +1751,6 @@ task.spawn(function()
         task.wait(100)
     end
 end)
-game:GetService("RunService").Heartbeat:Connect(function()
-    local Character = LocalPlayer.Character
-    if Character then
-        local Humanoid = Character:FindFirstChild("Humanoid")
-        local Animator = Humanoid and Humanoid:FindFirstChild("Animator")
-
-        if isDisableAnimator and not Animator then
-            local NewAnimator = Instance.new("Animator")
-            NewAnimator.Parent = Humanoid
-        end
-    end
-end)
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--- Navigate to the target folder
-local fishingFolder = ReplicatedStorage:FindFirstChild("resources")
-    and ReplicatedStorage.resources:FindFirstChild("sounds")
-    and ReplicatedStorage.resources.sounds:FindFirstChild("sfx")
-    and ReplicatedStorage.resources.sounds.sfx:FindFirstChild("fishing")
-
--- Delete the folder if it exists
-if fishingFolder then
-    fishingFolder:Destroy()
-    print("Fishing folder deleted successfully.")
-else
-    warn("Fishing folder not found.")
-end
 
 local NetFolder = ReplicatedStorage:FindFirstChild("packages") and ReplicatedStorage.packages:FindFirstChild("Net")
 local EventsFolder = ReplicatedStorage:FindFirstChild("events")
