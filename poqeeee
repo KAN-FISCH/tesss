@@ -447,13 +447,10 @@ local function GetRod()
     return Rod
 end
 local function EquipRod()
-    local Rod = GetRod()
-    if Rod then
-        local args = { [1] = Rod }
-        BackpackEquipEvent:FireServer(unpack(args))
-    else
-        warn("Rod tidak ditemukan di Character atau Backpack!")
-    end
+    local rod = backpack:FindFirstChild(RodName)
+    if rod then
+           LocalPlayer.Character.Humanoid:EquipTool(rod)
+     end
 end
 
 --ZONE EVENT
