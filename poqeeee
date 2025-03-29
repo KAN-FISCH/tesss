@@ -447,12 +447,13 @@ local function GetRod()
     return Rod
 end
 local function EquipRod()
-    local rod = backpack:FindFirstChild(RodName)
-    if rod then
-           LocalPlayer.Character.Humanoid:EquipTool(rod)
-     end
+    local Rod = GetRod()
+    if Rod then
+        LocalPlayer.Character.Humanoid:EquipTool(Rod)
+    else
+        warn("Rod tidak ditemukan di Character atau Backpack!")
+    end
 end
-
 --ZONE EVENT
 local teleportEnabled = false
 local previousPosition = nil
