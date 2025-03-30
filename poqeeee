@@ -469,15 +469,22 @@ end
 
 -- Toggle Remove Fog
 local function toggleRemoveFog(state)
-    fogRemoved = state
-    if fogRemoved then
-        Lighting.FogEnd = 100000 -- Hilangkan kabut
-        Lighting.FogStart = 0
+    if state then
+        Lighting.FogEnd = 1e9 -- Hilangkan kabut sepenuhnya
+        local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
+        if atmosphere then
+            atmosphere:Destroy()
+        end
     else
         Lighting.FogEnd = 1000 -- Kembalikan ke default
         Lighting.FogStart = 200
+        if not Lighting:FindFirstChildOfClass("Atmosphere") then
+            local newAtmosphere = Instance.new("Atmosphere")
+            newAtmosphere.Parent = Lighting
+        end
     end
 end
+
 
 local function GetRod()
     local Rod = LocalPlayer.Character:FindFirstChild(RodName) or LocalPlayer.Backpack:FindFirstChild(RodName)
@@ -1066,7 +1073,7 @@ local function setupGUI()
         end
     })
 
-    MiscSection:AddToggle("RemoveFog", {
+    SettingsSection:AddToggle("RemoveFog", {
         Title = "Remove Fog",
         Description = "Enable/Disable Fog Removal",
         Default = false,
