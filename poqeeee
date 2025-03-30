@@ -485,23 +485,6 @@ local function toggleRemoveFog(state)
     end
 end
 
-local UserInputService = game:GetService("UserInputService")
-local VirtualInputManager = game:GetService("VirtualInputManager")
-
-local autoOpenBaitEnabled = false
-
-local function autoOpenBait(state)
-    autoOpenBaitEnabled = state
-    if autoOpenBaitEnabled then
-        task.spawn(function()
-            while autoOpenBaitEnabled do
-                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, nil) -- Tekan tombol 'E'
-                task.wait(0.1) -- Delay antara setiap pembukaan bait
-            end
-        end)
-    end
-end
-
 local function GetRod()
     local Rod = LocalPlayer.Character:FindFirstChild(RodName) or LocalPlayer.Backpack:FindFirstChild(RodName)
     return Rod
@@ -1240,13 +1223,29 @@ local function setupGUI()
             AutoSell()
         end
     end)
-    AutosSection:AddToggle("AutoOpenBait", {
-         Title = "Auto Open Bait",
-         Default = false,
-         Callback = function(state)
-             autoOpenBait(state)
-         end
-    })
+    local autoOpenItemEnabled = false
+
+AutosSection:AddToggle("AutoOpenBait", {
+    Title = "Auto Open Held Item",
+    Default = false,
+    Description = "",
+    Callback = function(isEnabled)
+        autoOpenItemEnabled = isEnabled
+        task.spawn(function()
+            while autoOpenItemEnabled do
+                local item = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+                if item then
+                    item:Activate()
+                else
+                    autoOpenItemEnabled = false
+                    return
+                end
+                task.wait()
+            end
+        end)
+    end,
+})
+
     local AutoAuroraTotem = false
 local autoTotemThread = nil
 
