@@ -1057,23 +1057,24 @@ local function setupGUI()
             LocalPlayer.Character:WaitForChild("Humanoid").Health = 0
         end
     })
-    MiscSection:AddToggle({
-        Title = "No Clip",
-        Description = "Enable/Disable No Clip",
-        Default = false,
-        Callback = function(state)
-             toggleNoClip(state)
-        end
-    })
+    MiscSection:AddToggle("NoClip", {
+    Title = "No Clip",
+    Description = "Enable/Disable No Clip",
+    Default = false,
+    Callback = function(state)
+        toggleNoClip(state)
+    end
+})
 
-    MiscSection:AddToggle({
-         Title = "Remove Fog",
-         Description = "Enable/Disable Fog Removal",
-         Default = false,
-         Callback = function(state)
-            toggleRemoveFog(state)
-         end
-     })
+-- Toggle Remove Fog
+MiscSection:AddToggle("RemoveFog", {
+    Title = "Remove Fog",
+    Description = "Enable/Disable Fog Removal",
+    Default = false,
+    Callback = function(state)
+        toggleRemoveFog(state)
+    end
+})
      
     local RodDropdown = ShopItem:AddDropdown("RodSelection", {
         Title = "Select a Rod",
