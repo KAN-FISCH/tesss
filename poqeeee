@@ -1226,7 +1226,7 @@ local function setupGUI()
     local autoOpenItemEnabled = false
 
 AutosSection:AddToggle("AutoOpenBait", {
-    Title = "Auto Open Held Item",
+    Title = "Auto Open Bait",
     Default = false,
     Description = "",
     Callback = function(isEnabled)
