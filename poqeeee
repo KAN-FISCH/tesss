@@ -1013,6 +1013,13 @@ local function setupGUI()
             end
         end
     })
+    MiscSection:AddButton({
+        Title = "Reset Player",
+        Description = "Click this button to Reset Player", 
+        Callback = function()
+            LocalPlayer.Character:WaitForChild("Humanoid").Health = 0
+        end
+    })
     local RodDropdown = ShopItem:AddDropdown("RodSelection", {
         Title = "Select a Rod",
         Description = "Choose a fishing rod from the shop to purchase.", 
