@@ -442,6 +442,43 @@ local function Shake()
     end
     return uiAddedConnection
 end
+
+local noClipEnabled = false
+local fogRemoved = false
+local noClipConnection
+
+local function toggleNoClip(state)
+    noClipEnabled = state
+    if noClipEnabled then
+        noClipConnection = RunService.Stepped:Connect(function()
+            if LocalPlayer.Character then
+                for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
+                end
+            end
+        end)
+    else
+        if noClipConnection then
+            noClipConnection:Disconnect()
+            noClipConnection = nil
+        end
+    end
+end
+
+-- Toggle Remove Fog
+local function toggleRemoveFog(state)
+    fogRemoved = state
+    if fogRemoved then
+        Lighting.FogEnd = 100000 -- Hilangkan kabut
+        Lighting.FogStart = 0
+    else
+        Lighting.FogEnd = 1000 -- Kembalikan ke default
+        Lighting.FogStart = 200
+    end
+end
+
 local function GetRod()
     local Rod = LocalPlayer.Character:FindFirstChild(RodName) or LocalPlayer.Backpack:FindFirstChild(RodName)
     return Rod
@@ -1020,6 +1057,24 @@ local function setupGUI()
             LocalPlayer.Character:WaitForChild("Humanoid").Health = 0
         end
     })
+    MiscSection:AddToggle({
+        Title = "No Clip",
+        Description = "Enable/Disable No Clip",
+        Default = false,
+        Callback = function(state)
+             toggleNoClip(state)
+        end
+    })
+
+    MiscSection:AddToggle({
+         Title = "Remove Fog",
+         Description = "Enable/Disable Fog Removal",
+         Default = false,
+         Callback = function(state)
+            toggleRemoveFog(state)
+         end
+     })
+     
     local RodDropdown = ShopItem:AddDropdown("RodSelection", {
         Title = "Select a Rod",
         Description = "Choose a fishing rod from the shop to purchase.", 
