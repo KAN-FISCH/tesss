@@ -1013,13 +1013,75 @@ local function setupGUI()
             end
         end
     })
-    MiscSection:AddButton({
-        Title = "Reset Player",
-        Description = "Click this button to Reset Player", 
-        Callback = function()
-            LocalPlayer.Character:WaitForChild("Humanoid").Health = 0
+local noClipEnabled = false
+local fogRemoved = false
+local noClipConnection
+
+-- Fungsi untuk mengaktifkan / menonaktifkan No Clip
+local function toggleNoClip()
+    noClipEnabled = not noClipEnabled
+    if noClipEnabled then
+        noClipConnection = game:GetService("RunService").Stepped:Connect(function()
+            if LocalPlayer.Character then
+                for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") and v.CanCollide then
+                        v.CanCollide = false
+                    end
+                end
+            end
+        end)
+    else
+        if noClipConnection then
+            noClipConnection:Disconnect()
+            noClipConnection = nil
         end
-    })
+    end
+end
+
+-- Fungsi untuk menghapus / mengembalikan kabut
+local function toggleFog()
+    fogRemoved = not fogRemoved
+    local Lighting = game:GetService("Lighting")
+    if fogRemoved then
+        Lighting.FogEnd = 100000 -- Hilangkan kabut
+        Lighting.FogStart = 0
+    else
+        Lighting.FogEnd = 1000  -- Kembalikan ke default
+        Lighting.FogStart = 200
+    end
+end
+
+-- Tombol Reset Player
+MiscSection:AddButton({
+    Title = "Reset Player",
+    Description = "Click to Reset Player",
+    Callback = function()
+        LocalPlayer.Character:WaitForChild("Humanoid").Health = 0
+    end
+})
+
+-- Toggle No Clip
+MiscSection:AddToggle({
+    Title = "No Clip",
+    Description = "Enable or Disable No Clip",
+    Default = false,
+    Callback = function(state)
+        noClipEnabled = state
+        toggleNoClip()
+    end
+})
+
+-- Toggle Remove Fog
+SettingsSection:AddToggle({
+    Title = "Remove Fog",
+    Description = "Enable or Disable Fog Removal",
+    Default = false,
+    Callback = function(state)
+        fogRemoved = state
+        toggleFog()
+    end
+})
+
     local RodDropdown = ShopItem:AddDropdown("RodSelection", {
         Title = "Select a Rod",
         Description = "Choose a fishing rod from the shop to purchase.", 
@@ -1027,7 +1089,6 @@ local function setupGUI()
         Multi = false,
         Default = nil,
     })
-    
     ShopItem:AddButton({
         Title = "Buy Selected Rod",
         Description = "Click this button to purchase the selected fishing rod.", 
