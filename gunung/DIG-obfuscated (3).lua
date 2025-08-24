@@ -7,9 +7,9 @@ local LocalPlayer = Players.LocalPlayer
 
 local request = (syn and syn.request) or (http and http.request) or request
 
-local searchHwidUrl = "http://api.thanhub.xyz/api/key/search-hwid"
-local validateKeyUrl = "http://api.thanhub.xyz/api/key/validate"
-local urlExecute = "http://api.thanhub.xyz/api/key/execute"
+local searchHwidUrl = "http://api.shieldteamhq.com/api/key/search-hwid"
+local validateKeyUrl = "http://api.shieldteamhq.com/api/key/validate"
+local urlExecute = "http://api.shieldteamhq.xyz/api/key/execute"
 
 
 local success, response = pcall(function()
