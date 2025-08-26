@@ -1868,6 +1868,11 @@ function Item:AddDropdown(Config)
     local Default = Config[5] or Config.Default or {}
     local Callback = Config[6] or Config.Callback or function() end
 
+    -- Ensure Default is always a table for internal consistency
+    if type(Default) ~= "table" then
+        Default = Default and {Default} or {}
+    end
+    
     local Funcs_Dropdown = {Value = Default, Options = Options}
 
     local Dropdown = Custom:Create("Frame", {
@@ -2121,7 +2126,13 @@ function Item:AddDropdown(Config)
     
         local DropdownValueTable = table.concat(Funcs_Dropdown.Value, ", ")
         OptionSelecting.Text = DropdownValueTable ~= "" and DropdownValueTable or "Select Options"
-        Callback(Funcs_Dropdown.Value)
+        
+        -- For single selection, pass the first value as string, for multi pass the table
+        if Multi then
+            Callback(Funcs_Dropdown.Value)
+        else
+            Callback(Funcs_Dropdown.Value[1] or "")
+        end
     end
 
     function Funcs_Dropdown:AddOption(OptionName)
