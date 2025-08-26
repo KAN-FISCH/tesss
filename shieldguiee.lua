@@ -51,7 +51,7 @@ local function OpenClose()
     BorderSizePixel = 1,
     Position = UDim2.new(0.1021, 0, 0.0743, 0),
     Size = UDim2.new(0, 59, 0, 49),
-    Image = "rbxassetid://85779221265543",
+    Image = "rbxassetid://138753512481971",
     Visible = false
   }, ScreenGui)
 
