@@ -8,7 +8,7 @@ local VirtualUser = game:GetService("VirtualUser")
 
 local Custom = {} do
   -- Modern gradient colors: Deep purple to dark blue
-  Custom.ColorRGB = Color3.fromRGB(138, 43, 226) -- BlueViolet primary
+  Custom.ColorRGB = Color3.fromRGB(25, 25, 112) -- BlueViolet primary
   Custom.AccentColor = Color3.fromRGB(75, 0, 130) -- Indigo accent
   Custom.DarkBlue = Color3.fromRGB(25, 25, 112) -- MidnightBlue
   Custom.BackgroundDark = Color3.fromRGB(12, 12, 25) -- Very dark blue-black
@@ -48,7 +48,7 @@ local function OpenClose()
   local Close_ImageButton = Custom:Create("ImageButton", {
     BackgroundColor3 = Custom.BackgroundDark,
     BorderColor3 = Custom.ColorRGB,
-    BorderSizePixel = 2,
+    BorderSizePixel = 1,
     Position = UDim2.new(0.1021, 0, 0.0743, 0),
     Size = UDim2.new(0, 59, 0, 49),
     Image = "rbxassetid://85779221265543",
