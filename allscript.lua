@@ -9,7 +9,8 @@ local placeScripts = {
     [123224294054165] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Atin.lua",
     [8735521924] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/DISX/shieldtcentaura-enc.lua",
     [86076978383613] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/huntyZomby.lua",
-    [103754275310547] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/huntyZomby.lua"
+    [103754275310547] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/huntyZomby.lua",
+    [128473079243102] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/arunika2.lua"
 }
 local currentPlaceId = game.PlaceId
 if placeScripts[currentPlaceId] then
