@@ -10,7 +10,8 @@ local placeScripts = {
     [8735521924] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/DISX/shieldtcentaura-enc.lua",
     [86076978383613] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/huntyZomby.lua",
     [103754275310547] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/huntyZomby.lua",
-    [128473079243102] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/arunika2.lua"
+    [128473079243102] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/arunika2.lua",
+    [14963184269] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Sumbing.lua"
 }
 local currentPlaceId = game.PlaceId
 if placeScripts[currentPlaceId] then
@@ -22,5 +23,5 @@ if placeScripts[currentPlaceId] then
         warn("Failed to execute script for place " .. currentPlaceId .. ": " .. result)
     end
 else
-    print("No script defined for place ID: " .. currentPlaceId)
+    player:Kick("⚠️ Game not supported for this script!")
 end
