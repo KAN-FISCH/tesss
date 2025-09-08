@@ -2,6 +2,7 @@ local placeScripts = {
     [86710642002144] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Talamau.lua",
     [2693023319] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Antartika.lua",
     [131716211654599] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/fish.lua",
+    [16732694052] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/fish.lua",
     [95777993643016] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Arunika.lua",
     [102234703920418] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Daun.lua",
     [89100225746834] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Tanditek.lua",
