@@ -6,6 +6,17 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local VirtualUser = game:GetService("VirtualUser")
 
+local function generateRandomString(length)
+    -- kumpulan karakter yang bisa dipakai (angka, huruf, simbol)
+    local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:',.<>/?`~"
+    local str = {}
+    for i = 1, length do
+        local randIndex = math.random(1, #chars)
+        str[i] = string.sub(chars, randIndex, randIndex)
+    end
+    return table.concat(str)
+end
+
 local Custom = {} do
   -- Modern gradient colors: Deep purple to dark blue
   Custom.ColorRGB = Color3.fromRGB(25, 25, 112) -- BlueViolet primary
@@ -41,7 +52,7 @@ Custom:EnabledAFK()
 
 local function OpenClose()
   local ScreenGui = Custom:Create("ScreenGui", {
-    Name = "OpenClose",
+    Name = generateRandomString(12),
     ZIndexBehavior = Enum.ZIndexBehavior.Sibling
   }, RunService:IsStudio() and Player.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")))
 
@@ -56,7 +67,7 @@ local function OpenClose()
   }, ScreenGui)
 
   local UICorner = Custom:Create("UICorner", {
-    Name = "MainCorner",
+    Name = generateRandomString(12),
     CornerRadius = UDim.new(0, 12),
   }, Close_ImageButton)
 
@@ -211,7 +222,7 @@ function Speed_Library:SetNotification(Config)
 
     local NotificationGui = Custom:Create("ScreenGui", {
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-        Name = "NotificationGui"
+        Name = generateRandomString(12)
     }, game:GetService("CoreGui"))
 
     local NotificationLayout = Custom:Create("Frame", {
@@ -219,7 +230,7 @@ function Speed_Library:SetNotification(Config)
         BackgroundTransparency = 0.999,
         Position = UDim2.new(1,-30,1,-30),
         Size = UDim2.new(0,320,1,0),
-        Name = "NotificationLayout"
+        Name = generateRandomString(12)
     }, NotificationGui)
 
     local Count = 0
@@ -402,7 +413,7 @@ function Speed_Library:CreateWindow(Config)
   local Funcs = {}
 
   local SpeedHubXGui = Custom:Create("ScreenGui", {
-    Name = "SpeedHubXGui",
+    Name = generateRandomString(12),
     ZIndexBehavior = Enum.ZIndexBehavior.Sibling
   }, RunService:IsStudio() and LocalPlayer.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")))
 
@@ -411,7 +422,7 @@ function Speed_Library:CreateWindow(Config)
     BorderSizePixel = 0,
     Size = UDim2.new(0, 455, 0, 350),
     ZIndex = 0,
-    Name = "DropShadowHolder",
+    Name = generateRandomString(12),
     Position = UDim2.new(0, (SpeedHubXGui.AbsoluteSize.X // 2 - 455 // 2), 0, (SpeedHubXGui.AbsoluteSize.Y // 2 - 350 // 2))
   }, SpeedHubXGui)
 
@@ -427,7 +438,7 @@ function Speed_Library:CreateWindow(Config)
     Position = UDim2.new(0.5, 0, 0.5, 0),
     Size = SizeUi,
     ZIndex = 0,
-    Name = "DropShadow"
+    Name = generateRandomString(12)
   }, DropShadowHolder)
 
   local Main = Custom:Create("Frame", {
@@ -438,7 +449,7 @@ function Speed_Library:CreateWindow(Config)
     BorderSizePixel = 0,
     Position = UDim2.new(0.5, 0, 0.5, 0),
     Size = SizeUi,
-    Name = "Main"
+    Name = generateRandomString(12)
   }, DropShadow)
 
   Custom:Create("UICorner", {
