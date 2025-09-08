@@ -67,7 +67,7 @@ local function OpenClose()
   }, ScreenGui)
 
   local UICorner = Custom:Create("UICorner", {
-    Name = generateRandomString(12)
+    Name = generateRandomString(12),
     CornerRadius = UDim.new(0, 12),
   }, Close_ImageButton)
 
