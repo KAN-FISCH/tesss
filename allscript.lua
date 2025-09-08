@@ -22,6 +22,4 @@ if placeScripts[currentPlaceId] then
     if not success then
         warn("Failed to execute script for place " .. currentPlaceId .. ": " .. result)
     end
-else
-    player:Kick("⚠️ Game not supported for this script!")
 end
