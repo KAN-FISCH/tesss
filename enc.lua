@@ -6,6 +6,17 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local VirtualUser = game:GetService("VirtualUser")
 
+local function generateRandomString(length)
+    -- kumpulan karakter yang bisa dipakai (angka, huruf, simbol)
+    local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:',.<>/?`~"
+    local str = {}
+    for i = 1, length do
+        local randIndex = math.random(1, #chars)
+        str[i] = string.sub(chars, randIndex, randIndex)
+    end
+    return table.concat(str)
+end
+
 local Custom = {} do
   -- Modern gradient colors: Deep purple to dark blue
   Custom.ColorRGB = Color3.fromRGB(25, 25, 112) -- BlueViolet primary
@@ -38,19 +49,10 @@ local Custom = {} do
 end
 
 Custom:EnabledAFK()
-local function generateRandomString(length)
-    -- kumpulan karakter yang bisa dipakai (angka, huruf, simbol)
-    local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:',.<>/?`~"
-    local str = {}
-    for i = 1, length do
-        local randIndex = math.random(1, #chars)
-        str[i] = string.sub(chars, randIndex, randIndex)
-    end
-    return table.concat(str)
-end
+
 local function OpenClose()
   local ScreenGui = Custom:Create("ScreenGui", {
-    Name = generateRandomString(10),
+    Name = generateRandomString(12),
     ZIndexBehavior = Enum.ZIndexBehavior.Sibling
   }, RunService:IsStudio() and Player.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")))
 
@@ -65,7 +67,7 @@ local function OpenClose()
   }, ScreenGui)
 
   local UICorner = Custom:Create("UICorner", {
-    Name = generateRandomString(10),
+    Name = generateRandomString(12)
     CornerRadius = UDim.new(0, 12),
   }, Close_ImageButton)
 
@@ -220,7 +222,7 @@ function Speed_Library:SetNotification(Config)
 
     local NotificationGui = Custom:Create("ScreenGui", {
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-        Name = generateRandomString(10),
+        Name = generateRandomString(12)
     }, game:GetService("CoreGui"))
 
     local NotificationLayout = Custom:Create("Frame", {
@@ -228,7 +230,7 @@ function Speed_Library:SetNotification(Config)
         BackgroundTransparency = 0.999,
         Position = UDim2.new(1,-30,1,-30),
         Size = UDim2.new(0,320,1,0),
-        Name = generateRandomString(10),
+        Name = generateRandomString(12)
     }, NotificationGui)
 
     local Count = 0
@@ -251,7 +253,7 @@ function Speed_Library:SetNotification(Config)
         BackgroundColor3 = Custom.BackgroundDark,
         BorderSizePixel = 0,
         Size = UDim2.new(1,0,0,150),
-        Name = generateRandomString(10),
+        Name = "NotificationFrame",
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(0,1),
         Position = UDim2.new(0,0,1,-(_Count))
@@ -262,7 +264,7 @@ function Speed_Library:SetNotification(Config)
         BorderSizePixel = 0,
         Position = UDim2.new(0,400,0,0),
         Size = UDim2.new(1,0,1,0),
-        Name = generateRandomString(10),
+        Name = "NotificationFrameReal"
     }, NotificationFrame)
 
     Custom:Create("UICorner",{CornerRadius=UDim.new(0,12)}, NotificationFrameReal)
@@ -411,7 +413,7 @@ function Speed_Library:CreateWindow(Config)
   local Funcs = {}
 
   local SpeedHubXGui = Custom:Create("ScreenGui", {
-    Name = generateRandomString(10),
+    Name = generateRandomString(12),
     ZIndexBehavior = Enum.ZIndexBehavior.Sibling
   }, RunService:IsStudio() and LocalPlayer.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")))
 
@@ -420,7 +422,7 @@ function Speed_Library:CreateWindow(Config)
     BorderSizePixel = 0,
     Size = UDim2.new(0, 455, 0, 350),
     ZIndex = 0,
-    Name = generateRandomString(10),
+    Name = generateRandomString(12),
     Position = UDim2.new(0, (SpeedHubXGui.AbsoluteSize.X // 2 - 455 // 2), 0, (SpeedHubXGui.AbsoluteSize.Y // 2 - 350 // 2))
   }, SpeedHubXGui)
 
@@ -436,7 +438,7 @@ function Speed_Library:CreateWindow(Config)
     Position = UDim2.new(0.5, 0, 0.5, 0),
     Size = SizeUi,
     ZIndex = 0,
-    Name = generateRandomString(10),
+    Name = generateRandomString(12)
   }, DropShadowHolder)
 
   local Main = Custom:Create("Frame", {
@@ -447,7 +449,7 @@ function Speed_Library:CreateWindow(Config)
     BorderSizePixel = 0,
     Position = UDim2.new(0.5, 0, 0.5, 0),
     Size = SizeUi,
-    Name = generateRandomString(10),
+    Name = generateRandomString(12)
   }, DropShadow)
 
   Custom:Create("UICorner", {
@@ -477,7 +479,7 @@ function Speed_Library:CreateWindow(Config)
     BorderColor3 = Color3.fromRGB(0, 0, 0),
     BorderSizePixel = 0,
     Size = UDim2.new(1, 0, 0, 38),
-    Name = generateRandomString(10),
+    Name = "Top"
   }, Main)
 
   -- Top bar gradient
@@ -544,7 +546,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     BorderSizePixel = 0,
     Position = UDim2.new(1, -8, 0.5, 0),
     Size = UDim2.new(0, 25, 0, 25),
-    Name = generateRandomString(10),
+    Name = "Close"
   }, Top)
 
   local ImageLabel1 = Custom:Create("ImageLabel", {
@@ -571,7 +573,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     BorderSizePixel = 0,
     Position = UDim2.new(1, -42, 0.5, 0),
     Size = UDim2.new(0, 25, 0, 25),
-    Name = generateRandomString(10),
+    Name = "Min"
   }, Top)
 
   Custom:Create("ImageLabel", {
@@ -593,7 +595,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     BorderSizePixel = 0,
     Position = UDim2.new(0, 9, 0, 50),
     Size = UDim2.new(0, TabWidth, 1, -59),
-    Name = generateRandomString(10),
+    Name = "LayersTab"
   }, Main)
 
   Custom:Create("UICorner", {
@@ -623,7 +625,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     BorderSizePixel = 0,
     Position = UDim2.new(0.5, 0, 0, 38),
     Size = UDim2.new(1, 0, 0, 2),
-    Name = generateRandomString(10),
+    Name = "DecideFrame"
   }, Main)
 
   local Layers = Custom:Create("Frame", {
@@ -633,7 +635,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     BorderSizePixel = 0,
     Position = UDim2.new(0, TabWidth + 18, 0, 50),
     Size = UDim2.new(1, -(TabWidth + 9 + 18), 1, -59),
-    Name = generateRandomString(10),
+    Name = "Layers"
   }, Main)
 
   Custom:Create("UICorner", {
@@ -668,7 +670,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     BorderColor3 = Color3.fromRGB(0, 0, 0),
     BorderSizePixel = 0,
     Size = UDim2.new(1, 0, 0, 30),
-    Name = generateRandomString(10),
+    Name = "NameTab"
   }, Layers)
 
   Custom:Create("UIStroke", {
@@ -686,16 +688,16 @@ local TextLabel1 = Custom:Create("TextLabel", {
     ClipsDescendants = true,
     Position = UDim2.new(0, 0, 1, 0),
     Size = UDim2.new(1, 0, 1, -33),
-    Name = generateRandomString(10),
+    Name = "LayersReal"
   }, Layers)
 
   local LayersFolder = Custom:Create("Folder", {
-    Name = generateRandomString(10),
+    Name = "LayersFolder"
   }, LayersReal)
 
   local LayersPageLayout = Custom:Create("UIPageLayout", {
     SortOrder = Enum.SortOrder.LayoutOrder,
-    Name = generateRandomString(10),
+    Name = "LayersPageLayout",
     TweenTime = 0.5,
     EasingDirection = Enum.EasingDirection.InOut,
     EasingStyle = Enum.EasingStyle.Quad
@@ -711,7 +713,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     BorderColor3 = Color3.fromRGB(0, 0, 0),
     BorderSizePixel = 0,
     Size = UDim2.new(1, 0, 1, -10),
-    Name = generateRandomString(10),
+    Name = "ScrollTab"
   }, LayersTab)
 
   local UIListLayout = Custom:Create("UIListLayout", {
@@ -766,7 +768,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     Position = UDim2.new(1, 8, 1, 8),
     Size = UDim2.new(1, 154, 1, 54),
     Visible = false,
-    Name = generateRandomString(10),
+    Name = "MoreBlur"
   }, Layers)
 
   Custom:Create("UIGradient", {
@@ -783,7 +785,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     BorderSizePixel = 0,
     Size = UDim2.new(1, 0, 1, 0),
     ZIndex = 0,
-    Name = generateRandomString(10),
+    Name = "DropShadowHolder"
   }, MoreBlur)
 
   local DropShadow1 = Custom:Create("ImageLabel", {
@@ -798,7 +800,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     Position = UDim2.new(0.5, 0, 0.5, 0),
     Size = UDim2.new(1, 35, 1, 35),
     ZIndex = 0,
-    Name = generateRandomString(10),
+    Name = "DropShadow"
   }, DropShadowHolder1)
 
   Custom:Create("UICorner", {
@@ -815,7 +817,7 @@ local ConnectButton = Custom:Create("TextButton", {
 		BorderColor3 = Color3.fromRGB(0, 0, 0),
 		BorderSizePixel = 0,
 		Size = UDim2.new(1, 0, 1, 0),
-		Name = generateRandomString(10),
+		Name = "ConnectButton",
 	}, MoreBlur)
 
   local DropdownSelect = Custom:Create("Frame", {
@@ -826,7 +828,7 @@ local ConnectButton = Custom:Create("TextButton", {
     LayoutOrder = 1,
     Position = UDim2.new(1, 172, 0.5, 0),
     Size = UDim2.new(0, 160, 1, -16),
-    Name = generateRandomString(10),
+    Name = "DropdownSelect",
     ClipsDescendants = true,
   }, MoreBlur)
 
@@ -875,12 +877,12 @@ local ConnectButton = Custom:Create("TextButton", {
 		LayoutOrder = 1,
 		Position = UDim2.new(0.5, 0, 0.5, 0),
 		Size = UDim2.new(1, -10, 1, -10),
-		Name = generateRandomString(10),
+		Name = "DropdownSelectReal",
 		Parent = DropdownSelect
 	})
 
   local DropdownFolder = Custom:Create("Folder", {
-		Name = generateRandomString(10),
+		Name = "DropdownFolder",
 		Parent = DropdownSelectReal
 	})
 
@@ -890,7 +892,7 @@ local ConnectButton = Custom:Create("TextButton", {
     TweenTime = 0.01,
     SortOrder = Enum.SortOrder.LayoutOrder,
     Archivable = false,
-    Name = generateRandomString(10),
+    Name = "DropPageLayout",
     Parent = DropdownFolder
   })
 
@@ -912,7 +914,7 @@ local ConnectButton = Custom:Create("TextButton", {
 			BorderColor3 = Color3.fromRGB(0, 0, 0),
 			BorderSizePixel = 0,
 			Size = UDim2.new(1, 0, 1, 0),
-			Name = generateRandomString(10),
+			Name = "ScrolLayers",
 			Parent = LayersFolder
 		})
 
@@ -965,7 +967,7 @@ local ConnectButton = Custom:Create("TextButton", {
       BorderColor3 = Color3.fromRGB(0, 0, 0),
       BorderSizePixel = 0,
       Size = UDim2.new(1, 0, 1, 0),
-      Name = generateRandomString(10),
+      Name = "TabButton",
     }, Tab)
 
     local TabName = Custom:Create("TextLabel", {
@@ -980,7 +982,7 @@ local ConnectButton = Custom:Create("TextButton", {
       BorderSizePixel = 0,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 32, 0, 0),
-      Name = generateRandomString(10),
+      Name = "TabName",
     }, Tab)
 
     Custom:Create("UIStroke", {
@@ -998,7 +1000,7 @@ local ConnectButton = Custom:Create("TextButton", {
       BorderSizePixel = 0,
       Position = UDim2.new(0, 8, 0, 8),
       Size = UDim2.new(0, 18, 0, 18),
-      Name = generateRandomString(10),
+      Name = "FeatureImg",
     }, Tab)
 
     if CountTab == 0 then
@@ -1011,7 +1013,7 @@ local ConnectButton = Custom:Create("TextButton", {
         BorderSizePixel = 0,
         Position = UDim2.new(0, 3, 0, 12),
         Size = UDim2.new(0, 2, 0, 16),
-        Name = generateRandomString(10),
+        Name = "ChooseFrame",
       }, Tab)
   
       Custom:Create("UIStroke", {
@@ -1094,7 +1096,7 @@ local Sections, CountSection = {}, 0
         ClipsDescendants = true,
         LayoutOrder = CountSection,
         Size = UDim2.new(1, 0, 0, 35),
-        Name = generateRandomString(10),
+        Name = "Section"
       }, ScrolLayers)
   
       local SectionReal = Custom:Create("Frame", {
@@ -1106,7 +1108,7 @@ local Sections, CountSection = {}, 0
         LayoutOrder = 1,
         Position = UDim2.new(0.5, 0, 0, 0),
         Size = UDim2.new(1, 1, 0, 35),
-        Name = generateRandomString(10),
+        Name = "SectionReal"
       }, Section)
   
       Custom:Create("UICorner", {
@@ -1138,7 +1140,7 @@ local Sections, CountSection = {}, 0
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
-        Name = generateRandomString(10),
+        Name = "SectionButton"
       }, SectionReal)
   
       local FeatureFrame = Custom:Create("Frame", {
@@ -1149,7 +1151,7 @@ local Sections, CountSection = {}, 0
         BorderSizePixel = 0,
         Position = UDim2.new(1, -8, 0.5, 0),
         Size = UDim2.new(0, 20, 0, 20),
-        Name = generateRandomString(10),
+        Name = "FeatureFrame"
       }, SectionReal)
 
       Custom:Create("UICorner", {
@@ -1167,7 +1169,7 @@ local Sections, CountSection = {}, 0
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Rotation = -90,
         Size = UDim2.new(1, 4, 1, 4),
-        Name = generateRandomString(10),
+        Name = "FeatureImg"
       }, FeatureFrame)
   
       local SectionTitle = Custom:Create("TextLabel", {
@@ -1185,7 +1187,7 @@ local Sections, CountSection = {}, 0
         BorderSizePixel = 0,
         Position = UDim2.new(0, 12, 0, 0),
         Size = UDim2.new(1, -50, 1, 0),
-        Name = generateRandomString(10),
+        Name = "SectionTitle"
       }, SectionReal)
   
       local SectionDecideFrame = Custom:Create("Frame", {
@@ -1195,7 +1197,7 @@ local Sections, CountSection = {}, 0
         AnchorPoint = Vector2.new(0.5, 0),
         Position = UDim2.new(0.5, 0, 0, 38),
         Size = UDim2.new(0, 0, 0, 3),
-        Name = generateRandomString(10),
+        Name = "SectionDecideFrame"
       }, Section)
 
       Custom:Create("UICorner", {
@@ -1220,7 +1222,7 @@ local Sections, CountSection = {}, 0
         LayoutOrder = 1,
         Position = UDim2.new(0.5, 0, 0, 44),
         Size = UDim2.new(1, 0, 0, 100),
-        Name = generateRandomString(10),
+        Name = "SectionAdd"
       }, Section)
   
       Custom:Create("UICorner", {
@@ -1315,7 +1317,7 @@ function Item:AddParagraph(Config)
         BorderSizePixel = 0,
         LayoutOrder = ItemCount,
         Size = UDim2.new(1, 0, 0, 35),
-        Name = generateRandomString(10),
+        Name = "Paragraph",
     }, SectionAdd)
 
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, Paragraph)
@@ -1330,7 +1332,7 @@ function Item:AddParagraph(Config)
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 10, 0, 10),
         Size = UDim2.new(1, -16, 0, 13),
-        Name = generateRandomString(10),
+        Name = "ParagraphTitle",
     }, Paragraph)
 
     local ParagraphContent = Custom:Create("TextLabel", {
@@ -1344,7 +1346,7 @@ function Item:AddParagraph(Config)
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 10, 0, 23),
         Size = UDim2.new(1, -16, 0, 12),
-        Name = generateRandomString(10),
+        Name = "ParagraphContent",
         RichText = true -- penting
     }, Paragraph)
 
@@ -1394,7 +1396,7 @@ end
           BorderSizePixel = 1,
           LayoutOrder = ItemCount,
           Size = UDim2.new(1, 0, 0, 30),
-          Name = generateRandomString(10),
+          Name = "Seperator",
         }, SectionAdd)
       
         local SeperatorTitle = Custom:Create("TextLabel", {
@@ -1411,7 +1413,7 @@ end
           BorderSizePixel = 0,
           Position = UDim2.new(0, 12, 0, 0),
           Size = UDim2.new(1, -16, 1, 0),
-          Name = generateRandomString(10),
+          Name = "SeperatorTitle",
         }, Seperator)
         
         Custom:Create("UICorner", {
@@ -1445,7 +1447,7 @@ end
           BorderSizePixel = 0,
           LayoutOrder = ItemCount,
           Size = UDim2.new(1, 0, 0, 7),
-          Name = generateRandomString(10),
+          Name = "Line",
         }, SectionAdd)
     
         Custom:Create("UICorner", {CornerRadius = UDim.new(0, 3)}, Line)
@@ -1470,7 +1472,7 @@ end
         local Funcs_Button = {}
 
         local Button = Custom:Create("Frame", {
-					Name = generateRandomString(10),
+					Name = "Button",
 					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 					BackgroundTransparency = 0.935,
 					BorderSizePixel = 0,
@@ -1483,7 +1485,7 @@ end
         }, Button)
 
         Custom:Create("TextLabel", {
-					Name = generateRandomString(10),
+					Name = "ButtonTitle",
 					Font = Enum.Font.GothamBold,
 					Text = Title,
 					TextColor3 = Color3.fromRGB(231, 231, 231),
@@ -1498,7 +1500,7 @@ end
 				}, Button)
 
         local ButtonContent = Custom:Create("TextLabel", {
-					Name = generateRandomString(10),
+					Name = "ButtonContent",
 					Font = Enum.Font.GothamBold,
 					Text = Content,
 					TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -1531,7 +1533,7 @@ end
         end)
 
         local ButtonButton = Custom:Create("TextButton", {
-					Name = generateRandomString(10),
+					Name = "ButtonButton",
 					Font = Enum.Font.SourceSans,
 					Text = "",
 					TextColor3 = Color3.fromRGB(0, 0, 0),
@@ -1543,7 +1545,7 @@ end
 				}, Button)
 
         local FeatureFrame1 = Custom:Create("Frame", {
-					Name = generateRandomString(10),
+					Name = "FeatureFrame",
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 					BackgroundTransparency = 0.999,
@@ -1553,7 +1555,7 @@ end
 				}, Button)
 
         Custom:Create("ImageLabel", {
-          Name = generateRandomString(10),
+          Name = "FeatureImg",
           Image = Icon,
           AnchorPoint = Vector2.new(0.5, 0.5),
           BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -1583,7 +1585,7 @@ function Item:AddToggle(Config)
     local Funcs_Toggle = {Value = Default}
 
     local Toggle = Custom:Create("Frame", {
-       Name = generateRandomString(10),
+        Name = "Toggle",
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.935,
         BorderSizePixel = 0,
@@ -1594,7 +1596,7 @@ function Item:AddToggle(Config)
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, Toggle)
 
     local ToggleTitle = Custom:Create("TextLabel", {
-        Name = generateRandomString(10),
+        Name = "ToggleTitle",
         Font = Enum.Font.GothamBold,
         Text = Title,
         TextSize = 13,
@@ -1607,7 +1609,7 @@ function Item:AddToggle(Config)
     }, Toggle)
 
     local ToggleContent = Custom:Create("TextLabel", {
-        Name = generateRandomString(10),
+        Name = "ToggleContent",
         Font = Enum.Font.GothamBold,
         Text = Content,
         TextSize = 12,
@@ -1635,7 +1637,7 @@ function Item:AddToggle(Config)
     end)
 
     local ToggleButton = Custom:Create("TextButton", {
-        Name = generateRandomString(10),
+        Name = "ToggleButton",
         Font = Enum.Font.SourceSans,
         Text = "",
         BackgroundTransparency = 0.999,
@@ -1644,7 +1646,7 @@ function Item:AddToggle(Config)
 
     -- Buat Box / Toggle
     local FeatureFrame = Custom:Create("Frame", {
-        Name = generateRandomString(10),
+        Name = "FeatureFrame",
         AnchorPoint = Vector2.new(1, 0.5),
         BackgroundColor3 = (Mode == "Toggle") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 0, 0),
         BackgroundTransparency = (Mode == "Toggle") and 0.92 or 0.3,
@@ -1663,7 +1665,7 @@ function Item:AddToggle(Config)
     local ToggleCircle
     if Mode == "Toggle" then
         ToggleCircle = Custom:Create("Frame", {
-            Name = generateRandomString(10),
+            Name = "ToggleCircle",
             BackgroundColor3 = Color3.fromRGB(230, 230, 230),
             BorderSizePixel = 0,
             Size = UDim2.new(0, 14, 0, 14),
@@ -1727,7 +1729,7 @@ end
 					BorderSizePixel = 0,
 					LayoutOrder = ItemCount,
 					Size = UDim2.new(1, 0, 0, 35),
-					Name = generateRandomString(10),
+					Name = "Slider",
 				}, SectionAdd)
 
         Custom:Create("UICorner", {
@@ -1747,7 +1749,7 @@ end
 					BorderSizePixel = 0,
 					Position = UDim2.new(0, 10, 0, 10),
 					Size = UDim2.new(1, -180, 0, 13),
-					Name = generateRandomString(10),
+					Name = "SliderTitle",
 				}, Slider)
 
 				local SliderContent = Custom:Create("TextLabel", {
@@ -1764,7 +1766,7 @@ end
 					BorderSizePixel = 0,
 					Position = UDim2.new(0, 10, 0, 23),
 					Size = UDim2.new(1, -180, 0, 12),
-					Name = generateRandomString(10),
+					Name = "SliderContent",
 				}, Slider)
 
         local function UpdateSliderSize()
@@ -1787,7 +1789,7 @@ end
 					BorderSizePixel = 0,
 					Position = UDim2.new(1, -155, 0.5, 0),
 					Size = UDim2.new(0, 28, 0, 20),
-					Name = generateRandomString(10),
+					Name = "SliderInput",
 				}, Slider)
 
         Custom:Create("UICorner", {
@@ -1817,7 +1819,7 @@ end
 					BorderSizePixel = 0,
 					Position = UDim2.new(1, -20, 0.5, 0),
 					Size = UDim2.new(0, 100, 0, 3),
-					Name = generateRandomString(10),
+					Name = "SliderFrame",
 				}, Slider)
 
         Custom:Create("UICorner", {}, SliderFrame)
@@ -1829,7 +1831,7 @@ end
 					BorderSizePixel = 0,
 					Position = UDim2.new(0, 0, 0.5, 0),
 					Size = UDim2.new(0.899999976, 0, 0, 1),
-					Name = generateRandomString(10),
+					Name = "SliderDraggable",
 				}, SliderFrame)
 
         Custom:Create("UICorner", {}, SliderDraggable)
@@ -1841,7 +1843,7 @@ end
 					BorderSizePixel = 0,
 					Position = UDim2.new(1, 4, 0.5, 0),
 					Size = UDim2.new(0, 8, 0, 8),
-					Name = generateRandomString(10),
+					Name = "SliderCircle",
 				}, SliderDraggable)
 
         Custom:Create("UICorner", {}, SliderCircle)
@@ -1935,7 +1937,7 @@ end
           BorderSizePixel = 0,
           LayoutOrder = ItemCount,
           Size = UDim2.new(1, 0, 0, 35),
-          Name = generateRandomString(10),
+          Name = "Input",
         }, SectionAdd)
 
         Custom:Create("UICorner", {
@@ -1955,7 +1957,7 @@ end
           BorderSizePixel = 0,
           Position = UDim2.new(0, 10, 0, 10),
           Size = UDim2.new(1, -180, 0, 13),
-          Name = generateRandomString(10),
+          Name = "InputTitle",
         }, Input)
 
         local InputContent = Custom:Create("TextLabel", {
@@ -1973,7 +1975,7 @@ end
           BorderSizePixel = 0,
           Position = UDim2.new(0, 10, 0, 23),
           Size = UDim2.new(1, -180, 0, 12),
-          Name = generateRandomString(10),
+          Name = "InputContent",
           Parent = Input
         })
 
@@ -2003,7 +2005,7 @@ end
           ClipsDescendants = true,
           Position = UDim2.new(1, -7, 0.5, 0),
           Size = UDim2.new(0, 148, 0, 30),
-          Name = generateRandomString(10),
+          Name = "InputFrame"
         }, Input)
     
 
@@ -2027,7 +2029,7 @@ end
           BorderSizePixel = 0,
           Position = UDim2.new(0, 5, 0.5, 0),
           Size = UDim2.new(1, -10, 1, -8),
-          Name = generateRandomString(10),
+          Name = "InputTextBox"
         }, InputFrame)
 
         function Funcs_Input:Set(Value)
@@ -2068,7 +2070,7 @@ function Item:AddDropdown(Config)
         BorderSizePixel = 0,
         LayoutOrder = ItemCount,
         Size = UDim2.new(1, 0, 0, 35),
-        Name = generateRandomString(10),
+        Name = "Dropdown"
     }, SectionAdd)
 
     local DropdownButton = Custom:Create("TextButton", {
@@ -2081,7 +2083,7 @@ function Item:AddDropdown(Config)
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
-        Name = generateRandomString(10),
+        Name = "ToggleButton"
     }, Dropdown)
 
     Custom:Create("UICorner", {
@@ -2101,7 +2103,7 @@ function Item:AddDropdown(Config)
         BorderSizePixel = 0,
         Position = UDim2.new(0, 10, 0, 10),
         Size = UDim2.new(1, -180, 0, 13),
-        Name = generateRandomString(10),
+        Name = "DropdownTitle",
         Parent = Dropdown
     })
 
@@ -2120,7 +2122,7 @@ function Item:AddDropdown(Config)
         BorderSizePixel = 0,
         Position = UDim2.new(0, 10, 0, 23),
         Size = UDim2.new(1, -180, 0, 12),
-        Name = generateRandomString(10),
+        Name = "DropdownContent",
         Parent = Dropdown
     })
     
@@ -2146,7 +2148,7 @@ function Item:AddDropdown(Config)
         BorderSizePixel = 0,
         Position = UDim2.new(1, -7, 0.5, 0),
         Size = UDim2.new(0, 148, 0, 30),
-        Name = generateRandomString(10),
+        Name = "SelectOptionsFrame",
         LayoutOrder = CountDropdown
     }, Dropdown)
 
@@ -2185,7 +2187,7 @@ function Item:AddDropdown(Config)
         BorderSizePixel = 0,
         Position = UDim2.new(0, 5, 0.5, 0),
         Size = UDim2.new(1, -30, 1, -8),
-        Name = generateRandomString(10),
+        Name = "OptionSelecting",
     }, SelectOptionsFrame)
 
     local OptionImg = Custom:Create("ImageLabel", {
@@ -2198,7 +2200,7 @@ function Item:AddDropdown(Config)
         BorderSizePixel = 0,
         Position = UDim2.new(1, 0, 0.5, 0),
         Size = UDim2.new(0, 25, 0, 25),
-        Name = generateRandomString(10),
+        Name = "OptionImg",
     }, SelectOptionsFrame)
 
     local ScrollSelect = Custom:Create("ScrollingFrame", {
@@ -2212,7 +2214,7 @@ function Item:AddDropdown(Config)
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
-        Name = generateRandomString(10),
+        Name = "ScrollSelect",
     }, DropdownFolder)
     
     -- Create Search Bar with proper positioning
@@ -2229,7 +2231,7 @@ function Item:AddDropdown(Config)
         BorderSizePixel = 1,
         Size = UDim2.new(1, -6, 0, 25),
         Position = UDim2.new(0, 3, 0, 3),
-        Name = generateRandomString(10),
+        Name = "SearchBar",
         LayoutOrder = -1, -- Put search bar at the top
         Parent = ScrollSelect
     })
@@ -2350,7 +2352,7 @@ function Item:AddDropdown(Config)
             BorderColor3 = Color3.fromRGB(0, 0, 0),
             BorderSizePixel = 0,
             Size = UDim2.new(1, 0, 1, 0),
-            Name = generateRandomString(10),
+            Name = "OptionButton"
         }, Option)
 
         local OptionText = Custom:Create("TextLabel", {
@@ -2363,7 +2365,7 @@ function Item:AddDropdown(Config)
             BackgroundTransparency = 1,
             Position = UDim2.new(0, 8, 0, 0),
             Size = UDim2.new(1, -16, 1, 0),
-            Name = generateRandomString(10),
+            Name = "OptionText"
         }, Option)
 
         local ChooseFrame = Custom:Create("Frame", {
@@ -2373,7 +2375,7 @@ function Item:AddDropdown(Config)
             BorderSizePixel = 0,
             Position = UDim2.new(0, 2, 0.5, 0),
             Size = UDim2.new(0, 0, 0, 0),
-            Name = "ChooseFrame",
+            Name = "ChooseFrame"
         }, Option)
 
         Custom:Create("UIStroke", {
