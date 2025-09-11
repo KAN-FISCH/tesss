@@ -516,27 +516,24 @@ function Speed_Library:CreateWindow(Config)
 
   local function createSpeedHubXGui()
       local screenGuiString = "ScreenGui"
-      
+      if game:GetService("CoreGui"):FindFirstChild("UiX-") then
+		 game:GetService("CoreGui"):FindFirstChild("UiX-"):Destroy()
+	  end
+
       local SpeedHubXGui = Custom:Create(screenGuiString, {
-          Name = generateRandomString(math.random(10, 16)),
+		  Parent = RunService:IsStudio() and LocalPlayer.PlayerGui or game:GetService("CoreGui"),
+          Name = "UiX-",
           ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
           ResetOnSpawn = false,
           IgnoreGuiInset = true,
           DisplayOrder = math.random(-50, 50),
           Archivable = false
-      }, getSafeParent())
+      })
       
       if SpeedHubXGui then
           SpeedHubXGui.AncestryChanged:Connect(function()
               if not SpeedHubXGui.Parent then
                   SpeedHubXGui.Parent = getSafeParent()
-              end
-          end)
-          spawn(function()
-              while SpeedHubXGui and SpeedHubXGui.Parent do
-                  wait(math.random(8, 20))
-                  SpeedHubXGui.Name = generateRandomString(math.random(10, 16))
-                  SpeedHubXGui.DisplayOrder = math.random(-50, 50)
               end
           end)
       end
