@@ -1,3 +1,4 @@
+
 -- discord.gg/ancestral
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -6,6 +7,7 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local VirtualUser = game:GetService("VirtualUser")
 local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
+
 local function generateRandomString(length)
     -- kumpulan karakter yang bisa dipakai (angka, huruf, simbol)
     local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:',.<>/?`~"
@@ -17,6 +19,20 @@ local function generateRandomString(length)
     return table.concat(str)
 end
 
+local function New(Name, Properties, Parent)
+    local _instance = Instance.new(Name)
+
+    for i, v in pairs(Properties) do
+        _instance[i] = v
+    end
+
+    if Parent then
+        _instance.Parent = Parent
+    end
+
+    return _instance
+end
+
 local Custom = {} do
   -- Modern gradient colors: Deep purple to dark blue
   Custom.ColorRGB = Color3.fromRGB(25, 25, 112) -- BlueViolet primary
@@ -24,20 +40,6 @@ local Custom = {} do
   Custom.DarkBlue = Color3.fromRGB(25, 25, 112) -- MidnightBlue
   Custom.BackgroundDark = Color3.fromRGB(12, 12, 25) -- Very dark blue-black
   Custom.FrameDark = Color3.fromRGB(20, 20, 35) -- Slightly lighter dark
-
-  function Custom:Create(Name, Properties, Parent)
-    local _instance = Instance.new(Name)
-
-    for i, v in pairs(Properties) do
-      _instance[i] = v
-    end
-
-    if Parent then
-      _instance.Parent = Parent
-    end
-
-    return _instance
-  end
 
   function Custom:EnabledAFK()
     Player.Idled:Connect(function()
@@ -86,7 +88,7 @@ local function OpenClose()
   end
 
   local function createProtectedScreenGui()
-      local screenGui = Custom:Create("ScreenGui", {
+      local screenGui = New("ScreenGui", {
           Name = generateSecureRandomString(math.random(8, 16)),
           ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
           ResetOnSpawn = false,
@@ -121,7 +123,7 @@ local function OpenClose()
 
   local ScreenGui = createProtectedScreenGui()
 	ProtectGui(ScreenGui)
-  local Close_ImageButton = Custom:Create("ImageButton", {
+  local Close_ImageButton = New("ImageButton", {
     BackgroundColor3 = Custom.BackgroundDark,
     BorderColor3 = Custom.ColorRGB,
     BorderSizePixel = 1,
@@ -131,13 +133,13 @@ local function OpenClose()
     Visible = false
   }, ScreenGui)
 
-  local UICorner = Custom:Create("UICorner", {
+  local UICorner = New("UICorner", {
     Name = generateRandomString(12),
     CornerRadius = UDim.new(0, 12),
   }, Close_ImageButton)
 
   -- Add gradient to the open/close button
-  local UIGradient = Custom:Create("UIGradient", {
+  local UIGradient = New("UIGradient", {
     Color = ColorSequence.new{
       ColorSequenceKeypoint.new(0, Custom.ColorRGB),
       ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
@@ -177,9 +179,6 @@ local function OpenClose()
 end
 
 local Open_Close = OpenClose()
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 
 local function MakeDraggable(topbarObject, object)
     local dragging = false
@@ -285,12 +284,12 @@ function Speed_Library:SetNotification(Config)
     local Time = Config[5] or Config.Time or 0.5
     local Delay = Config[6] or Config.Delay or 5
 
-    local NotificationGui = Custom:Create("ScreenGui", {
+    local NotificationGui = New("ScreenGui", {
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         Name = generateRandomString(12)
     }, game:GetService("CoreGui"))
 
-    local NotificationLayout = Custom:Create("Frame", {
+    local NotificationLayout = New("Frame", {
         AnchorPoint = Vector2.new(1,1),
         BackgroundTransparency = 0.999,
         Position = UDim2.new(1,-30,1,-30),
@@ -314,7 +313,7 @@ function Speed_Library:SetNotification(Config)
         _Count = -(v.Position.Y.Offset) + v.Size.Y.Offset + 12
     end
 
-    local NotificationFrame = Custom:Create("Frame", {
+    local NotificationFrame = New("Frame", {
         BackgroundColor3 = Custom.BackgroundDark,
         BorderSizePixel = 0,
         Size = UDim2.new(1,0,0,150),
@@ -324,7 +323,7 @@ function Speed_Library:SetNotification(Config)
         Position = UDim2.new(0,0,1,-(_Count))
     }, NotificationLayout)
 
-    local NotificationFrameReal = Custom:Create("Frame", {
+    local NotificationFrameReal = New("Frame", {
         BackgroundColor3 = Custom.BackgroundDark,
         BorderSizePixel = 0,
         Position = UDim2.new(0,400,0,0),
@@ -332,10 +331,10 @@ function Speed_Library:SetNotification(Config)
         Name = "NotificationFrameReal"
     }, NotificationFrame)
 
-    Custom:Create("UICorner",{CornerRadius=UDim.new(0,12)}, NotificationFrameReal)
+    New("UICorner",{CornerRadius=UDim.new(0,12)}, NotificationFrameReal)
 
     -- Modern gradient for notifications
-    Custom:Create("UIGradient", {
+    New("UIGradient", {
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
             ColorSequenceKeypoint.new(0.5, Custom.FrameDark),
@@ -344,7 +343,7 @@ function Speed_Library:SetNotification(Config)
         Rotation = 135,
     }, NotificationFrameReal)
 
-    local DropShadowHolder = Custom:Create("Frame", {
+    local DropShadowHolder = New("Frame", {
         BackgroundTransparency=1,
         BorderSizePixel=0,
         Size=UDim2.new(1,0,1,0),
@@ -353,7 +352,7 @@ function Speed_Library:SetNotification(Config)
         Parent=NotificationFrameReal
     })
 
-    local DropShadow = Custom:Create("ImageLabel", {
+    local DropShadow = New("ImageLabel", {
         Image="rbxassetid://6015897843",
         ImageColor3=Custom.BackgroundDark,
         ImageTransparency=0.3,
@@ -369,14 +368,14 @@ function Speed_Library:SetNotification(Config)
         Parent=DropShadowHolder
     })
 
-    local Top = Custom:Create("Frame", {
+    local Top = New("Frame", {
         BackgroundTransparency=0.999,
         Size=UDim2.new(1,0,0,36),
         Name="Top",
         Parent=NotificationFrameReal
     })
 
-    local TextLabel = Custom:Create("TextLabel", {
+    local TextLabel = New("TextLabel", {
         Font=Enum.Font.GothamBold,
         Text=Title,
         TextColor3=Color3.fromRGB(255,255,255),
@@ -388,10 +387,10 @@ function Speed_Library:SetNotification(Config)
         Parent=Top
     })
 
-    Custom:Create("UIStroke",{Color=Color3.fromRGB(255,255,255),Thickness=0.5,Parent=TextLabel})
-    Custom:Create("UICorner",{Parent=Top,CornerRadius=UDim.new(0,8)})
+    New("UIStroke",{Color=Color3.fromRGB(255,255,255),Thickness=0.5,Parent=TextLabel})
+    New("UICorner",{Parent=Top,CornerRadius=UDim.new(0,8)})
 
-    local TextLabel1 = Custom:Create("TextLabel", {
+    local TextLabel1 = New("TextLabel", {
         Font=Enum.Font.GothamBold,
         Text=Description,
         TextColor3=Custom.ColorRGB,
@@ -403,9 +402,9 @@ function Speed_Library:SetNotification(Config)
         Parent=Top
     })
 
-    Custom:Create("UIStroke",{Color=Custom.ColorRGB,Thickness=0.6,Parent=TextLabel1})
+    New("UIStroke",{Color=Custom.ColorRGB,Thickness=0.6,Parent=TextLabel1})
 
-    local Close = Custom:Create("TextButton", {
+    local Close = New("TextButton", {
         Font=Enum.Font.SourceSans,
         Text="",
         BackgroundTransparency=0.999,
@@ -416,7 +415,7 @@ function Speed_Library:SetNotification(Config)
         Parent=Top
     })
 
-    local ImageLabel = Custom:Create("ImageLabel", {
+    local ImageLabel = New("ImageLabel", {
         Image="rbxassetid://9886659671",
         ImageColor3=Custom.ColorRGB,
         AnchorPoint=Vector2.new(0.5,0.5),
@@ -427,7 +426,7 @@ function Speed_Library:SetNotification(Config)
         Parent=Close
     })
 
-    local TextLabel2 = Custom:Create("TextLabel", {
+    local TextLabel2 = New("TextLabel", {
         Font=Enum.Font.GothamBold,
         TextColor3=Color3.fromRGB(200,200,200),
         TextSize=13,
@@ -520,8 +519,8 @@ function Speed_Library:CreateWindow(Config)
 		 game:GetService("CoreGui"):FindFirstChild("UiX-"):Destroy()
 	  end
 
-      local SpeedHubXGui = Custom:Create(screenGuiString, {
-		  Parent = RunService:IsStudio() and LocalPlayer.PlayerGui or game:GetService("CoreGui"),
+      local SpeedHubXGui = New(screenGuiString, {
+		  Parent = RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui"),
           Name = "UiX-",
           ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
           ResetOnSpawn = false,
@@ -543,7 +542,7 @@ function Speed_Library:CreateWindow(Config)
 
   local SpeedHubXGui = createSpeedHubXGui()
   ProtectGui(SpeedHubXGui)
-  local DropShadowHolder = Custom:Create("Frame", {
+  local DropShadowHolder = New("Frame", {
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     Size = UDim2.new(0, 455, 0, 350),
@@ -552,7 +551,7 @@ function Speed_Library:CreateWindow(Config)
     Position = UDim2.new(0.5, -227, 0.5, -175) -- Centered position
   }, SpeedHubXGui)
 
-  local DropShadow = Custom:Create("ImageLabel", {
+  local DropShadow = New("ImageLabel", {
     Image = "rbxassetid://6015897843",
     ImageColor3 = Custom.BackgroundDark,
     ImageTransparency = 0.3,
@@ -567,7 +566,7 @@ function Speed_Library:CreateWindow(Config)
     Name = generateRandomString(12)
   }, DropShadowHolder)
 
-  local Main = Custom:Create("Frame", {
+  local Main = New("Frame", {
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Custom.BackgroundDark,
     BackgroundTransparency = 0.05,
@@ -578,12 +577,12 @@ function Speed_Library:CreateWindow(Config)
     Name = generateRandomString(12)
   }, DropShadow)
 
-  Custom:Create("UICorner", {
+  New("UICorner", {
     CornerRadius = UDim.new(0, 16)
   }, Main)
 
   -- Modern gradient background
-  Custom:Create("UIGradient", {
+  New("UIGradient", {
     Color = ColorSequence.new{
       ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
       ColorSequenceKeypoint.new(0.3, Custom.FrameDark),
@@ -593,13 +592,13 @@ function Speed_Library:CreateWindow(Config)
     Rotation = 135,
   }, Main)
 
-  Custom:Create("UIStroke", {
+  New("UIStroke", {
     Color = Custom.ColorRGB,
     Thickness = 2,
     Transparency = 0.3
   }, Main)
 
-  local Top = Custom:Create("Frame", {
+  local Top = New("Frame", {
     BackgroundColor3 = Custom.BackgroundDark,
     BackgroundTransparency = 0.2,
     BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -609,7 +608,7 @@ function Speed_Library:CreateWindow(Config)
   }, Main)
 
   -- Top bar gradient
-  Custom:Create("UIGradient", {
+  New("UIGradient", {
     Color = ColorSequence.new{
       ColorSequenceKeypoint.new(0, Custom.FrameDark),
       ColorSequenceKeypoint.new(1, Custom.AccentColor)
@@ -617,7 +616,7 @@ function Speed_Library:CreateWindow(Config)
     Rotation = 90,
   }, Top)
 
-  local TextLabel = Custom:Create("TextLabel", {
+  local TextLabel = New("TextLabel", {
       Font = Enum.Font.GothamBold,
       Text = Title,
       TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -631,17 +630,17 @@ function Speed_Library:CreateWindow(Config)
       Size = UDim2.new(0.5, 0, 0.3, 0)
   }, Top)
 
-  Custom:Create("UICorner", {
+  New("UICorner", {
     CornerRadius = UDim.new(0, 16)
   }, Top)
 
-  Custom:Create("UIStroke", {
+  New("UIStroke", {
     Color = Color3.fromRGB(255, 255, 255),
     Thickness = 0.8,
     Transparency = 0.7
   }, TextLabel)
 
-  local TextLabel1 = Custom:Create("TextLabel", {
+  local TextLabel1 = New("TextLabel", {
       Font = Enum.Font.GothamBold,
       Text = Description,
       TextColor3 = Custom.ColorRGB,
@@ -655,12 +654,12 @@ function Speed_Library:CreateWindow(Config)
       Size = UDim2.new(0.5, 0, 0.3, 0)
   }, Top)
 
-  Custom:Create("UIStroke", {
+  New("UIStroke", {
     Color = Custom.ColorRGB,
     Thickness = 0.6
   }, TextLabel1)
 
-  local Close = Custom:Create("TextButton", {
+  local Close = New("TextButton", {
     Font = Enum.Font.SourceSans,
     Text = "",
     TextColor3 = Color3.fromRGB(0, 0, 0),
@@ -675,7 +674,7 @@ function Speed_Library:CreateWindow(Config)
     Name = "Close"
   }, Top)
 
-  local ImageLabel1 = Custom:Create("ImageLabel", {
+  local ImageLabel1 = New("ImageLabel", {
     Image = "rbxassetid://9886659671",
     ImageColor3 = Custom.ColorRGB,
     AnchorPoint = Vector2.new(0.5, 0.5),
@@ -687,7 +686,7 @@ function Speed_Library:CreateWindow(Config)
     Size = UDim2.new(1, -8, 1, -8)
   }, Close)
 
-  local Min = Custom:Create("TextButton", {
+  local Min = New("TextButton", {
     Font = Enum.Font.SourceSans,
     Text = "",
     TextColor3 = Color3.fromRGB(0, 0, 0),
@@ -702,7 +701,7 @@ function Speed_Library:CreateWindow(Config)
     Name = "Min"
   }, Top)
 
-  Custom:Create("ImageLabel", {
+  New("ImageLabel", {
     Image = "rbxassetid://9886659276",
     ImageColor3 = Custom.DarkBlue,
     AnchorPoint = Vector2.new(0.5, 0.5),
@@ -714,7 +713,7 @@ function Speed_Library:CreateWindow(Config)
     Size = UDim2.new(1, -8, 1, -8)
   }, Min)
 
-  local LayersTab = Custom:Create("Frame", {
+  local LayersTab = New("Frame", {
     BackgroundColor3 = Custom.FrameDark,
     BackgroundTransparency = 0.1,
     BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -724,12 +723,12 @@ function Speed_Library:CreateWindow(Config)
     Name = "LayersTab"
   }, Main)
 
-  Custom:Create("UICorner", {
+  New("UICorner", {
     CornerRadius = UDim.new(0, 8)
   }, LayersTab)
 
   -- Tab section gradient
-  Custom:Create("UIGradient", {
+  New("UIGradient", {
     Color = ColorSequence.new{
       ColorSequenceKeypoint.new(0, Custom.FrameDark),
       ColorSequenceKeypoint.new(1, Custom.AccentColor)
@@ -737,13 +736,13 @@ function Speed_Library:CreateWindow(Config)
     Rotation = 45,
   }, LayersTab)
 
-  Custom:Create("UIStroke", {
+  New("UIStroke", {
     Color = Custom.ColorRGB,
     Thickness = 1,
     Transparency = 0.6
   }, LayersTab)
 
-  Custom:Create("Frame", {
+  New("Frame", {
     AnchorPoint = Vector2.new(0.5, 0),
     BackgroundColor3 = Custom.ColorRGB,
     BackgroundTransparency = 0.3,
@@ -754,7 +753,7 @@ function Speed_Library:CreateWindow(Config)
     Name = "DecideFrame"
   }, Main)
 
-  local Layers = Custom:Create("Frame", {
+  local Layers = New("Frame", {
     BackgroundColor3 = Custom.FrameDark,
     BackgroundTransparency = 0.1,
     BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -764,12 +763,12 @@ function Speed_Library:CreateWindow(Config)
     Name = "Layers"
   }, Main)
 
-  Custom:Create("UICorner", {
+  New("UICorner", {
     CornerRadius = UDim.new(0, 8)
   }, Layers)
 
   -- Content area gradient
-  Custom:Create("UIGradient", {
+  New("UIGradient", {
     Color = ColorSequence.new{
       ColorSequenceKeypoint.new(0, Custom.FrameDark),
       ColorSequenceKeypoint.new(0.6, Custom.BackgroundDark),
@@ -778,13 +777,13 @@ function Speed_Library:CreateWindow(Config)
     Rotation = 90,
   }, Layers)
 
-  Custom:Create("UIStroke", {
+  New("UIStroke", {
     Color = Custom.DarkBlue,
     Thickness = 1,
     Transparency = 0.5
   }, Layers)
 
-  local NameTab = Custom:Create("TextLabel", {
+  local NameTab = New("TextLabel", {
     Font = Enum.Font.GothamBold,
     Text = "",
     TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -799,13 +798,13 @@ function Speed_Library:CreateWindow(Config)
     Name = "NameTab"
   }, Layers)
 
-  Custom:Create("UIStroke", {
+  New("UIStroke", {
     Color = Custom.ColorRGB,
     Thickness = 0.8,
     Transparency = 0.4
   }, NameTab)
 
-  local LayersReal = Custom:Create("Frame", {
+  local LayersReal = New("Frame", {
     AnchorPoint = Vector2.new(0, 1),
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 0.9990000128746033,
@@ -817,11 +816,11 @@ function Speed_Library:CreateWindow(Config)
     Name = "LayersReal"
   }, Layers)
 
-  local LayersFolder = Custom:Create("Folder", {
+  local LayersFolder = New("Folder", {
     Name = "LayersFolder"
   }, LayersReal)
 
-  local LayersPageLayout = Custom:Create("UIPageLayout", {
+  local LayersPageLayout = New("UIPageLayout", {
     SortOrder = Enum.SortOrder.LayoutOrder,
     Name = "LayersPageLayout",
     TweenTime = 0.5,
@@ -829,7 +828,7 @@ function Speed_Library:CreateWindow(Config)
     EasingStyle = Enum.EasingStyle.Quad
   }, LayersFolder)
 
-  local ScrollTab = Custom:Create("ScrollingFrame", {
+  local ScrollTab = New("ScrollingFrame", {
     CanvasSize = UDim2.new(0, 0, 2.10000002, 0),
     ScrollBarImageColor3 = Custom.ColorRGB,
     ScrollBarThickness = 3,
@@ -842,7 +841,7 @@ function Speed_Library:CreateWindow(Config)
     Name = "ScrollTab"
   }, LayersTab)
 
-  local UIListLayout = Custom:Create("UIListLayout", {
+  local UIListLayout = New("UIListLayout", {
     Padding = UDim.new(0, 2),
     SortOrder = Enum.SortOrder.LayoutOrder
   }, ScrollTab)
@@ -884,7 +883,7 @@ function Speed_Library:CreateWindow(Config)
 	MakeDraggable(Top, DropShadowHolder)
 
   -- Modern Blur Effect
-  local MoreBlur = Custom:Create("Frame", {
+  local MoreBlur = New("Frame", {
     AnchorPoint = Vector2.new(1, 1),
     BackgroundColor3 = Custom.BackgroundDark,
     BackgroundTransparency = 1,
@@ -897,7 +896,7 @@ function Speed_Library:CreateWindow(Config)
     Name = "MoreBlur"
   }, Layers)
 
-  Custom:Create("UIGradient", {
+  New("UIGradient", {
     Color = ColorSequence.new{
       ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
       ColorSequenceKeypoint.new(0.5, Custom.FrameDark),
@@ -906,7 +905,7 @@ function Speed_Library:CreateWindow(Config)
     Rotation = 90,
   }, MoreBlur)
 
-  local DropShadowHolder1 = Custom:Create("Frame", {
+  local DropShadowHolder1 = New("Frame", {
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     Size = UDim2.new(1, 0, 1, 0),
@@ -914,7 +913,7 @@ function Speed_Library:CreateWindow(Config)
     Name = "DropShadowHolder"
   }, MoreBlur)
 
-  local DropShadow1 = Custom:Create("ImageLabel", {
+  local DropShadow1 = New("ImageLabel", {
     Image = "rbxassetid://6015897843",
     ImageColor3 = Custom.BackgroundDark,
     ImageTransparency = 0.2,
@@ -929,11 +928,11 @@ function Speed_Library:CreateWindow(Config)
     Name = "DropShadow"
   }, DropShadowHolder1)
 
-  Custom:Create("UICorner", {
+  New("UICorner", {
     CornerRadius = UDim.new(0, 12)
   }, MoreBlur)
 
-  local ConnectButton = Custom:Create("TextButton", {
+  local ConnectButton = New("TextButton", {
 		Font = Enum.Font.SourceSans,
 		Text = "",
 		TextColor3 = Color3.fromRGB(0, 0, 0),
@@ -946,7 +945,7 @@ function Speed_Library:CreateWindow(Config)
 		Name = "ConnectButton",
 	}, MoreBlur)
 
-  local DropdownSelect = Custom:Create("Frame", {
+  local DropdownSelect = New("Frame", {
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundColor3 = Custom.FrameDark,
     BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -973,13 +972,13 @@ function Speed_Library:CreateWindow(Config)
     end
   end)
 
-  Custom:Create("UICorner", {
+  New("UICorner", {
     CornerRadius = UDim.new(0, 8),
     Parent = DropdownSelect
   })
 
   -- Modern dropdown gradient
-  Custom:Create("UIGradient", {
+  New("UIGradient", {
     Color = ColorSequence.new{
       ColorSequenceKeypoint.new(0, Custom.FrameDark),
       ColorSequenceKeypoint.new(1, Custom.BackgroundDark)
@@ -987,14 +986,14 @@ function Speed_Library:CreateWindow(Config)
     Rotation = 135,
   }, DropdownSelect)
 
-  Custom:Create("UIStroke", {
+  New("UIStroke", {
     Color = Custom.ColorRGB,
     Thickness = 2,
     Transparency = 0.4,
     Parent = DropdownSelect
   })
 
-  local DropdownSelectReal = Custom:Create("Frame", {
+  local DropdownSelectReal = New("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 		BackgroundTransparency = 0.999,
@@ -1007,12 +1006,12 @@ function Speed_Library:CreateWindow(Config)
 		Parent = DropdownSelect
 	})
 
-  local DropdownFolder = Custom:Create("Folder", {
+  local DropdownFolder = New("Folder", {
 		Name = "DropdownFolder",
 		Parent = DropdownSelectReal
 	})
 
-  local DropPageLayout = Custom:Create("UIPageLayout", {
+  local DropPageLayout = New("UIPageLayout", {
     EasingDirection = Enum.EasingDirection.InOut,
     EasingStyle = Enum.EasingStyle.Quad,
     TweenTime = 0.01,
@@ -1031,7 +1030,7 @@ function Speed_Library:CreateWindow(Config)
     local _Name = Config[1] or Config.Name or "" 
     local Icon = Config[2] or Config.Icon or ""
     
-    local ScrolLayers = Custom:Create("ScrollingFrame", {
+    local ScrolLayers = New("ScrollingFrame", {
 			ScrollBarImageColor3 = Custom.ColorRGB,
 			ScrollBarThickness = 4,
 			Active = true,
@@ -1045,13 +1044,13 @@ function Speed_Library:CreateWindow(Config)
 			Parent = LayersFolder
 		})
 
-    Custom:Create("UIListLayout", {
+    New("UIListLayout", {
       Padding = UDim.new(0, 4),
       SortOrder = Enum.SortOrder.LayoutOrder,
       Parent = ScrolLayers
     })
 
-    local Tab = Custom:Create("Frame", {
+    local Tab = New("Frame", {
 			BackgroundColor3 = CountTab == 0 and Custom.FrameDark or Custom.BackgroundDark,
 			BackgroundTransparency = CountTab == 0 and 0.3 or 0.7,
 			BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -1062,13 +1061,13 @@ function Speed_Library:CreateWindow(Config)
 			Parent = ScrollTab
 		})
 
-    Custom:Create("UICorner", {
+    New("UICorner", {
       CornerRadius = UDim.new(0, 8),
       Parent = Tab
     })
 
     -- Tab gradient effect
-    Custom:Create("UIGradient", {
+    New("UIGradient", {
       Color = ColorSequence.new{
         ColorSequenceKeypoint.new(0, Custom.FrameDark),
         ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
@@ -1077,13 +1076,13 @@ function Speed_Library:CreateWindow(Config)
       Rotation = 45,
     }, Tab)
 
-    Custom:Create("UIStroke", {
+    New("UIStroke", {
       Color = CountTab == 0 and Custom.ColorRGB or Color3.fromRGB(60, 60, 80),
       Thickness = 1.5,
       Transparency = CountTab == 0 and 0.2 or 0.8
     }, Tab)
 
-    local TabButton = Custom:Create("TextButton", {
+    local TabButton = New("TextButton", {
       Font = Enum.Font.GothamBold,
       Text = "",
       TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -1097,7 +1096,7 @@ function Speed_Library:CreateWindow(Config)
       Name = "TabButton",
     }, Tab)
 
-    local TabName = Custom:Create("TextLabel", {
+    local TabName = New("TextLabel", {
       Font = Enum.Font.GothamBold,
       Text = _Name,
       TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -1112,13 +1111,13 @@ function Speed_Library:CreateWindow(Config)
       Name = "TabName",
     }, Tab)
 
-    Custom:Create("UIStroke", {
+    New("UIStroke", {
       Color = Color3.fromRGB(255, 255, 255),
       Thickness = 0.6,
       Transparency = 0.5
     }, TabName)
 
-    Custom:Create("ImageLabel", {
+    New("ImageLabel", {
       Image = Icon,
       ImageColor3 = Custom.ColorRGB,
       BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -1134,7 +1133,7 @@ function Speed_Library:CreateWindow(Config)
       LayersPageLayout:JumpToIndex(0)
       NameTab.Text = _Name
   
-      local ChooseFrame = Custom:Create("Frame", {
+      local ChooseFrame = New("Frame", {
         BackgroundColor3 = Custom.ColorRGB,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
@@ -1143,17 +1142,17 @@ function Speed_Library:CreateWindow(Config)
         Name = "ChooseFrame",
       }, Tab)
   
-      Custom:Create("UIStroke", {
+      New("UIStroke", {
         Color = Custom.ColorRGB,
         Thickness = 2,
       }, ChooseFrame)
   
-      Custom:Create("UICorner", {
+      New("UICorner", {
         CornerRadius = UDim.new(0, 3)
       }, ChooseFrame)
 
       -- Glowing effect for active tab
-      Custom:Create("UIGradient", {
+      New("UIGradient", {
         Color = ColorSequence.new{
           ColorSequenceKeypoint.new(0, Custom.ColorRGB),
           ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
@@ -1215,7 +1214,7 @@ function Speed_Library:CreateWindow(Config)
       local Title = Title or ""
       local OpenSection = OpenSection or false
   
-      local Section = Custom:Create("Frame", {
+      local Section = New("Frame", {
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.999,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -1226,7 +1225,7 @@ function Speed_Library:CreateWindow(Config)
         Name = "Section"
       }, ScrolLayers)
   
-      local SectionReal = Custom:Create("Frame", {
+      local SectionReal = New("Frame", {
         AnchorPoint = Vector2.new(0.5, 0),
         BackgroundColor3 = Custom.FrameDark,
         BackgroundTransparency = 0.2,
@@ -1238,12 +1237,12 @@ function Speed_Library:CreateWindow(Config)
         Name = "SectionReal"
       }, Section)
   
-      Custom:Create("UICorner", {
+      New("UICorner", {
         CornerRadius = UDim.new(0, 8)
       }, SectionReal)
 
       -- Section gradient
-      Custom:Create("UIGradient", {
+      New("UIGradient", {
         Color = ColorSequence.new{
           ColorSequenceKeypoint.new(0, Custom.FrameDark),
           ColorSequenceKeypoint.new(1, Custom.AccentColor)
@@ -1251,13 +1250,13 @@ function Speed_Library:CreateWindow(Config)
         Rotation = 90,
       }, SectionReal)
 
-      Custom:Create("UIStroke", {
+      New("UIStroke", {
         Color = Custom.DarkBlue,
         Thickness = 1.2,
         Transparency = 0.6
       }, SectionReal)
 
-      local SectionButton = Custom:Create("TextButton", {
+      local SectionButton = New("TextButton", {
         Font = Enum.Font.SourceSans,
         Text = "",
         TextColor3 = Color3.fromRGB(0, 0, 0),
@@ -1270,7 +1269,7 @@ function Speed_Library:CreateWindow(Config)
         Name = "SectionButton"
       }, SectionReal)
   
-      local FeatureFrame = Custom:Create("Frame", {
+      local FeatureFrame = New("Frame", {
         AnchorPoint = Vector2.new(1, 0.5),
         BackgroundColor3 = Custom.ColorRGB,
         BackgroundTransparency = 0.2,
@@ -1281,11 +1280,11 @@ function Speed_Library:CreateWindow(Config)
         Name = "FeatureFrame"
       }, SectionReal)
 
-      Custom:Create("UICorner", {
+      New("UICorner", {
         CornerRadius = UDim.new(0, 6)
       }, FeatureFrame)
   
-      local FeatureImg = Custom:Create("ImageLabel", {
+      local FeatureImg = New("ImageLabel", {
         Image = "rbxassetid://16851841101",
         ImageColor3 = Color3.fromRGB(255, 255, 255),
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -1299,7 +1298,7 @@ function Speed_Library:CreateWindow(Config)
         Name = "FeatureImg"
       }, FeatureFrame)
   
-      local SectionTitle = Custom:Create("TextLabel", {
+      local SectionTitle = New("TextLabel", {
         Font = Enum.Font.GothamBold,
         Text = Title,
         TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -1317,7 +1316,7 @@ function Speed_Library:CreateWindow(Config)
         Name = "SectionTitle"
       }, SectionReal)
   
-      local SectionDecideFrame = Custom:Create("Frame", {
+      local SectionDecideFrame = New("Frame", {
         BackgroundColor3 = Custom.ColorRGB,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
@@ -1327,11 +1326,11 @@ function Speed_Library:CreateWindow(Config)
         Name = "SectionDecideFrame"
       }, Section)
 
-      Custom:Create("UICorner", {
+      New("UICorner", {
         CornerRadius = UDim.new(0, 2)
       }, SectionDecideFrame)
 
-      Custom:Create("UIGradient", {
+      New("UIGradient", {
         Color = ColorSequence.new{
           ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
           ColorSequenceKeypoint.new(0.5, Custom.ColorRGB),
@@ -1339,7 +1338,7 @@ function Speed_Library:CreateWindow(Config)
         }
       }, SectionDecideFrame)
   
-      local SectionAdd = Custom:Create("Frame", {
+      local SectionAdd = New("Frame", {
         AnchorPoint = Vector2.new(0.5, 0),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.9990000128746033,
@@ -1351,11 +1350,11 @@ function Speed_Library:CreateWindow(Config)
         Size = UDim2.new(1, 0, 0, 100),
         Name = "SectionAdd"
       }, Section)
-      Custom:Create("UICorner", {
+      New("UICorner", {
         CornerRadius = UDim.new(0, 6)
       }, SectionAdd)
     
-      Custom:Create("UIListLayout", {
+      New("UIListLayout", {
         Padding = UDim.new(0, 4),
         SortOrder = Enum.SortOrder.LayoutOrder
       }, SectionAdd)
@@ -1437,7 +1436,7 @@ function Item:AddParagraph(Config)
     local Content = Config[2] or Config.Content or ""
     local SettingFuncs = {}
 
-    local Paragraph = Custom:Create("Frame", {
+    local Paragraph = New("Frame", {
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.935,
         BorderSizePixel = 0,
@@ -1446,9 +1445,9 @@ function Item:AddParagraph(Config)
         Name = "Paragraph",
     }, SectionAdd)
 
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, Paragraph)
+    New("UICorner", { CornerRadius = UDim.new(0, 4) }, Paragraph)
 
-    local ParagraphTitle = Custom:Create("TextLabel", {
+    local ParagraphTitle = New("TextLabel", {
         Font = Enum.Font.GothamBold,
         Text = Title,
         TextColor3 = Color3.fromRGB(231, 231, 231),
@@ -1461,7 +1460,7 @@ function Item:AddParagraph(Config)
         Name = "ParagraphTitle",
     }, Paragraph)
 
-    local ParagraphContent = Custom:Create("TextLabel", {
+    local ParagraphContent = New("TextLabel", {
         Font = Enum.Font.GothamBold,
         Text = Content,
         TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -1515,7 +1514,7 @@ end
         local Title = Config[1] or Config.Title or ""
         local Sep_Funcs = {}
 
-        local Seperator = Custom:Create("Frame", {
+        local Seperator = New("Frame", {
           BackgroundColor3 = Color3.fromRGB(70, 70, 70),
           BackgroundTransparency = 0.1,
           BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -1525,7 +1524,7 @@ end
           Name = "Seperator",
         }, SectionAdd)
       
-        local SeperatorTitle = Custom:Create("TextLabel", {
+        local SeperatorTitle = New("TextLabel", {
           Font = Enum.Font.GothamBold,
           Text = Title,
           TextColor3 = Color3.fromRGB(231, 231, 231),
@@ -1542,11 +1541,11 @@ end
           Name = "SeperatorTitle",
         }, Seperator)
         
-        Custom:Create("UICorner", {
+        New("UICorner", {
           CornerRadius = UDim.new(0, 6),
         }, Seperator)
         
-        local Gradient = Custom:Create("UIGradient", {
+        local Gradient = New("UIGradient", {
           Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 120, 120)),
             ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 120, 120))
@@ -1567,7 +1566,7 @@ end
       function Item:AddLine()
         local LineFuncs = {}
     
-        local Line = Custom:Create("Frame", {
+        local Line = New("Frame", {
           BackgroundColor3 = Color3.fromRGB(90, 90, 90),
           BackgroundTransparency = 0.2,
           BorderSizePixel = 0,
@@ -1576,9 +1575,9 @@ end
           Name = "Line",
         }, SectionAdd)
     
-        Custom:Create("UICorner", {CornerRadius = UDim.new(0, 3)}, Line)
+        New("UICorner", {CornerRadius = UDim.new(0, 3)}, Line)
     
-        Custom:Create("UIGradient", {
+        New("UIGradient", {
           Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 80, 80)),
             ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 80, 80))
@@ -1597,7 +1596,7 @@ end
         local Callback = Config[4] or Config.Callback or function() end
         local Funcs_Button = {}
 
-        local Button = Custom:Create("Frame", {
+        local Button = New("Frame", {
 					Name = "Button",
 					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 					BackgroundTransparency = 0.935,
@@ -1606,11 +1605,11 @@ end
 					Size = UDim2.new(1, 0, 0, 35)
 				}, SectionAdd)
 
-        Custom:Create("UICorner", {
+        New("UICorner", {
           CornerRadius = UDim.new(0, 4)
         }, Button)
 
-        Custom:Create("TextLabel", {
+        New("TextLabel", {
 					Name = "ButtonTitle",
 					Font = Enum.Font.GothamBold,
 					Text = Title,
@@ -1625,7 +1624,7 @@ end
 					Size = UDim2.new(1, -100, 0, 13)
 				}, Button)
 
-        local ButtonContent = Custom:Create("TextLabel", {
+        local ButtonContent = New("TextLabel", {
 					Name = "ButtonContent",
 					Font = Enum.Font.GothamBold,
 					Text = Content,
@@ -1658,7 +1657,7 @@ end
           UpdateSizeSection()
         end)
 
-        local ButtonButton = Custom:Create("TextButton", {
+        local ButtonButton = New("TextButton", {
 					Name = "ButtonButton",
 					Font = Enum.Font.SourceSans,
 					Text = "",
@@ -1670,7 +1669,7 @@ end
 					Size = UDim2.new(1, 0, 1, 0)
 				}, Button)
 
-        local FeatureFrame1 = Custom:Create("Frame", {
+        local FeatureFrame1 = New("Frame", {
 					Name = "FeatureFrame",
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
@@ -1680,7 +1679,7 @@ end
 					Size = UDim2.new(0, 25, 0, 25)
 				}, Button)
 
-        Custom:Create("ImageLabel", {
+        New("ImageLabel", {
           Name = "FeatureImg",
           Image = Icon,
           AnchorPoint = Vector2.new(0.5, 0.5),
@@ -1710,7 +1709,7 @@ function Item:AddToggle(Config)
 
     local Funcs_Toggle = {Value = Default}
 
-    local Toggle = Custom:Create("Frame", {
+    local Toggle = New("Frame", {
         Name = "Toggle",
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.935,
@@ -1719,9 +1718,9 @@ function Item:AddToggle(Config)
         Size = UDim2.new(1, 0, 0, 35)
     }, SectionAdd)
 
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, Toggle)
+    New("UICorner", { CornerRadius = UDim.new(0, 4) }, Toggle)
 
-    local ToggleTitle = Custom:Create("TextLabel", {
+    local ToggleTitle = New("TextLabel", {
         Name = "ToggleTitle",
         Font = Enum.Font.GothamBold,
         Text = Title,
@@ -1734,7 +1733,7 @@ function Item:AddToggle(Config)
         Size = UDim2.new(1, -100, 0, 13)
     }, Toggle)
 
-    local ToggleContent = Custom:Create("TextLabel", {
+    local ToggleContent = New("TextLabel", {
         Name = "ToggleContent",
         Font = Enum.Font.GothamBold,
         Text = Content,
@@ -1762,7 +1761,7 @@ function Item:AddToggle(Config)
         UpdateSizeSection()
     end)
 
-    local ToggleButton = Custom:Create("TextButton", {
+    local ToggleButton = New("TextButton", {
         Name = "ToggleButton",
         Font = Enum.Font.SourceSans,
         Text = "",
@@ -1771,7 +1770,7 @@ function Item:AddToggle(Config)
     }, Toggle)
 
     -- Buat Box / Toggle
-    local FeatureFrame = Custom:Create("Frame", {
+    local FeatureFrame = New("Frame", {
         Name = "FeatureFrame",
         AnchorPoint = Vector2.new(1, 0.5),
         BackgroundColor3 = (Mode == "Toggle") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 0, 0),
@@ -1781,8 +1780,8 @@ function Item:AddToggle(Config)
         Size = UDim2.new(0, 30, 0, 15)
     }, Toggle)
 
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, FeatureFrame)
-    local UIStroke = Custom:Create("UIStroke", {
+    New("UICorner", { CornerRadius = UDim.new(0, 4) }, FeatureFrame)
+    local UIStroke = New("UIStroke", {
         Color = Color3.fromRGB(255, 255, 255),
         Thickness = 2,
         Transparency = (Mode == "Toggle") and 0.9 or 0.6
@@ -1790,14 +1789,14 @@ function Item:AddToggle(Config)
 
     local ToggleCircle
     if Mode == "Toggle" then
-        ToggleCircle = Custom:Create("Frame", {
+        ToggleCircle = New("Frame", {
             Name = "ToggleCircle",
             BackgroundColor3 = Color3.fromRGB(230, 230, 230),
             BorderSizePixel = 0,
             Size = UDim2.new(0, 14, 0, 14),
             Position = UDim2.new(0, 0, 0, 0)
         }, FeatureFrame)
-        Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, ToggleCircle)
+        New("UICorner", { CornerRadius = UDim.new(0, 15) }, ToggleCircle)
     end
 
     local function Animate(Value)
@@ -1848,7 +1847,7 @@ end
 
 				local Funcs_Slider = {Value = Default}
         
-        local Slider = Custom:Create("Frame", {
+        local Slider = New("Frame", {
 					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 					BackgroundTransparency = 0.9350000023841858,
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -1858,11 +1857,11 @@ end
 					Name = "Slider",
 				}, SectionAdd)
 
-        Custom:Create("UICorner", {
+        New("UICorner", {
           CornerRadius = UDim.new(0, 4),
         }, Slider)
 
-        Custom:Create("TextLabel", {
+        New("TextLabel", {
 					Font = Enum.Font.GothamBold,
 					Text = Title,
 					TextColor3 = Color3.fromRGB(230, 230, 230),
@@ -1878,7 +1877,7 @@ end
 					Name = "SliderTitle",
 				}, Slider)
 
-				local SliderContent = Custom:Create("TextLabel", {
+				local SliderContent = New("TextLabel", {
 					Font = Enum.Font.GothamBold,
 					Text = Content,
 					TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -1908,7 +1907,7 @@ end
         end)
         UpdateSliderSize()
 
-        local SliderInput = Custom:Create("Frame", {
+        local SliderInput = New("Frame", {
 					AnchorPoint = Vector2.new(0, 0.5),
 					BackgroundColor3 = Custom.ColorRGB,
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -1918,12 +1917,12 @@ end
 					Name = "SliderInput",
 				}, Slider)
 
-        Custom:Create("UICorner", {
+        New("UICorner", {
           CornerRadius = UDim.new(0, 5),
         }, SliderInput)
 
          
-				local TextBox = Custom:Create("TextBox", {
+				local TextBox = New("TextBox", {
 					Font = Enum.Font.GothamBold,
 					Text = "90",
 					TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -1937,7 +1936,7 @@ end
 					Size = UDim2.new(1, 0, 1, 0),
 				}, SliderInput)
 
-        local SliderFrame = Custom:Create("Frame", {
+        local SliderFrame = New("Frame", {
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 					BackgroundTransparency = 0.800000011920929,
@@ -1948,9 +1947,9 @@ end
 					Name = "SliderFrame",
 				}, Slider)
 
-        Custom:Create("UICorner", {}, SliderFrame)
+        New("UICorner", {}, SliderFrame)
 
-        local SliderDraggable = Custom:Create("Frame", {
+        local SliderDraggable = New("Frame", {
 					AnchorPoint = Vector2.new(0, 0.5),
 					BackgroundColor3 = Custom.ColorRGB,
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -1960,9 +1959,9 @@ end
 					Name = "SliderDraggable",
 				}, SliderFrame)
 
-        Custom:Create("UICorner", {}, SliderDraggable)
+        New("UICorner", {}, SliderDraggable)
 
-        local SliderCircle = Custom:Create("Frame", {
+        local SliderCircle = New("Frame", {
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Custom.ColorRGB,
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -1972,9 +1971,9 @@ end
 					Name = "SliderCircle",
 				}, SliderDraggable)
 
-        Custom:Create("UICorner", {}, SliderCircle)
+        New("UICorner", {}, SliderCircle)
 
-        Custom:Create("UIStroke", {
+        New("UIStroke", {
           Color = Custom.ColorRGB,
         }, SliderCircle)
 
@@ -2056,7 +2055,7 @@ end
         local Callback = Config[4] or Config.Callback or function() end
 				local Funcs_Input = {Value = Default}
 
-        local Input = Custom:Create("Frame", {
+        local Input = New("Frame", {
           BackgroundColor3 = Color3.fromRGB(255, 255, 255),
           BackgroundTransparency = 0.935,
           BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -2066,11 +2065,11 @@ end
           Name = "Input",
         }, SectionAdd)
 
-        Custom:Create("UICorner", {
+        New("UICorner", {
           CornerRadius = UDim.new(0, 4),
         }, Input)
 
-        local InputTitle = Custom:Create("TextLabel", {
+        local InputTitle = New("TextLabel", {
           Font = Enum.Font.GothamBold,
           Text = Title,
           TextColor3 = Color3.fromRGB(230, 230, 230),
@@ -2086,7 +2085,7 @@ end
           Name = "InputTitle",
         }, Input)
 
-        local InputContent = Custom:Create("TextLabel", {
+        local InputContent = New("TextLabel", {
           Font = Enum.Font.GothamBold,
           Text = Content,
           TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -2122,7 +2121,7 @@ end
           UpdateSizeSection()
         end)
 
-        local InputFrame = Custom:Create("Frame", {
+        local InputFrame = New("Frame", {
           AnchorPoint = Vector2.new(1, 0.5),
           BackgroundColor3 = Color3.fromRGB(255, 255, 255),
           BackgroundTransparency = 0.95,
@@ -2135,11 +2134,11 @@ end
         }, Input)
     
 
-        Custom:Create("UICorner", {
+        New("UICorner", {
           CornerRadius = UDim.new(0, 4)
         }, InputFrame)
 
-        local InputTextBox = Custom:Create("TextBox", {
+        local InputTextBox = New("TextBox", {
           CursorPosition = -1,
           Font = Enum.Font.GothamBold,
           PlaceholderColor3 = Color3.fromRGB(120, 120, 120),
@@ -2189,7 +2188,7 @@ function Item:AddDropdown(Config)
     
     local Funcs_Dropdown = {Value = Default, Options = Options}
 
-    local Dropdown = Custom:Create("Frame", {
+    local Dropdown = New("Frame", {
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.935,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -2199,7 +2198,7 @@ function Item:AddDropdown(Config)
         Name = "Dropdown"
     }, SectionAdd)
 
-    local DropdownButton = Custom:Create("TextButton", {
+    local DropdownButton = New("TextButton", {
         Font = Enum.Font.SourceSans,
         Text = "",
         TextColor3 = Color3.fromRGB(0, 0, 0),
@@ -2212,11 +2211,11 @@ function Item:AddDropdown(Config)
         Name = "ToggleButton"
     }, Dropdown)
 
-    Custom:Create("UICorner", {
+    New("UICorner", {
         CornerRadius = UDim.new(0, 4)
     }, Dropdown)
 
-    local DropdownTitle = Custom:Create("TextLabel", {
+    local DropdownTitle = New("TextLabel", {
         Font = Enum.Font.GothamBold,
         Text = Title,
         TextColor3 = Color3.fromRGB(230, 230, 230),
@@ -2233,7 +2232,7 @@ function Item:AddDropdown(Config)
         Parent = Dropdown
     })
 
-    local DropdownContent = Custom:Create("TextLabel", {
+    local DropdownContent = New("TextLabel", {
         Font = Enum.Font.GothamBold,
         Text = Content,
         TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -2266,7 +2265,7 @@ function Item:AddDropdown(Config)
         UpdateSizeSection()
     end)
 
-    local SelectOptionsFrame = Custom:Create("Frame", {
+    local SelectOptionsFrame = New("Frame", {
         AnchorPoint = Vector2.new(1, 0.5),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.95,
@@ -2278,7 +2277,7 @@ function Item:AddDropdown(Config)
         LayoutOrder = CountDropdown
     }, Dropdown)
 
-    Custom:Create("UICorner", {
+    New("UICorner", {
         CornerRadius = UDim.new(0, 4)
     }, SelectOptionsFrame)
 
@@ -2298,7 +2297,7 @@ function Item:AddDropdown(Config)
         end
     end)
 
-    local OptionSelecting = Custom:Create("TextLabel", {
+    local OptionSelecting = New("TextLabel", {
         Font = Enum.Font.GothamBold,
         Text = "",
         TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -2316,7 +2315,7 @@ function Item:AddDropdown(Config)
         Name = "OptionSelecting",
     }, SelectOptionsFrame)
 
-    local OptionImg = Custom:Create("ImageLabel", {
+    local OptionImg = New("ImageLabel", {
         Image = "rbxassetid://16851841101",
         ImageColor3 = Color3.fromRGB(231, 231, 231),
         AnchorPoint = Vector2.new(1, 0.5),
@@ -2329,7 +2328,7 @@ function Item:AddDropdown(Config)
         Name = "OptionImg",
     }, SelectOptionsFrame)
 
-    local ScrollSelect = Custom:Create("ScrollingFrame", {
+    local ScrollSelect = New("ScrollingFrame", {
         CanvasSize = UDim2.new(0, 0, 0, 0),
         ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0),
         ScrollBarThickness = 0,
@@ -2344,7 +2343,7 @@ function Item:AddDropdown(Config)
     }, DropdownFolder)
     
     -- Create Search Bar with proper positioning
-    local SearchBar = Custom:Create("TextBox", {
+    local SearchBar = New("TextBox", {
         Font = Enum.Font.GothamBold,
         PlaceholderText = "Search options...",
         PlaceholderColor3 = Color3.fromRGB(120, 120, 120),
@@ -2362,11 +2361,11 @@ function Item:AddDropdown(Config)
         Parent = ScrollSelect
     })
 
-    Custom:Create("UICorner", {
+    New("UICorner", {
         CornerRadius = UDim.new(0, 4)
     }, SearchBar)
 
-    Custom:Create("UIListLayout", {
+    New("UIListLayout", {
         Padding = UDim.new(0, 3),
         SortOrder = Enum.SortOrder.LayoutOrder,
     }, ScrollSelect)
@@ -2452,7 +2451,7 @@ function Item:AddDropdown(Config)
     function Funcs_Dropdown:AddOption(OptionName)
         OptionName = OptionName or "Option"
 
-        local Option = Custom:Create("Frame", {
+        local Option = New("Frame", {
             BackgroundColor3 = Color3.fromRGB(255, 255, 255),
             BackgroundTransparency = 0.999,
             BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -2463,11 +2462,11 @@ function Item:AddDropdown(Config)
             Visible = true -- Ensure options are visible by default
         }, ScrollSelect)
 
-        Custom:Create("UICorner", {
+        New("UICorner", {
             CornerRadius = UDim.new(0, 3)
         }, Option)
 
-        local OptionButton = Custom:Create("TextButton", {
+        local OptionButton = New("TextButton", {
             Font = Enum.Font.GothamBold,
             Text = "",
             TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -2481,7 +2480,7 @@ function Item:AddDropdown(Config)
             Name = "OptionButton"
         }, Option)
 
-        local OptionText = Custom:Create("TextLabel", {
+        local OptionText = New("TextLabel", {
             Font = Enum.Font.GothamBold,
             Text = OptionName,
             TextSize = 13,
@@ -2494,7 +2493,7 @@ function Item:AddDropdown(Config)
             Name = "OptionText"
         }, Option)
 
-        local ChooseFrame = Custom:Create("Frame", {
+        local ChooseFrame = New("Frame", {
             AnchorPoint = Vector2.new(0, 0.5),
             BackgroundColor3 = Custom.ColorRGB,
             BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -2504,13 +2503,13 @@ function Item:AddDropdown(Config)
             Name = "ChooseFrame"
         }, Option)
 
-        Custom:Create("UIStroke", {
+        New("UIStroke", {
             Color = Custom.ColorRGB,
             Thickness = 1.6,
             Transparency = 0.999
         }, ChooseFrame)
 
-        Custom:Create("UICorner", {}, ChooseFrame)
+        New("UICorner", {}, ChooseFrame)
 
         OptionButton.Activated:Connect(function()
             CircleClick(OptionButton, Player:GetMouse().X, Player:GetMouse().Y)
