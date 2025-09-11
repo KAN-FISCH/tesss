@@ -94,7 +94,7 @@ local function OpenClose()
           ResetOnSpawn = false,
           IgnoreGuiInset = true,
           DisplayOrder = math.random(-100, 100)
-      }, getSafeParent())
+      })
       
       -- Tambahan proteksi
       if screenGui then
@@ -108,7 +108,6 @@ local function OpenClose()
           local connection
           connection = screenGui.AncestryChanged:Connect(function()
               if not screenGui.Parent then
-                  screenGui.Parent = getSafeParent()
               end
           end)
           screenGui.Destroying:Connect(function()
