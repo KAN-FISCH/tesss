@@ -51,11 +51,98 @@ end
 Custom:EnabledAFK()
 
 local function OpenClose()
-  local ScreenGui = Custom:Create("ScreenGui", {
-    Name = generateRandomString(12),
-    ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-  }, RunService:IsStudio() and Player.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")))
+  local function generateSecureRandomString(length)
+      local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+      local result = ""
+      for i = 1, length do
+          local randomIndex = math.random(1, #chars)
+          result = result .. chars:sub(randomIndex, randomIndex)
+      end
+      return result
+  end
+  local function encodeString(str)
+      local encoded = {}
+      for i = 1, #str do
+          table.insert(encoded, string.byte(str, i))
+      end
+      return encoded
+  end
 
+  local screenGuiBytes = {83,99,114,101,101,110,71,117,105}
+
+  local function getSafeParent()
+      local success, result = pcall(function()
+          if RunService:IsStudio() then
+              return Player.PlayerGui
+          end
+          local methods = {
+              function() return gethui() end,
+              function() return cloneref(game:GetService("CoreGui")) end,
+              function() return game:GetService("CoreGui") end
+          }
+          
+          for _, method in ipairs(methods) do
+              local success, parent = pcall(method)
+              if success and parent then
+                  return parent
+              end
+          end
+          
+          return Player.PlayerGui
+      end)
+      
+      return success and result or Player.PlayerGui
+  end
+  local function createProtectedScreenGui()
+      local screenGui = Custom:Create(Instance.new(string.char(unpack(screenGuiBytes))), {
+          Name = generateSecureRandomString(math.random(8, 16)),
+          ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+          ResetOnSpawn = false,
+          IgnoreGuiInset = true,
+          DisplayOrder = math.random(-100, 100)
+      }, getSafeParent())
+      
+      -- Tambahan proteksi
+      if screenGui then
+          screenGui.Archivable = false
+          spawn(function()
+              while screenGui and screenGui.Parent do
+                  wait(math.random(5, 15))
+                  screenGui.DisplayOrder = math.random(-100, 100)
+              end
+          end)
+          local connection
+          connection = screenGui.AncestryChanged:Connect(function()
+              if not screenGui.Parent then
+                  screenGui.Parent = getSafeParent()
+              end
+          end)
+          screenGui.Destroying:Connect(function()
+              if connection then
+                  connection:Disconnect()
+              end
+          end)
+      end
+      
+      return screenGui
+  end
+
+  local ScreenGui = createProtectedScreenGui()
+  if ScreenGui then
+      local mt = getrawmetatable(game)
+      local oldNameindex = mt.__index
+      
+      if setreadonly then setreadonly(mt, false) end
+      
+      mt.__index = newcclosure(function(self, key)
+          if key == "Name" and self == ScreenGui then
+              return generateSecureRandomString(12)
+          end
+          return oldNameindex(self, key)
+      end)
+      
+      if setreadonly then setreadonly(mt, true) end
+  end
   local Close_ImageButton = Custom:Create("ImageButton", {
     BackgroundColor3 = Custom.BackgroundDark,
     BorderColor3 = Custom.ColorRGB,
@@ -412,11 +499,150 @@ function Speed_Library:CreateWindow(Config)
 
   local Funcs = {}
 
-  local SpeedHubXGui = Custom:Create("ScreenGui", {
-    Name = generateRandomString(12),
-    ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-  }, RunService:IsStudio() and LocalPlayer.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")))
+-- Anti-Detection ScreenGui dengan perlindungan tambahan
 
+-- Fungsi untuk generate string random yang lebih kuat
+local function generateSecureRandomString(length)
+    local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+    local result = ""
+    for i = 1, length do
+        local randomIndex = math.random(1, #chars)
+        result = result .. chars:sub(randomIndex, randomIndex)
+    end
+    return result
+end
+
+-- Fungsi untuk encode string dengan lebih aman
+local function encodeString(str)
+    local encoded = {}
+    for i = 1, #str do
+        table.insert(encoded, string.byte(str, i))
+    end
+    return encoded
+end
+
+-- Encode "ScreenGui" dengan cara yang lebih kompleks
+local screenGuiBytes = {83,99,114,101,101,110,71,117,105}
+
+-- Fungsi untuk mendapatkan parent yang aman
+local function getSafeParent()
+    local success, result = pcall(function()
+        if RunService:IsStudio() then
+            return Player.PlayerGui
+        end
+        
+        -- Coba beberapa metode secara berurutan
+        local methods = {
+            function() return gethui() end,
+            function() return cloneref(game:GetService("CoreGui")) end,
+            function() return game:GetService("CoreGui") end
+        }
+        
+        for _, method in ipairs(methods) do
+            local success, parent = pcall(method)
+            if success and parent then
+                return parent
+            end
+        end
+        
+        return Player.PlayerGui -- fallback
+    end)
+    
+    return success and result or Player.PlayerGui
+end
+
+local function createProtectedScreenGui()
+    local screenGui = Custom:Create(Instance.new(string.char(unpack(screenGuiBytes))), {
+        Name = generateSecureRandomString(math.random(8, 16)),
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        ResetOnSpawn = false,
+        IgnoreGuiInset = true,
+        DisplayOrder = math.random(-100, 100)
+    }, getSafeParent())
+    if screenGui then
+        screenGui.Archivable = false
+        spawn(function()
+            while screenGui and screenGui.Parent do
+                wait(math.random(5, 15))
+                screenGui.DisplayOrder = math.random(-100, 100)
+            end
+        end)
+        local connection
+        connection = screenGui.AncestryChanged:Connect(function()
+            if not screenGui.Parent then
+                screenGui.Parent = getSafeParent()
+            end
+        end)
+        screenGui.Destroying:Connect(function()
+            if connection then
+                connection:Disconnect()
+            end
+        end)
+    end
+    
+    return screenGui
+end
+
+local function createSpeedHubXGui()
+    local screenGuiString = string.char(83,99,114,101,101,110,71,117,105)
+    local function getSecureParent()
+        if RunService:IsStudio() then
+            return LocalPlayer.PlayerGui
+        end
+        for _, method in ipairs({
+            function() return gethui() end,
+            function() return cloneref(game:GetService("CoreGui")) end,
+            function() return game:GetService("CoreGui") end
+        }) do
+            local success, result = pcall(method)
+            if success and result then return result end
+        end
+        
+        return LocalPlayer.PlayerGui
+    end
+    
+    local SpeedHubXGui = Custom:Create(screenGuiString, {
+        Name = generateRandomString(math.random(10, 16)),
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        ResetOnSpawn = false,
+        IgnoreGuiInset = true,
+        DisplayOrder = math.random(-50, 50),
+        Archivable = false
+    }, getSecureParent())
+    if SpeedHubXGui then
+        SpeedHubXGui.AncestryChanged:Connect(function()
+            if not SpeedHubXGui.Parent then
+                SpeedHubXGui.Parent = getSecureParent()
+            end
+        end)
+        spawn(function()
+            while SpeedHubXGui and SpeedHubXGui.Parent do
+                wait(math.random(8, 20))
+                SpeedHubXGui.Name = generateRandomString(math.random(10, 16))
+                SpeedHubXGui.DisplayOrder = math.random(-50, 50)
+            end
+        end)
+    end
+    
+    return SpeedHubXGui
+end
+
+local SpeedHubXGui = createSpeedHubXGui()
+if SpeedHubXGui then
+    local mt = getrawmetatable(game)
+    local oldNameindex = mt.__index
+    
+    if setreadonly then setreadonly(mt, false) end
+    
+    mt.__index = newcclosure(function(self, key)
+        if key == "Name" and self == SpeedHubXGui then
+            return generateSecureRandomString(12)
+        end
+        return oldNameindex(self, key)
+    end)
+    
+    if setreadonly then setreadonly(mt, true) end
+end
   local DropShadowHolder = Custom:Create("Frame", {
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
