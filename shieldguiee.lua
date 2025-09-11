@@ -5,7 +5,7 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local VirtualUser = game:GetService("VirtualUser")
-
+local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
 local function generateRandomString(length)
     -- kumpulan karakter yang bisa dipakai (angka, huruf, simbol)
     local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:',.<>/?`~"
@@ -120,7 +120,7 @@ local function OpenClose()
   end
 
   local ScreenGui = createProtectedScreenGui()
-
+	ProtectGui(ScreenGui)
   local Close_ImageButton = Custom:Create("ImageButton", {
     BackgroundColor3 = Custom.BackgroundDark,
     BorderColor3 = Custom.ColorRGB,
@@ -545,7 +545,7 @@ function Speed_Library:CreateWindow(Config)
   end
 
   local SpeedHubXGui = createSpeedHubXGui()
-
+  ProtectGui(SpeedHubXGui)
   local DropShadowHolder = Custom:Create("Frame", {
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
