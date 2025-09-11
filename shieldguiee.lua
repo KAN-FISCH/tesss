@@ -51,151 +51,66 @@ end
 Custom:EnabledAFK()
 
 local function OpenClose()
-    local function generateSecureRandomString(length)
-        local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
-        local result = ""
-        for i = 1, length do
-            local randomIndex = math.random(1, #chars)
-            result = result .. chars:sub(randomIndex, randomIndex)
+  local ScreenGui = Custom:Create("ScreenGui", {
+    Name = "OpenClose",
+    ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+  })
+  ProtectGui(screenGui)
+  local Close_ImageButton = Custom:Create("ImageButton", {
+    BackgroundColor3 = Custom.BackgroundDark,
+    BorderColor3 = Custom.ColorRGB,
+    BorderSizePixel = 1,
+    Position = UDim2.new(0.1021, 0, 0.0743, 0),
+    Size = UDim2.new(0, 59, 0, 49),
+    Image = "rbxassetid://85779221265543",
+    Visible = false
+  }, ScreenGui)
+
+  local UICorner = Custom:Create("UICorner", {
+    Name = "MainCorner",
+    CornerRadius = UDim.new(0, 12),
+  }, Close_ImageButton)
+  local UIGradient = Custom:Create("UIGradient", {
+    Color = ColorSequence.new{
+      ColorSequenceKeypoint.new(0, Custom.ColorRGB),
+      ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
+      ColorSequenceKeypoint.new(1, Custom.DarkBlue)
+    },
+    Rotation = 45,
+  }, Close_ImageButton)
+
+  local dragging, dragStart, startPos = false, nil, nil
+
+  local function UpdateDraggable(input)
+    local delta = input.Position - dragStart
+    Close_ImageButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+  end
+
+  Close_ImageButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+      dragging = true
+      dragStart = input.Position
+      startPos = Close_ImageButton.Position
+
+      input.Changed:Connect(function()
+        if input.UserInputState == Enum.UserInputState.End then
+          dragging = false
         end
-        return result
+      end)
     end
+  end)
 
-    local screenGuiBytes = {83,99,114,101,101,110,71,117,105}
-
-    local function getSafeParent()
-        local success, result = pcall(function()
-            if RunService:IsStudio() then
-                return Player.PlayerGui
-            end
-            local methods = {
-                function() return gethui() end,
-                function() return cloneref(game:GetService("CoreGui")) end,
-                function() return game:GetService("CoreGui") end
-            }
-            
-            for _, method in ipairs(methods) do
-                local success, parent = pcall(method)
-                if success and parent then
-                    return parent
-                end
-            end
-            
-            return Player.PlayerGui
-        end)
-        
-        return success and result or Player.PlayerGui
+  Close_ImageButton.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+      UpdateDraggable(input)
     end
+  end)
 
-    local function createProtectedScreenGui()
-        local screenGui = Custom:Create("ScreenGui", {
-            Name = generateSecureRandomString(math.random(8, 16)),
-            ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-            ResetOnSpawn = false,
-            IgnoreGuiInset = true,
-            DisplayOrder = math.random(-100, 100)
-        }, getSafeParent())
-
-        if screenGui then
-            screenGui.Archivable = false
-            spawn(function()
-                while screenGui and screenGui.Parent do
-                    wait(math.random(5, 15))
-                    screenGui.DisplayOrder = math.random(-100, 100)
-                end
-            end)
-            local connection
-            connection = screenGui.AncestryChanged:Connect(function()
-                if not screenGui.Parent then
-                    screenGui.Parent = getSafeParent()
-                end
-            end)
-            screenGui.Destroying:Connect(function()
-                if connection then
-                    connection:Disconnect()
-                end
-            end)
-            
-            ProtectGui(screenGui)
-        end
-        
-        return screenGui
-    end
-
-    local ScreenGui = createProtectedScreenGui()
-    if ScreenGui then
-        local mt = getrawmetatable(game)
-        if mt then
-            local oldNameindex = mt.__index
-            
-            if setreadonly then setreadonly(mt, false) end
-            
-            mt.__index = newcclosure(function(self, key)
-                if key == "Name" and self == ScreenGui then
-                    return generateSecureRandomString(12)
-                end
-                return oldNameindex(self, key)
-            end)
-            
-            if setreadonly then setreadonly(mt, true) end
-        end
-    end
-
-    local Close_ImageButton = Custom:Create("ImageButton", {
-        BackgroundColor3 = Custom.BackgroundDark,
-        BorderColor3 = Custom.ColorRGB,
-        BorderSizePixel = 1,
-        Position = UDim2.new(0.1021, 0, 0.0743, 0),
-        Size = UDim2.new(0, 59, 0, 49),
-        Image = "rbxassetid://125992172976297",
-        Visible = false
-    }, ScreenGui)
-
-    local UICorner = Custom:Create("UICorner", {
-        Name = generateRandomString(12),
-        CornerRadius = UDim.new(0, 12),
-    }, Close_ImageButton)
-
-    local UIGradient = Custom:Create("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Custom.ColorRGB),
-            ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
-            ColorSequenceKeypoint.new(1, Custom.DarkBlue)
-        },
-        Rotation = 45,
-    }, Close_ImageButton)
-
-    local dragging, dragStart, startPos = false, nil, nil
-
-    local function UpdateDraggable(input)
-        local delta = input.Position - dragStart
-        Close_ImageButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-
-    Close_ImageButton.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = Close_ImageButton.Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-
-    Close_ImageButton.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            UpdateDraggable(input)
-        end
-    end)
-
-    return Close_ImageButton
+  return Close_ImageButton
 end
 
 local Open_Close = OpenClose()
+
 
 local function MakeDraggable(topbarObject, object)
     local dragging = false
@@ -301,39 +216,17 @@ function Speed_Library:SetNotification(Config)
     local Time = Config[5] or Config.Time or 0.5
     local Delay = Config[6] or Config.Delay or 5
 
-    local function getSafeParent()
-        if RunService:IsStudio() then
-            return Player.PlayerGui
-        end
-        local methods = {
-            function() return gethui() end,
-            function() return cloneref(game:GetService("CoreGui")) end,
-            function() return game:GetService("CoreGui") end
-        }
-        
-        for _, method in ipairs(methods) do
-            local success, result = pcall(method)
-            if success and result then
-                return result
-            end
-        end
-        
-        return Player.PlayerGui
-    end
-
     local NotificationGui = Custom:Create("ScreenGui", {
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-        Name = generateRandomString(12)
-    }, getSafeParent())
-    
+        Name = "NotificationGui"
+    })
     ProtectGui(NotificationGui)
-
     local NotificationLayout = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(1,1),
         BackgroundTransparency = 0.999,
         Position = UDim2.new(1,-30,1,-30),
         Size = UDim2.new(0,320,1,0),
-        Name = generateRandomString(12)
+        Name = "NotificationLayout"
     }, NotificationGui)
 
     local Count = 0
@@ -349,7 +242,7 @@ function Speed_Library:SetNotification(Config)
 
     local _Count = 0
     for _, v in ipairs(NotificationLayout:GetChildren()) do
-        _Count = -v.Position.Y.Offset + v.Size.Y.Offset + 12
+        _Count = -(v.Position.Y.Offset) + v.Size.Y.Offset + 12
     end
 
     local NotificationFrame = Custom:Create("Frame", {
@@ -359,7 +252,7 @@ function Speed_Library:SetNotification(Config)
         Name = "NotificationFrame",
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(0,1),
-        Position = UDim2.new(0,0,1,-_Count)
+        Position = UDim2.new(0,0,1,-(_Count))
     }, NotificationLayout)
 
     local NotificationFrameReal = Custom:Create("Frame", {
@@ -371,12 +264,11 @@ function Speed_Library:SetNotification(Config)
     }, NotificationFrame)
 
     Custom:Create("UICorner",{CornerRadius=UDim.new(0,12)}, NotificationFrameReal)
-
     Custom:Create("UIGradient", {
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
             ColorSequenceKeypoint.new(0.5, Custom.FrameDark),
-            ColorSequenceKeypoint.new(1, Custom.AccentColor)
+            ColorSequence.new(1, Custom.AccentColor)
         },
         Rotation = 135,
     }, NotificationFrameReal)
@@ -387,7 +279,8 @@ function Speed_Library:SetNotification(Config)
         Size=UDim2.new(1,0,1,0),
         ZIndex=0,
         Name="DropShadowHolder",
-    }, NotificationFrameReal)
+        Parent=NotificationFrameReal
+    })
 
     local DropShadow = Custom:Create("ImageLabel", {
         Image="rbxassetid://6015897843",
@@ -402,13 +295,15 @@ function Speed_Library:SetNotification(Config)
         Size=UDim2.new(1,47,1,47),
         ZIndex=0,
         Name="DropShadow",
-    }, DropShadowHolder)
+        Parent=DropShadowHolder
+    })
 
     local Top = Custom:Create("Frame", {
         BackgroundTransparency=0.999,
         Size=UDim2.new(1,0,0,36),
         Name="Top",
-    }, NotificationFrameReal)
+        Parent=NotificationFrameReal
+    })
 
     local TextLabel = Custom:Create("TextLabel", {
         Font=Enum.Font.GothamBold,
@@ -419,10 +314,11 @@ function Speed_Library:SetNotification(Config)
         BackgroundTransparency=0.999,
         Size=UDim2.new(1,0,1,0),
         Position=UDim2.new(0,10,0,0),
-    }, Top)
+        Parent=Top
+    })
 
-    Custom:Create("UIStroke",{Color=Color3.fromRGB(255,255,255),Thickness=0.5}, TextLabel)
-    Custom:Create("UICorner",{CornerRadius=UDim.new(0,8)}, Top)
+    Custom:Create("UIStroke",{Color=Color3.fromRGB(255,255,255),Thickness=0.5,Parent=TextLabel})
+    Custom:Create("UICorner",{Parent=Top,CornerRadius=UDim.new(0,8)})
 
     local TextLabel1 = Custom:Create("TextLabel", {
         Font=Enum.Font.GothamBold,
@@ -433,9 +329,10 @@ function Speed_Library:SetNotification(Config)
         BackgroundTransparency=0.999,
         Size=UDim2.new(1,0,1,0),
         Position=UDim2.new(0,TextLabel.TextBounds.X+15,0,0),
-    }, Top)
+        Parent=Top
+    })
 
-    Custom:Create("UIStroke",{Color=Custom.ColorRGB,Thickness=0.6}, TextLabel1)
+    Custom:Create("UIStroke",{Color=Custom.ColorRGB,Thickness=0.6,Parent=TextLabel1})
 
     local Close = Custom:Create("TextButton", {
         Font=Enum.Font.SourceSans,
@@ -445,7 +342,8 @@ function Speed_Library:SetNotification(Config)
         Position=UDim2.new(1,-5,0.5,0),
         Size=UDim2.new(0,25,0,25),
         Name="Close",
-    }, Top)
+        Parent=Top
+    })
 
     local ImageLabel = Custom:Create("ImageLabel", {
         Image="rbxassetid://9886659671",
@@ -455,7 +353,8 @@ function Speed_Library:SetNotification(Config)
         BorderSizePixel=0,
         Position=UDim2.new(0.49,0,0.5,0),
         Size=UDim2.new(1,-8,1,-8),
-    }, Close)
+        Parent=Close
+    })
 
     local TextLabel2 = Custom:Create("TextLabel", {
         Font=Enum.Font.GothamBold,
@@ -468,8 +367,9 @@ function Speed_Library:SetNotification(Config)
         BorderSizePixel=0,
         Position=UDim2.new(0,10,0,27),
         Size=UDim2.new(1,-20,0,13),
+        Parent=NotificationFrameReal,
         TextWrapped=true
-    }, NotificationFrameReal)
+    })
 
     TextLabel2.Size = UDim2.new(1,-20,0,13+(13*(TextLabel2.TextBounds.X//TextLabel2.AbsoluteSize.X)))
 
@@ -492,11 +392,12 @@ function Speed_Library:SetNotification(Config)
 
     Close.Activated:Connect(function() Notification:Close() end)
 
-    TweenService:Create(NotificationFrameReal, TweenInfo.new(tonumber(Time), Enum.EasingStyle.Back, Enum.EasingDirection.InOut), {Position=UDim2.new(0,0,0,0)}):Play()
+    TweenService:Create(NotificationFrameReal, TweenInfo.new(tonumber(Time), Enum.EasingStyle.Back, Enum.EasingDirection.InOut), {Position=UDim2.new(0,0,0,0)} ):Play()
     task.delay(tonumber(Delay), Notification.Close)
 
     return Notification
 end
+
 
 function Speed_Library:CreateWindow(Config)
     local Title = Config[1] or Config.Title or ""
@@ -506,93 +407,12 @@ function Speed_Library:CreateWindow(Config)
 
     local Funcs = {}
 
-    local function generateSecureRandomString(length)
-        local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
-        local result = ""
-        for i = 1, length do
-            local randomIndex = math.random(1, #chars)
-            result = result .. chars:sub(randomIndex, randomIndex)
-        end
-        return result
-    end
-
-    local screenGuiBytes = {83,99,114,101,101,110,71,117,105}
-
-    local function getSafeParent()
-        local success, result = pcall(function()
-            if RunService:IsStudio() then
-                return Player.PlayerGui
-            end
-            
-            local methods = {
-                function() return gethui() end,
-                function() return cloneref(game:GetService("CoreGui")) end,
-                function() return game:GetService("CoreGui") end
-            }
-            
-            for _, method in ipairs(methods) do
-                local success, parent = pcall(method)
-                if success and parent then
-                    return parent
-                end
-            end
-            
-            return Player.PlayerGui
-        end)
-        
-        return success and result or Player.PlayerGui
-    end
-
-    local function createSpeedHubXGui()
-        local screenGuiString = string.char(83,99,114,101,101,110,71,117,105)
-        
-        local SpeedHubXGui = Custom:Create("ScreenGui", {
-            Name = generateRandomString(math.random(10, 16)),
-            ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-            ResetOnSpawn = false,
-            IgnoreGuiInset = true,
-            DisplayOrder = math.random(-50, 50),
-            Archivable = false
-        }, getSafeParent())
-
-        if SpeedHubXGui then
-            SpeedHubXGui.AncestryChanged:Connect(function()
-                if not SpeedHubXGui.Parent then
-                    SpeedHubXGui.Parent = getSafeParent()
-                end
-            end)
-            spawn(function()
-                while SpeedHubXGui and SpeedHubXGui.Parent do
-                    wait(math.random(8, 20))
-                    SpeedHubXGui.Name = generateRandomString(math.random(10, 16))
-                    SpeedHubXGui.DisplayOrder = math.random(-50, 50)
-                end
-            end)
-            
-            ProtectGui(SpeedHubXGui)
-        end
-        
-        return SpeedHubXGui
-    end
-
-    local SpeedHubXGui = createSpeedHubXGui()
-    if SpeedHubXGui then
-        local mt = getrawmetatable(game)
-        if mt then
-            local oldNameindex = mt.__index
-            
-            if setreadonly then setreadonly(mt, false) end
-            
-            mt.__index = newcclosure(function(self, key)
-                if key == "Name" and self == SpeedHubXGui then
-                    return generateSecureRandomString(12)
-                end
-                return oldNameindex(self, key)
-            end)
-            
-            if setreadonly then setreadonly(mt, true) end
-        end
-    end
+    
+  local SpeedHubXGui = Custom:Create("ScreenGui", {
+      Name = "ShieldTeam || Luowis",
+      ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    }, RunService:IsStudio() and LocalPlayer.PlayerGui or game:GetService("CoreGui"))
+    ProtectGui(SpeedHubXGui)
 
     local DropShadowHolder = Custom:Create("Frame", {
         BackgroundTransparency = 1,
