@@ -6,6 +6,8 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local VirtualUser = game:GetService("VirtualUser")
+
+local RenderStepped = RunService.RenderStepped
 local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
 
 local function generateRandomString(length)
