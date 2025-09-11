@@ -54,7 +54,7 @@ local function OpenClose()
   local ScreenGui = Custom:Create("ScreenGui", {
     Name = "OpenClose",
     ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-  })
+  }, RunService:IsStudio() and LocalPlayer.PlayerGui or game:GetService("CoreGui"))
   ProtectGui(screenGui)
   local Close_ImageButton = Custom:Create("ImageButton", {
     BackgroundColor3 = Custom.BackgroundDark,
