@@ -51,10 +51,75 @@ end
 Custom:EnabledAFK()
 
 local function OpenClose()
-  local ScreenGui = Custom:Create("ScreenGui", {
-    Name = generateRandomString(12),
-    ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-  }, RunService:IsStudio() and Player.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")))
+  local function generateSecureRandomString(length)
+      local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+      local result = ""
+      for i = 1, length do
+          local randomIndex = math.random(1, #chars)
+          result = result .. chars:sub(randomIndex, randomIndex)
+      end
+      return result
+  end
+
+  local function getSafeParent()
+      local success, result = pcall(function()
+          if RunService:IsStudio() then
+              return Player.PlayerGui
+          end
+          local methods = {
+              function() return gethui() end,
+              function() return cloneref(game:GetService("CoreGui")) end,
+              function() return game:GetService("CoreGui") end
+          }
+          
+          for _, method in ipairs(methods) do
+              local success, parent = pcall(method)
+              if success and parent then
+                  return parent
+              end
+          end
+          
+          return Player.PlayerGui
+      end)
+      
+      return success and result or Player.PlayerGui
+  end
+
+  local function createProtectedScreenGui()
+      local screenGui = Custom:Create("ScreenGui", {
+          Name = generateSecureRandomString(math.random(8, 16)),
+          ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+          ResetOnSpawn = false,
+          IgnoreGuiInset = true,
+          DisplayOrder = math.random(-100, 100)
+      }, getSafeParent())
+      
+      -- Tambahan proteksi
+      if screenGui then
+          screenGui.Archivable = false
+          spawn(function()
+              while screenGui and screenGui.Parent do
+                  wait(math.random(5, 15))
+                  screenGui.DisplayOrder = math.random(-100, 100)
+              end
+          end)
+          local connection
+          connection = screenGui.AncestryChanged:Connect(function()
+              if not screenGui.Parent then
+                  screenGui.Parent = getSafeParent()
+              end
+          end)
+          screenGui.Destroying:Connect(function()
+              if connection then
+                  connection:Disconnect()
+              end
+          end)
+      end
+      
+      return screenGui
+  end
+
+  local ScreenGui = createProtectedScreenGui()
 
   local Close_ImageButton = Custom:Create("ImageButton", {
     BackgroundColor3 = Custom.BackgroundDark,
@@ -274,7 +339,7 @@ function Speed_Library:SetNotification(Config)
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
             ColorSequenceKeypoint.new(0.5, Custom.FrameDark),
-            ColorSequence.new(1, Custom.AccentColor)
+            ColorSequenceKeypoint.new(1, Custom.AccentColor)
         },
         Rotation = 135,
     }, NotificationFrameReal)
@@ -412,10 +477,74 @@ function Speed_Library:CreateWindow(Config)
 
   local Funcs = {}
 
-  local SpeedHubXGui = Custom:Create("ScreenGui", {
-    Name = generateRandomString(12),
-    ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-  }, RunService:IsStudio() and LocalPlayer.PlayerGui or (gethui() or cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui")))
+  -- Anti-Detection ScreenGui dengan perlindungan tambahan
+  local function generateSecureRandomString(length)
+      local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+      local result = ""
+      for i = 1, length do
+          local randomIndex = math.random(1, #chars)
+          result = result .. chars:sub(randomIndex, randomIndex)
+      end
+      return result
+  end
+
+  local function getSafeParent()
+      local success, result = pcall(function()
+          if RunService:IsStudio() then
+              return Player.PlayerGui
+          end
+          
+          -- Coba beberapa metode secara berurutan
+          local methods = {
+              function() return gethui() end,
+              function() return cloneref(game:GetService("CoreGui")) end,
+              function() return game:GetService("CoreGui") end
+          }
+          
+          for _, method in ipairs(methods) do
+              local success, parent = pcall(method)
+              if success and parent then
+                  return parent
+              end
+          end
+          
+          return Player.PlayerGui -- fallback
+      end)
+      
+      return success and result or Player.PlayerGui
+  end
+
+  local function createSpeedHubXGui()
+      local screenGuiString = "ScreenGui"
+      
+      local SpeedHubXGui = Custom:Create(screenGuiString, {
+          Name = generateRandomString(math.random(10, 16)),
+          ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+          ResetOnSpawn = false,
+          IgnoreGuiInset = true,
+          DisplayOrder = math.random(-50, 50),
+          Archivable = false
+      }, getSafeParent())
+      
+      if SpeedHubXGui then
+          SpeedHubXGui.AncestryChanged:Connect(function()
+              if not SpeedHubXGui.Parent then
+                  SpeedHubXGui.Parent = getSafeParent()
+              end
+          end)
+          spawn(function()
+              while SpeedHubXGui and SpeedHubXGui.Parent do
+                  wait(math.random(8, 20))
+                  SpeedHubXGui.Name = generateRandomString(math.random(10, 16))
+                  SpeedHubXGui.DisplayOrder = math.random(-50, 50)
+              end
+          end)
+      end
+      
+      return SpeedHubXGui
+  end
+
+  local SpeedHubXGui = createSpeedHubXGui()
 
   local DropShadowHolder = Custom:Create("Frame", {
     BackgroundTransparency = 1,
@@ -423,7 +552,7 @@ function Speed_Library:CreateWindow(Config)
     Size = UDim2.new(0, 455, 0, 350),
     ZIndex = 0,
     Name = generateRandomString(12),
-    Position = UDim2.new(0, (SpeedHubXGui.AbsoluteSize.X // 2 - 455 // 2), 0, (SpeedHubXGui.AbsoluteSize.Y // 2 - 350 // 2))
+    Position = UDim2.new(0.5, -227, 0.5, -175) -- Centered position
   }, SpeedHubXGui)
 
   local DropShadow = Custom:Create("ImageLabel", {
@@ -491,19 +620,19 @@ function Speed_Library:CreateWindow(Config)
     Rotation = 90,
   }, Top)
 
-local TextLabel = Custom:Create("TextLabel", {
-    Font = Enum.Font.GothamBold,
-    Text = Title,
-    TextColor3 = Color3.fromRGB(255, 255, 255),
-    TextSize = 16,
-    TextXAlignment = Enum.TextXAlignment.Center,
-    TextYAlignment = Enum.TextYAlignment.Center,
-    BackgroundTransparency = 1,
-    BorderSizePixel = 0,
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    Position = UDim2.new(0.5, 0, 0.35, 0),
-    Size = UDim2.new(0.5, 0, 0.3, 0)
-}, Top)
+  local TextLabel = Custom:Create("TextLabel", {
+      Font = Enum.Font.GothamBold,
+      Text = Title,
+      TextColor3 = Color3.fromRGB(255, 255, 255),
+      TextSize = 16,
+      TextXAlignment = Enum.TextXAlignment.Center,
+      TextYAlignment = Enum.TextYAlignment.Center,
+      BackgroundTransparency = 1,
+      BorderSizePixel = 0,
+      AnchorPoint = Vector2.new(0.5, 0.5),
+      Position = UDim2.new(0.5, 0, 0.35, 0),
+      Size = UDim2.new(0.5, 0, 0.3, 0)
+  }, Top)
 
   Custom:Create("UICorner", {
     CornerRadius = UDim.new(0, 16)
@@ -515,19 +644,19 @@ local TextLabel = Custom:Create("TextLabel", {
     Transparency = 0.7
   }, TextLabel)
 
-local TextLabel1 = Custom:Create("TextLabel", {
-    Font = Enum.Font.GothamBold,
-    Text = Description,
-    TextColor3 = Custom.ColorRGB,
-    TextSize = 14,
-    TextXAlignment = Enum.TextXAlignment.Center,
-    TextYAlignment = Enum.TextYAlignment.Center,
-    BackgroundTransparency = 1,
-    BorderSizePixel = 0,
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    Position = UDim2.new(0.5, 0, 0.72, 0),
-    Size = UDim2.new(0.5, 0, 0.3, 0)
-}, Top)
+  local TextLabel1 = Custom:Create("TextLabel", {
+      Font = Enum.Font.GothamBold,
+      Text = Description,
+      TextColor3 = Custom.ColorRGB,
+      TextSize = 14,
+      TextXAlignment = Enum.TextXAlignment.Center,
+      TextYAlignment = Enum.TextYAlignment.Center,
+      BackgroundTransparency = 1,
+      BorderSizePixel = 0,
+      AnchorPoint = Vector2.new(0.5, 0.5),
+      Position = UDim2.new(0.5, 0, 0.72, 0),
+      Size = UDim2.new(0.5, 0, 0.3, 0)
+  }, Top)
 
   Custom:Create("UIStroke", {
     Color = Custom.ColorRGB,
@@ -807,7 +936,7 @@ local TextLabel1 = Custom:Create("TextLabel", {
     CornerRadius = UDim.new(0, 12)
   }, MoreBlur)
 
-local ConnectButton = Custom:Create("TextButton", {
+  local ConnectButton = Custom:Create("TextButton", {
 		Font = Enum.Font.SourceSans,
 		Text = "",
 		TextColor3 = Color3.fromRGB(0, 0, 0),
@@ -897,9 +1026,10 @@ local ConnectButton = Custom:Create("TextButton", {
   })
 
   -- Create Tab Function
- local Tabs = {}
+  local Tabs = {}
   local CountTab = 0
   local CountDropdown = 0
+  
   function Tabs:CreateTab(Config)
     local _Name = Config[1] or Config.Name or "" 
     local Icon = Config[2] or Config.Icon or ""
@@ -1082,7 +1212,7 @@ local ConnectButton = Custom:Create("TextButton", {
       end
     end)
 
-local Sections, CountSection = {}, 0
+    local Sections, CountSection = {}, 0
 
     function Sections:AddSection(Title, OpenSection)
       local Title = Title or ""
@@ -1224,7 +1354,6 @@ local Sections, CountSection = {}, 0
         Size = UDim2.new(1, 0, 0, 100),
         Name = "SectionAdd"
       }, Section)
-  
       Custom:Create("UICorner", {
         CornerRadius = UDim.new(0, 6)
       }, SectionAdd)
