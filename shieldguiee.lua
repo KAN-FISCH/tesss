@@ -1321,15 +1321,9 @@ function Item:AddParagraph(Config)
         TextWrapped = true, -- wajib aktif
     }, Paragraph)
 
-    -- fungsi resize otomatis
     local function UpdateParagraphSize()
-        -- hitung tinggi teks real
         local textHeight = ParagraphContent.TextBounds.Y
-
-        -- update tinggi content sesuai isi
         ParagraphContent.Size = UDim2.new(1, -16, 0, textHeight)
-
-        -- update tinggi frame utama
         Paragraph.Size = UDim2.new(1, 0, 0, textHeight + 35)
 
         UpdateSizeSection()
@@ -1338,7 +1332,6 @@ function Item:AddParagraph(Config)
     ParagraphContent:GetPropertyChangedSignal("Text"):Connect(UpdateParagraphSize)
     ParagraphContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(UpdateParagraphSize)
 
-    -- fungsi helper untuk warna richtext
     local function parseColors(str)
         local coloredStr = str
         coloredStr = coloredStr:gsub('default%("([^"]-)"%)', '<font color="#ffffff"><b>%1</b></font>')
