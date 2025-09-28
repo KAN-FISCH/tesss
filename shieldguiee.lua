@@ -1314,28 +1314,33 @@ function Item:AddParagraph(Config)
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Top,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 10, 0, 23),
+        Position = UDim2.new(0, 10, 0, 25),
         Size = UDim2.new(1, -16, 0, 12),
         Name = "ParagraphContent",
-        RichText = true -- penting
+        RichText = true,
+        TextWrapped = true, -- wajib aktif
     }, Paragraph)
 
+    -- fungsi resize otomatis
     local function UpdateParagraphSize()
-        ParagraphContent.TextWrapped = false
-        local lineCount = math.ceil(ParagraphContent.TextBounds.X / ParagraphContent.AbsoluteSize.X)
-        ParagraphContent.Size = UDim2.new(1, -16, 0, 12 + (12 * lineCount))
-        Paragraph.Size = UDim2.new(1, 0, 0, ParagraphContent.AbsoluteSize.Y + 33)
-        ParagraphContent.TextWrapped = true
+        -- hitung tinggi teks real
+        local textHeight = ParagraphContent.TextBounds.Y
+
+        -- update tinggi content sesuai isi
+        ParagraphContent.Size = UDim2.new(1, -16, 0, textHeight)
+
+        -- update tinggi frame utama
+        Paragraph.Size = UDim2.new(1, 0, 0, textHeight + 35)
+
         UpdateSizeSection()
     end
 
-    UpdateParagraphSize()
+    ParagraphContent:GetPropertyChangedSignal("Text"):Connect(UpdateParagraphSize)
     ParagraphContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(UpdateParagraphSize)
 
-    -- fungsi helper untuk konversi warna ke RichText
+    -- fungsi helper untuk warna richtext
     local function parseColors(str)
         local coloredStr = str
-        -- default putih
         coloredStr = coloredStr:gsub('default%("([^"]-)"%)', '<font color="#ffffff"><b>%1</b></font>')
         coloredStr = coloredStr:gsub('red%("([^"]-)"%)', '<font color="#ff0000"><b>%1</b></font>')
         coloredStr = coloredStr:gsub('blue%("([^"]-)"%)', '<font color="#0000ff"><b>%1</b></font>')
@@ -1352,8 +1357,11 @@ function Item:AddParagraph(Config)
     end
 
     ParagraphContent.Text = parseColors(Content)
+    UpdateParagraphSize()
+
     return SettingFuncs
 end
+
 
       function Item:AddSeperator(Config)
         local Title = Config[1] or Config.Title or ""
