@@ -4,7 +4,6 @@ local Player = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-local VirtualUser = game:GetService("VirtualUser")
 local RenderStepped = RunService.RenderStepped
 local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
 
@@ -38,17 +37,7 @@ local Custom = {} do
 
         return _instance
     end
-
-    function Custom:EnabledAFK()
-        Player.Idled:Connect(function()
-            VirtualUser:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
-            task.wait(1)
-            VirtualUser:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
-        end)
-    end
 end
-
-Custom:EnabledAFK()
 
 local function OpenClose()
   local ScreenGui = Custom:Create("ScreenGui", {
