@@ -127,7 +127,7 @@ refreshButton.Position = isMobile and UDim2.new(1, -75, 0, 10) or UDim2.new(1, -
 refreshButton.BackgroundColor3 = Color3.fromRGB(80, 40, 140)
 refreshButton.BorderSizePixel = 0
 refreshButton.Font = Enum.Font.GothamBold
-refreshButton.Text = isMobile and "↻" or "Refresh"
+refreshButton.Text = isMobile and "Refresh"
 refreshButton.TextColor3 = Color3.fromRGB(240, 230, 255)
 refreshButton.TextSize = isMobile and 16 or 13
 refreshButton.AutoButtonColor = false
@@ -347,7 +347,7 @@ local function createServerItem(data)
     if isMobile then
         info.Size = UDim2.new(1, -20, 0, 35)
         info.Position = UDim2.new(0, 10, 0, 36)
-        info.Text = string.format("↑%s • 👥%s • 💎%s • 🌤%s",
+        info.Text = string.format("Uptime %s • Players %s • Cosmic Relic %s • Weather %s",
             data.uptime, data.players, data.relic, data.weather)
         info.TextSize = 9
     else
