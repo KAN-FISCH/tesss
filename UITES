@@ -1,0 +1,551 @@
+-- Than Server UI - Neon Purple Glow Mobile Responsive Edition
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Ambil request function dari exploit environment
+local request = (syn and syn.request) or (http and http.request) or request
+
+local API_URL = "https://api.thanhub.xyz/api/key/weebhooks?limit=100&sort=desc"
+
+-- Deteksi platform
+local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+local screenSize = workspace.CurrentCamera.ViewportSize
+
+-- ROOT GUI
+local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ThanServerUI"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = playerGui
+ProtectGui(screenGui)
+
+-- === MAIN BUTTON (Responsive) ===
+local mainButton = Instance.new("TextButton")
+mainButton.Name = "ThanServerButton"
+mainButton.Size = isMobile and UDim2.new(0, 50, 0, 20) or UDim2.new(0, 90, 0, 30)
+mainButton.Position = UDim2.new(0.5, isMobile and -35 or -45, 0, 6)
+mainButton.BackgroundColor3 = Color3.fromRGB(30, 19, 50)
+mainButton.BorderSizePixel = 0
+mainButton.Font = Enum.Font.GothamBold
+mainButton.Text = "SHELD"
+mainButton.TextColor3 = Color3.fromRGB(220, 200, 255)
+mainButton.TextSize = isMobile and 9 or 11
+mainButton.AutoButtonColor = false
+mainButton.Parent = screenGui
+
+local mbCorner = Instance.new("UICorner")
+mbCorner.CornerRadius = UDim.new(0.5, 0)
+mbCorner.Parent = mainButton
+
+local mbStroke = Instance.new("UIStroke")
+mbStroke.Thickness = 1
+mbStroke.Color = Color3.fromRGB(140, 60, 220)
+mbStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+mbStroke.Transparency = 0.3
+mbStroke.Parent = mainButton
+
+-- === MAIN FRAME (Responsive) ===
+local frameWidth = isMobile and math.min(screenSize.X * 0.95, 380) or 520
+local frameHeight = isMobile and math.min(screenSize.Y * 0.7, 400) or 270
+
+local serverFrame = Instance.new("Frame")
+serverFrame.Size = UDim2.new(0, frameWidth, 0, frameHeight)
+serverFrame.AnchorPoint = Vector2.new(0.5, 0)
+serverFrame.Position = UDim2.new(0.5, 0, 0, isMobile and 35 or 45)
+serverFrame.BackgroundColor3 = Color3.fromRGB(15, 10, 25)
+serverFrame.BackgroundTransparency = 0.05
+serverFrame.BorderSizePixel = 0
+serverFrame.Visible = false
+serverFrame.Parent = screenGui
+
+local frameCorner = Instance.new("UICorner")
+frameCorner.CornerRadius = UDim.new(0, isMobile and 15 or 20)
+frameCorner.Parent = serverFrame
+
+local frameStroke = Instance.new("UIStroke")
+frameStroke.Thickness = 1.5
+frameStroke.Color = Color3.fromRGB(120, 60, 210)
+frameStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+frameStroke.Transparency = 0.25
+frameStroke.Parent = serverFrame
+
+local frameGradient = Instance.new("UIGradient")
+frameGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(90, 50, 160)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 90, 230)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(90, 50, 160))
+}
+frameGradient.Offset = Vector2.new(0,0)
+frameGradient.Parent = frameStroke
+
+local insideGrad = Instance.new("UIGradient")
+insideGrad.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(18, 12, 28)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 20, 38))
+}
+insideGrad.Rotation = 135
+insideGrad.Parent = serverFrame
+
+-- === SEARCH BAR (Responsive) ===
+local searchBar = Instance.new("TextBox")
+searchBar.Size = isMobile and UDim2.new(1, -110, 0, 30) or UDim2.new(1, -130, 0, 34)
+searchBar.Position = UDim2.new(0, isMobile and 10 or 18, 0, isMobile and 10 or 18)
+searchBar.BackgroundColor3 = Color3.fromRGB(28, 22, 38)
+searchBar.BorderSizePixel = 0
+searchBar.Font = Enum.Font.GothamMedium
+searchBar.PlaceholderText = isMobile and "Search..." or "Search events"
+searchBar.PlaceholderColor3 = Color3.fromRGB(160, 140, 200)
+searchBar.Text = ""
+searchBar.TextColor3 = Color3.fromRGB(235, 230, 255)
+searchBar.TextSize = isMobile and 11 or 13
+searchBar.TextXAlignment = Enum.TextXAlignment.Left
+searchBar.Parent = serverFrame
+
+local sbCorner = Instance.new("UICorner")
+sbCorner.CornerRadius = UDim.new(0, isMobile and 8 or 10)
+sbCorner.Parent = searchBar
+
+local sbPad = Instance.new("UIPadding")
+sbPad.PaddingLeft = UDim.new(0, isMobile and 8 or 12)
+sbPad.Parent = searchBar
+
+local sbStroke = Instance.new("UIStroke")
+sbStroke.Thickness = 0.8
+sbStroke.Color = Color3.fromRGB(120, 60, 210)
+sbStroke.Transparency = 0.6
+sbStroke.Parent = searchBar
+
+-- === REFRESH BUTTON (Responsive) ===
+local refreshButton = Instance.new("TextButton")
+refreshButton.Size = isMobile and UDim2.new(0, 65, 0, 30) or UDim2.new(0, 80, 0, 34)
+refreshButton.Position = isMobile and UDim2.new(1, -75, 0, 10) or UDim2.new(1, -95, 0, 18)
+refreshButton.BackgroundColor3 = Color3.fromRGB(80, 40, 140)
+refreshButton.BorderSizePixel = 0
+refreshButton.Font = Enum.Font.GothamBold
+refreshButton.Text = isMobile and "↻" or "Refresh"
+refreshButton.TextColor3 = Color3.fromRGB(240, 230, 255)
+refreshButton.TextSize = isMobile and 16 or 13
+refreshButton.AutoButtonColor = false
+refreshButton.Parent = serverFrame
+
+local rbCorner = Instance.new("UICorner")
+rbCorner.CornerRadius = UDim.new(0, isMobile and 8 or 10)
+rbCorner.Parent = refreshButton
+
+local rbStroke = Instance.new("UIStroke")
+rbStroke.Thickness = 0.8
+rbStroke.Color = Color3.fromRGB(150, 80, 240)
+rbStroke.Transparency = 0.4
+rbStroke.Parent = refreshButton
+
+-- === SERVER LIST (Responsive) ===
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = isMobile and UDim2.new(1, -20, 1, -55) or UDim2.new(1, -36, 1, -75)
+scrollFrame.Position = isMobile and UDim2.new(0, 10, 0, 50) or UDim2.new(0, 18, 0, 65)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = isMobile and 4 or 5
+scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(150, 80, 240)
+scrollFrame.CanvasSize = UDim2.new(0,0,0,0)
+scrollFrame.Parent = serverFrame
+
+local sfPadding = Instance.new("UIPadding")
+sfPadding.PaddingRight = UDim.new(0, isMobile and 8 or 13)
+sfPadding.Parent = scrollFrame
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Padding = UDim.new(0, isMobile and 8 or 10)
+listLayout.Parent = scrollFrame
+
+local servers = {}
+local refreshing = false
+
+local function parseAPIData(apiResponse)
+    local parsed = {}
+    
+    local success, err = pcall(function()
+        if not apiResponse or type(apiResponse) ~= "table" then
+            warn("[Parse] Invalid API response")
+            return
+        end
+        
+        if not apiResponse.rows then
+            warn("[Parse] No rows in response")
+            return
+        end
+        
+        local count = 0
+        for _, row in ipairs(apiResponse.rows) do
+            if count >= 30 then break end
+            
+            if row and row.payload then
+                local payload = row.payload
+                if payload.embeds and payload.embeds[1] then
+                    local embed = payload.embeds[1]
+                    local fields = embed.fields or {}
+                    
+                    local serverData = {
+                        event = "No Events",
+                        uptime = "0m",
+                        players = "0/20",
+                        relic = "0",
+                        weather = "None",
+                        jobId = "N/A",
+                        placeId = game.PlaceId
+                    }
+                    
+                    if embed.description then
+                        local jobMatch = tostring(embed.description):match("`([^`]+)`")
+                        if jobMatch then
+                            serverData.jobId = jobMatch
+                        end
+                    end
+                    
+                    for _, field in ipairs(fields) do
+                        if field and field.name and field.value then
+                            local name = tostring(field.name)
+                            local value = tostring(field.value)
+                            
+                            if name:find("Active Events") or name:find("Active Zones") then
+                                local zones = value:match("```(.-)```") or value
+                                zones = zones:gsub("^[,%s]+", ""):gsub("%s+$", "")
+                                
+                                if zones:find("No active") or zones:find("❌") or zones == "" then
+                                    serverData.event = "No Events"
+                                else
+                                    serverData.event = zones
+                                end
+                                
+                            elseif name:find("Uptime") then
+                                local uptimeMatch = value:match("```(.-)```")
+                                if uptimeMatch then
+                                    serverData.uptime = uptimeMatch:gsub("^%s+", ""):gsub("%s+$", "")
+                                end
+                                
+                            elseif name:find("Players") then
+                                local playersMatch = value:match("```(.-)```")
+                                if playersMatch then
+                                    serverData.players = playersMatch:gsub("^%s+", ""):gsub("%s+$", "")
+                                end
+                                
+                            elseif name:find("Weather") then
+                                local weatherMatch = value:match("```(.-)```")
+                                if weatherMatch then
+                                    serverData.weather = weatherMatch:gsub("^%s+", ""):gsub("%s+$", "")
+                                end
+                                
+                            elseif name:find("Cosmic Relics") then
+                                local relicNum = value:match("%d+")
+                                serverData.relic = relicNum or "0"
+                                
+                            elseif name:find("Server Info") or name:find("Place ID") then
+                                local placeMatch = value:match("`(%d+)`") or value:match("(%d+)")
+                                if placeMatch then
+                                    serverData.placeId = tonumber(placeMatch) or game.PlaceId
+                                end
+                            end
+                        end
+                    end
+                    
+                    table.insert(parsed, serverData)
+                    count = count + 1
+                end
+            end
+        end
+    end)
+    
+    if not success then
+        warn("[Parse] Error:", err)
+    end
+    
+    print("[Parse] Parsed", #parsed, "servers")
+    return parsed
+end
+
+local function fetchServers()
+    local success, response = pcall(function()
+        if not request then
+            error("Request function not available")
+        end
+        
+        return request({
+            Url = API_URL,
+            Method = "GET",
+            Headers = { ["Content-Type"] = "application/json" }
+        })
+    end)
+    
+    if not success then
+        warn("[API] ❌ Request failed:", response)
+        return false
+    end
+    
+    if not response then
+        warn("[API] ❌ No response from server")
+        return false
+    end
+    
+    if response.StatusCode ~= 200 then
+        warn("[API] ❌ Bad status code:", response.StatusCode)
+        return false
+    end
+    
+    print("[API] ✅ Response received")
+    
+    local decodeSuccess, decoded = pcall(function()
+        return HttpService:JSONDecode(response.Body)
+    end)
+    
+    if not decodeSuccess then
+        warn("[API] ❌ Failed to decode JSON:", decoded)
+        return false
+    end
+    
+    print("[API] ✅ JSON decoded successfully")
+    servers = parseAPIData(decoded)
+    print("[API] Total servers loaded:", #servers)
+    
+    return true
+end
+
+local function createServerItem(data)
+    local item = Instance.new("Frame")
+    item.Size = isMobile and UDim2.new(1, 0, 0, 95) or UDim2.new(1, 0, 0, 80)
+    item.BackgroundColor3 = Color3.fromRGB(28, 22, 38)
+    item.BorderSizePixel = 0
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, isMobile and 10 or 12)
+    corner.Parent = item
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Thickness = 0.8
+    stroke.Color = Color3.fromRGB(120, 60, 210)
+    stroke.Transparency = 0.5
+    stroke.Parent = item
+
+    local title = Instance.new("TextLabel")
+    title.Size = isMobile and UDim2.new(1, -20, 0, 30) or UDim2.new(0.8, -130, 0, 35)
+    title.Position = UDim2.new(0, isMobile and 10 or 14, 0, isMobile and 6 or 8)
+    title.BackgroundTransparency = 1
+    title.Font = Enum.Font.GothamBold
+    title.Text = "Event: "..data.event
+    title.TextColor3 = Color3.fromRGB(180, 160, 250)
+    title.TextSize = isMobile and 11 or 13
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.TextYAlignment = Enum.TextYAlignment.Top
+    title.TextWrapped = true
+    title.Parent = item
+
+    local info = Instance.new("TextLabel")
+    if isMobile then
+        info.Size = UDim2.new(1, -20, 0, 35)
+        info.Position = UDim2.new(0, 10, 0, 36)
+        info.Text = string.format("↑%s • 👥%s • 💎%s • 🌤%s",
+            data.uptime, data.players, data.relic, data.weather)
+        info.TextSize = 9
+    else
+        info.Size = UDim2.new(0.95, -130, 0, 28)
+        info.Position = UDim2.new(0, 14, 0, 48)
+        info.Text = string.format("Uptime %s  •  Players %s  •  Cosmic Relic %s  •  Weather %s",
+            data.uptime, data.players, data.relic, data.weather)
+        info.TextSize = 11
+    end
+    info.BackgroundTransparency = 1
+    info.Font = Enum.Font.Gotham
+    info.TextColor3 = Color3.fromRGB(210, 200, 235)
+    info.TextXAlignment = Enum.TextXAlignment.Left
+    info.TextYAlignment = Enum.TextYAlignment.Top
+    info.TextWrapped = true
+    info.Parent = item
+
+    local join = Instance.new("TextButton")
+    if isMobile then
+        join.Size = UDim2.new(1, -20, 0, 26)
+        join.Position = UDim2.new(0, 10, 1, -32)
+    else
+        join.Size = UDim2.new(0, 90, 0, 28)
+        join.Position = UDim2.new(1, -110, 0.5, -14)
+    end
+    join.BackgroundColor3 = Color3.fromRGB(100, 50, 180)
+    join.BorderSizePixel = 0
+    join.Font = Enum.Font.GothamBold
+    join.Text = "Join Server"
+    join.TextColor3 = Color3.fromRGB(255, 255, 255)
+    join.TextSize = isMobile and 11 or 13
+    join.AutoButtonColor = false
+    join.Parent = item
+
+    local jCorner = Instance.new("UICorner")
+    jCorner.CornerRadius = UDim.new(0, isMobile and 6 or 8)
+    jCorner.Parent = join
+
+    local jStroke = Instance.new("UIStroke")
+    jStroke.Thickness = 0.8
+    jStroke.Color = Color3.fromRGB(150, 80, 240)
+    jStroke.Transparency = 0.4
+    jStroke.Parent = join
+
+    join.MouseButton1Click:Connect(function()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "SHELD SERVER",
+            Text = "Joining server...",
+            Duration = 2
+        })
+
+        if data.placeId and data.jobId and data.jobId ~= "N/A" then
+            local TeleportService = game:GetService("TeleportService")
+            TeleportService:TeleportToPlaceInstance(data.placeId, data.jobId, player)
+        else
+            warn("[Join] ❌ Missing placeId or jobId for teleport")
+        end
+    end)
+
+    return item
+end
+
+local function populate(filter)
+    for _,c in ipairs(scrollFrame:GetChildren()) do
+        if c:IsA("Frame") or c:IsA("TextLabel") then c:Destroy() end
+    end
+
+    if #servers == 0 then
+        local noData = Instance.new("TextLabel")
+        noData.Size = UDim2.new(1, 0, 0, 40)
+        noData.BackgroundTransparency = 1
+        noData.Font = Enum.Font.GothamMedium
+        noData.Text = "No servers found. Click Refresh."
+        noData.TextColor3 = Color3.fromRGB(160, 140, 200)
+        noData.TextSize = isMobile and 11 or 13
+        noData.Parent = scrollFrame
+    else
+        local found = false
+        for _,s in ipairs(servers) do
+            if filter=="" or string.find(string.lower(s.event), string.lower(filter)) then
+                createServerItem(s).Parent = scrollFrame
+                found = true
+            end
+        end
+        if not found then
+            local noLabel = Instance.new("TextLabel")
+            noLabel.Size = UDim2.new(1, 0, 0, 40)
+            noLabel.BackgroundTransparency = 1
+            noLabel.Font = Enum.Font.GothamMedium
+            noLabel.Text = "No matching servers."
+            noLabel.TextColor3 = Color3.fromRGB(160, 140, 200)
+            noLabel.TextSize = isMobile and 11 or 13
+            noLabel.Parent = scrollFrame
+        end
+    end
+    
+    scrollFrame.CanvasSize = UDim2.new(0,0,0,listLayout.AbsoluteContentSize.Y+10)
+end
+
+populate("")
+
+searchBar:GetPropertyChangedSignal("Text"):Connect(function()
+    populate(searchBar.Text)
+end)
+
+refreshButton.MouseEnter:Connect(function()
+    if not isMobile then
+        TweenService:Create(refreshButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(100, 50, 160)
+        }):Play()
+    end
+end)
+
+refreshButton.MouseLeave:Connect(function()
+    if not isMobile then
+        TweenService:Create(refreshButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(80, 40, 140)
+        }):Play()
+    end
+end)
+
+refreshButton.MouseButton1Click:Connect(function()
+    if refreshing then return end
+    refreshing=true
+    refreshButton.Text = isMobile and "..." or "Loading..."
+    
+    local success = fetchServers()
+    
+    refreshButton.Text = isMobile and "↻" or "Refresh"
+    searchBar.Text=""
+    
+    if success then
+        populate("")
+        game.StarterGui:SetCore("SendNotification",{
+            Title="SHELD SERVER",
+            Text="Loaded "..#servers.." servers",
+            Duration=2
+        })
+    else
+        game.StarterGui:SetCore("SendNotification",{
+            Title="SHELD SERVER",
+            Text="Failed to load servers",
+            Duration=2
+        })
+    end
+    
+    refreshing=false
+end)
+
+local isVisible=false
+mainButton.MouseButton1Click:Connect(function()
+    isVisible = not isVisible
+    if isVisible then
+        serverFrame.Visible = true
+        serverFrame.Size = UDim2.new(0, frameWidth, 0, 0)
+        TweenService:Create(
+            serverFrame,
+            TweenInfo.new(0.4, Enum.EasingStyle.Back),
+            {Size = UDim2.new(0, frameWidth, 0, frameHeight)}
+        ):Play()
+    else
+        local tw = TweenService:Create(
+            serverFrame,
+            TweenInfo.new(0.3),
+            {Size = UDim2.new(0, frameWidth, 0, 0)}
+        )
+        tw:Play()
+        tw.Completed:Wait()
+        serverFrame.Visible = false
+    end
+end)
+
+task.spawn(function()
+    while true do
+        for i=0,1,0.01 do
+            frameGradient.Offset = Vector2.new(i,0)
+            task.wait(0.03)
+        end
+        for i=1,0,-0.01 do
+            frameGradient.Offset = Vector2.new(i,0)
+            task.wait(0.03)
+        end
+    end
+end)
+
+task.spawn(function()
+    task.wait(2)
+    fetchServers()
+    populate("")
+    
+    while true do
+        task.wait(300)
+        if not refreshing then
+            print("[API] Auto-refresh...")
+            fetchServers()
+            if isVisible then
+                populate(searchBar.Text)
+            end
+        end
+    end
+end)
