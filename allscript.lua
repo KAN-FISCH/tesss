@@ -12,7 +12,8 @@ local placeScripts = {
     [86076978383613] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/huntyZomby.lua",
     [103754275310547] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/huntyZomby.lua",
     [128473079243102] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/arunika2.lua",
-    [14963184269] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Sumbing.lua"
+    [14963184269] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Sumbing.lua",
+    [121864768012064] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/fishit",
 }
 local currentPlaceId = game.PlaceId
 if placeScripts[currentPlaceId] then
