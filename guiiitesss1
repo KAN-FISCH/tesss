@@ -435,7 +435,7 @@ function Speed_Library:CreateWindow(Config)
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Custom.BackgroundDark,
-        BackgroundTransparency = 0.05,
+        BackgroundTransparency = 0.3,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -458,14 +458,14 @@ function Speed_Library:CreateWindow(Config)
     }, Main)
 
     Custom:Create("UIStroke", {
-        Color = Custom.ColorRGB,
+        Color = Color3.fromRGB(255, 255, 255),
         Thickness = 2,
-        Transparency = 0.3
+        Transparency = 0.5
     }, Main)
 
     local Top = Custom:Create("Frame", {
         BackgroundColor3 = Custom.BackgroundDark,
-        BackgroundTransparency = 0.2,
+        BackgroundTransparency = 0.4,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 38),
@@ -641,9 +641,9 @@ function Speed_Library:CreateWindow(Config)
     }, LayersTab)
 
     Custom:Create("UIStroke", {
-        Color = Custom.ColorRGB,
+        Color = Color3.fromRGB(255, 255, 255),
         Thickness = 1,
-        Transparency = 0.6
+        Transparency = 0.4
     }, LayersTab)
 
     Custom:Create("Frame", {
@@ -681,7 +681,7 @@ function Speed_Library:CreateWindow(Config)
     }, Layers)
 
     Custom:Create("UIStroke", {
-        Color = Custom.DarkBlue,
+        Color = Color3.fromRGB(255, 255, 255),
         Thickness = 1,
         Transparency = 0.5
     }, Layers)
