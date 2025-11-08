@@ -67,6 +67,7 @@ local function OpenClose()
   local UIGradient = Custom:Create("UIGradient", {
     Color = ColorSequence.new{
       ColorSequenceKeypoint.new(0, Custom.ColorRGB),
+      ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
       ColorSequenceKeypoint.new(1, Custom.DarkBlue)
     },
     Rotation = 45,
@@ -261,6 +262,7 @@ function Speed_Library:SetNotification(Config)
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
             ColorSequenceKeypoint.new(0.5, Custom.FrameDark),
+            ColorSequenceKeypoint.new(1, Custom.AccentColor)
         },
         Rotation = 135,
     }, NotificationFrameReal)
@@ -449,6 +451,7 @@ function Speed_Library:CreateWindow(Config)
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
             ColorSequenceKeypoint.new(0.3, Custom.FrameDark),
+            ColorSequenceKeypoint.new(0.7, Custom.AccentColor),
             ColorSequenceKeypoint.new(1, Custom.DarkBlue)
         },
         Rotation = 135,
@@ -472,6 +475,7 @@ function Speed_Library:CreateWindow(Config)
     Custom:Create("UIGradient", {
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Custom.FrameDark),
+            ColorSequenceKeypoint.new(1, Custom.AccentColor)
         },
         Rotation = 90,
     }, Top)
@@ -819,6 +823,7 @@ function Speed_Library:CreateWindow(Config)
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
             ColorSequenceKeypoint.new(0.5, Custom.FrameDark),
+            ColorSequenceKeypoint.new(1, Custom.AccentColor)
         },
         Rotation = 90,
     }, MoreBlur)
@@ -977,6 +982,7 @@ function Speed_Library:CreateWindow(Config)
         Custom:Create("UIGradient", {
             Color = ColorSequence.new{
                 ColorSequenceKeypoint.new(0, Custom.FrameDark),
+                ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
                 ColorSequenceKeypoint.new(1, Custom.DarkBlue)
             },
             Rotation = 45,
@@ -1149,6 +1155,7 @@ function Speed_Library:CreateWindow(Config)
             Custom:Create("UIGradient", {
                 Color = ColorSequence.new{
                     ColorSequenceKeypoint.new(0, Custom.FrameDark),
+                    ColorSequenceKeypoint.new(1, Custom.AccentColor)
                 },
                 Rotation = 90,
             }, SectionReal)
