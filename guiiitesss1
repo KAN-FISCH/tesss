@@ -657,6 +657,7 @@ function Speed_Library:CreateWindow(Config)
     }, Main)
 
     local Layers = Custom:Create("Frame", {
+        BackgroundColor3 = Custom.FrameDark,
         BackgroundTransparency = 0.1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
@@ -673,6 +674,7 @@ function Speed_Library:CreateWindow(Config)
         Color = ColorSequence.new{
             ColorSequenceKeypoint.new(0, Custom.FrameDark),
             ColorSequenceKeypoint.new(0.6, Custom.BackgroundDark),
+            ColorSequenceKeypoint.new(1, Custom.AccentColor)
         },
         Rotation = 90,
     }, Layers)
