@@ -619,7 +619,6 @@ function Speed_Library:CreateWindow(Config)
     }, TextLabel1)
 
     local LayersTab = Custom:Create("Frame", {
-        BackgroundColor3 = Custom.FrameDark,
         BackgroundTransparency = 0.5,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
@@ -658,7 +657,6 @@ function Speed_Library:CreateWindow(Config)
     }, Main)
 
     local Layers = Custom:Create("Frame", {
-        BackgroundColor3 = Custom.FrameDark,
         BackgroundTransparency = 0.1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
