@@ -641,7 +641,7 @@ function Speed_Library:CreateWindow(Config)
     }, LayersTab)
 
     Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(255, 255, 255),
+        Color = Custom.ColorRGB,
         Thickness = 1,
         Transparency = 0.4
     }, LayersTab)
