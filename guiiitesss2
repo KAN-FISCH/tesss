@@ -681,7 +681,6 @@ function Speed_Library:CreateWindow(Config)
     }, Layers)
 
     Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(255, 255, 255),
         Thickness = 1,
         Transparency = 0.5
     }, Layers)
@@ -693,6 +692,7 @@ function Speed_Library:CreateWindow(Config)
         TextSize = 24,
         TextWrapped = true,
         TextXAlignment = Enum.TextXAlignment.Left,
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.9990000128746033,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
@@ -708,6 +708,7 @@ function Speed_Library:CreateWindow(Config)
 
     local LayersReal = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0, 1),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.9990000128746033,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
