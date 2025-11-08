@@ -19,7 +19,7 @@ end
 
 local Custom = {} do
     Custom.ColorRGB = Color3.fromRGB(25, 25, 112)
-    Custom.AccentColor = Color3.fromRGB(75, 0, 130)
+    Custom.AccentColor = Color3.fromRGB(25, 25, 112)
     Custom.DarkBlue = Color3.fromRGB(25, 25, 112)
     Custom.BackgroundDark = Color3.fromRGB(12, 12, 25)
     Custom.FrameDark = Color3.fromRGB(20, 20, 35)
@@ -656,7 +656,6 @@ function Speed_Library:CreateWindow(Config)
     }, Main)
 
     local Layers = Custom:Create("Frame", {
-        BackgroundColor3 = Custom.FrameDark,
         BackgroundTransparency = 0.1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
@@ -707,7 +706,7 @@ function Speed_Library:CreateWindow(Config)
     local LayersReal = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0, 1),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.9990000128746033,
+        BackgroundTransparency = 0.5990000128746033,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         ClipsDescendants = true,
