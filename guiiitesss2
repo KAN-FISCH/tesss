@@ -444,7 +444,7 @@ function Speed_Library:CreateWindow(Config)
     }, DropShadow)
 
     Custom:Create("UICorner", {
-        CornerRadius = UDim.new(0, 16)
+        CornerRadius = UDim.new(0, 10)
     }, Main)
 
     Custom:Create("UIGradient", {
@@ -464,7 +464,6 @@ function Speed_Library:CreateWindow(Config)
     }, Main)
 
     local Top = Custom:Create("Frame", {
-        BackgroundColor3 = Custom.BackgroundDark,
         BackgroundTransparency = 0.4,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
