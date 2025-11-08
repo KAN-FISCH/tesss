@@ -620,7 +620,7 @@ function Speed_Library:CreateWindow(Config)
 
     local LayersTab = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0.1,
+        BackgroundTransparency = 0.5,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0, 9, 0, 50),
@@ -634,8 +634,8 @@ function Speed_Library:CreateWindow(Config)
 
     Custom:Create("UIGradient", {
         Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Custom.FrameDark),
-            ColorSequenceKeypoint.new(1, Custom.AccentColor)
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(30, 30, 45)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 40, 60))
         },
         Rotation = 45,
     }, LayersTab)
