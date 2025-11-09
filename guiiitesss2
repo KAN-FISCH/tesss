@@ -508,25 +508,20 @@ function Speed_Library:CreateWindow(Config)
     }, GreenButton)
 
     local tweenInfo = TweenInfo.new(
-        12,
-        Enum.EasingStyle.Quad, -- Easing style
-        Enum.EasingDirection.InOut -- Easing direction
+        7,
+        Enum.EasingStyle.Quad,
+        Enum.EasingDirection.InOut
     )
 
     local buttonTween = TweenService:Create(GreenButton, tweenInfo, {
-        BackgroundColor3 = Custom.MacGreenButton -- Warna hijau akhir
+        BackgroundColor3 = Custom.MacGreenButton
     })
-
-    -- Tween untuk stroke
     local strokeTween = TweenService:Create(Stroke, tweenInfo, {
-        Color = Color3.fromRGB(30, 150, 50) -- Stroke hijau
+        Color = Color3.fromRGB(30, 150, 50)
     })
-
-    -- Jalankan animasi
     buttonTween:Play()
     strokeTween:Play()
 
-    -- macOS/Linux Terminal Style Buttons Container (Kanan untuk Hijau, Kuning & Merah)
     local RightButtonsContainer = Custom:Create("Frame", {
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(1, 0),
@@ -535,7 +530,6 @@ function Speed_Library:CreateWindow(Config)
         Name = "RightButtonsContainer"
     }, Top)
 
-    -- Green Button 2 (Decorative - sebelah kiri kuning)
     local GreenButton2 = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacGreenButton,
@@ -554,7 +548,6 @@ function Speed_Library:CreateWindow(Config)
         Transparency = 0.3
     }, GreenButton2)
 
-    -- Yellow Button (Minimize - tengah)
     local YellowButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacYellowButton,
@@ -574,7 +567,6 @@ function Speed_Library:CreateWindow(Config)
         Transparency = 0.3
     }, YellowButton)
 
-    -- Red Button (Close - paling kanan)
     local RedButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacRedButton,
