@@ -508,7 +508,7 @@ function Speed_Library:CreateWindow(Config)
     }, GreenButton)
 
     local tweenInfo = TweenInfo.new(
-        20,
+        12,
         Enum.EasingStyle.Quad, -- Easing style
         Enum.EasingDirection.InOut -- Easing direction
     )
