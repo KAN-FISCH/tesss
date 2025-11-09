@@ -519,6 +519,7 @@ function Speed_Library:CreateWindow(Config)
     local strokeTween = TweenService:Create(Stroke, tweenInfo, {
         Color = Color3.fromRGB(30, 150, 50)
     })
+    task.wait(6)
     buttonTween:Play()
     strokeTween:Play()
 
