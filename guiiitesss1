@@ -480,6 +480,8 @@ function Speed_Library:CreateWindow(Config)
     }, Top)
 
     -- macOS/Linux Terminal Style Buttons Container (Kiri untuk Hijau)
+    local TweenService = game:GetService("TweenService")
+
     local GreenButtonContainer = Custom:Create("Frame", {
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 12, 0, 0),
@@ -487,10 +489,9 @@ function Speed_Library:CreateWindow(Config)
         Name = "GreenButtonContainer"
     }, Top)
 
-    -- Green Button (Decorative - paling kiri sendiri)
     local GreenButton = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundColor3 = Custom.MacGreenButton,
+        BackgroundColor3 = Color3.fromRGB(255, 59, 48),
         Position = UDim2.new(0, 0, 0.5, 0),
         Size = UDim2.new(0, 12, 0, 12),
         Name = "GreenButton"
@@ -500,11 +501,30 @@ function Speed_Library:CreateWindow(Config)
         CornerRadius = UDim.new(1, 0)
     }, GreenButton)
 
-    Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(30, 150, 50),
+    local Stroke = Custom:Create("UIStroke", {
+        Color = Color3.fromRGB(200, 40, 30),
         Thickness = 1,
         Transparency = 0.3
     }, GreenButton)
+
+    local tweenInfo = TweenInfo.new(
+        3,
+        Enum.EasingStyle.Quad, -- Easing style
+        Enum.EasingDirection.InOut -- Easing direction
+    )
+
+    local buttonTween = TweenService:Create(GreenButton, tweenInfo, {
+        BackgroundColor3 = Custom.MacGreenButton -- Warna hijau akhir
+    })
+
+    -- Tween untuk stroke
+    local strokeTween = TweenService:Create(Stroke, tweenInfo, {
+        Color = Color3.fromRGB(30, 150, 50) -- Stroke hijau
+    })
+
+    -- Jalankan animasi
+    buttonTween:Play()
+    strokeTween:Play()
 
     -- macOS/Linux Terminal Style Buttons Container (Kanan untuk Hijau, Kuning & Merah)
     local RightButtonsContainer = Custom:Create("Frame", {
