@@ -435,7 +435,7 @@ function Speed_Library:CreateWindow(Config)
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Custom.BackgroundDark,
-        BackgroundTransparency = 0.3,
+        BackgroundTransparency = 0.1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
