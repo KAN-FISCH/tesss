@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------
--- HARD RESET + FPS BOOST MAX
+-- HARD RESET + FPS BOOST MAX (ROBLOX SAFE)
 ---------------------------------------------------------------------
 
 local Players = game:GetService("Players")
@@ -7,20 +7,10 @@ local LocalPlayer = Players.LocalPlayer
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
-local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserSettings = UserSettings():GetService("UserGameSettings")
 
 ---------------------------------------------------------------------
--- 1. Set FPS max & Graphics level minimal
----------------------------------------------------------------------
-pcall(function()
-	UserSettings.TouchEnabled = false
-	UserSettings.FFlagGraphicsQualityLevel = 1
-end)
-
----------------------------------------------------------------------
--- 2. Disable semua Script & LocalScript
+-- 1. Disable semua Script & LocalScript
 ---------------------------------------------------------------------
 for _, obj in ipairs(game:GetDescendants()) do
 	if obj:IsA("Script") or obj:IsA("LocalScript") then
@@ -34,15 +24,16 @@ game.DescendantAdded:Connect(function(obj)
 end)
 
 ---------------------------------------------------------------------
--- 3. Hapus semua map, Terrain, model
+-- 2. Hapus semua map, Terrain, model
 ---------------------------------------------------------------------
 for _, obj in ipairs(Workspace:GetChildren()) do
 	if obj ~= LocalPlayer.Character then
 		obj:Destroy()
 	end
 end
-if Workspace:FindFirstChildOfClass("Terrain") then
-	Workspace:FindFirstChildOfClass("Terrain"):Clear()
+local terrain = Workspace:FindFirstChildOfClass("Terrain")
+if terrain then
+	terrain:Clear()
 end
 Workspace.DescendantAdded:Connect(function(obj)
 	if obj ~= LocalPlayer.Character then
@@ -51,7 +42,7 @@ Workspace.DescendantAdded:Connect(function(obj)
 end)
 
 ---------------------------------------------------------------------
--- 4. Bersihkan semua VFX & GUI
+-- 3. Bersihkan semua VFX & GUI
 ---------------------------------------------------------------------
 local notifNames = {"notification","notif","notifications","message","messages","alert","warning","hint"}
 
@@ -90,7 +81,7 @@ for _, v in ipairs(game:GetDescendants()) do cleanVFX(v) end
 game.DescendantAdded:Connect(cleanVFX)
 
 ---------------------------------------------------------------------
--- 5. Matikan semua Lighting & PostEffect
+-- 4. Matikan semua Lighting & PostEffect
 ---------------------------------------------------------------------
 for _, v in ipairs(Lighting:GetChildren()) do
 	if v:IsA("PostEffect") or
@@ -121,7 +112,7 @@ Lighting.OutdoorAmbient = Color3.fromRGB(255,255,255)
 Lighting.FogEnd = 1
 
 ---------------------------------------------------------------------
--- 6. Stop physics & gravity
+-- 5. Stop physics & gravity
 ---------------------------------------------------------------------
 workspace.Gravity = 0
 for _, part in ipairs(Workspace:GetDescendants()) do
@@ -132,7 +123,7 @@ for _, part in ipairs(Workspace:GetDescendants()) do
 end
 
 ---------------------------------------------------------------------
--- 7. Stop all sounds
+-- 6. Stop all sounds
 ---------------------------------------------------------------------
 for _, s in ipairs(game:GetDescendants()) do
 	if s:IsA("Sound") then s:Stop() end
@@ -142,7 +133,7 @@ game.DescendantAdded:Connect(function(obj)
 end)
 
 ---------------------------------------------------------------------
--- 8. Bersihkan karakter sendiri (animasi, accessories)
+-- 7. Bersihkan karakter sendiri (animasi, accessories)
 ---------------------------------------------------------------------
 local function cleanChar(char)
 	local hum = char:FindFirstChildOfClass("Humanoid")
@@ -165,7 +156,7 @@ end)
 if LocalPlayer.Character then cleanChar(LocalPlayer.Character) end
 
 ---------------------------------------------------------------------
--- 9. Nonaktifkan semua karakter lain
+-- 8. Nonaktifkan semua karakter lain
 ---------------------------------------------------------------------
 Players.CharacterAutoLoads = false
 for _, plr in ipairs(Players:GetPlayers()) do
@@ -181,7 +172,7 @@ Players.PlayerAdded:Connect(function(plr)
 end)
 
 ---------------------------------------------------------------------
--- 10. Nonaktifkan semua RemoteEvent / RemoteFunction
+-- 9. Nonaktifkan semua RemoteEvent / RemoteFunction
 ---------------------------------------------------------------------
 for _, obj in ipairs(ReplicatedStorage:GetDescendants()) do
 	if obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") then
@@ -193,16 +184,6 @@ ReplicatedStorage.DescendantAdded:Connect(function(obj)
 		obj:Destroy()
 	end
 end)
-
----------------------------------------------------------------------
--- 11. Stop all RenderStepped & Heartbeat loops
----------------------------------------------------------------------
-for _, conn in ipairs(getconnections or function() return {} end)(RunService.RenderStepped) do
-	pcall(function() conn:Disconnect() end)
-end
-for _, conn in ipairs(getconnections or function() return {} end)(RunService.Heartbeat) do
-	pcall(function() conn:Disconnect() end)
-end
 
 ---------------------------------------------------------------------
 print("HARD RESET + FPS BOOST MAX – AKTIF ✓")
