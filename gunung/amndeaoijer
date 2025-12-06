@@ -156,13 +156,3 @@ end
 Players.PlayerAdded:Connect(function(plr)
 	deleteChar(plr)
 end)
-local StarterGui = game:GetService("StarterGui")
-StarterGui:SetCore("ChatActive", false)
-StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
-StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false) 
-do
-    local function noop(...) return end
-    print = noop
-    warn = noop
-    error = noop
-end
