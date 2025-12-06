@@ -1,0 +1,183 @@
+workspace:FindFirstChildOfClass('Terrain'):Clear()
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local notifNames = {
+	"notification",
+	"notif",
+	"notifications",
+	"message",
+	"messages",
+	"alert",
+	"warning",
+	"hint"
+}
+local function containsYouGot(gui)
+	for _, d in ipairs(gui:GetDescendants()) do
+		if d:IsA("TextLabel") or d:IsA("TextButton") or d:IsA("TextBox") then
+			if d.Text and d.Text:lower():find("you got") then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+local function isNotif(gui)
+	for _, name in ipairs(notifNames) do
+		if gui.Name:lower():find(name) then
+			return true
+		end
+	end
+	return false
+end
+
+-- Hapus notif existing
+for _, gui in ipairs(playerGui:GetChildren()) do
+	if gui:IsA("ScreenGui") then
+		if isNotif(gui) and not containsYouGot(gui) then
+			gui:Destroy()
+		end
+	end
+end
+playerGui.ChildAdded:Connect(function(gui)
+	task.wait()
+
+	if gui:IsA("ScreenGui") then
+		if isNotif(gui) and not containsYouGot(gui) then
+			gui:Destroy()
+		end
+	end
+end)
+local Lighting = game:GetService("Lighting")
+local RunService = game:GetService("RunService")
+
+-- Hapus semua VFX yang sudah ada
+for _, v in ipairs(game:GetDescendants()) do
+	if v:IsA("ForceField")
+		or v:IsA("Sparkles")
+		or v:IsA("Smoke")
+		or v:IsA("Fire")
+		or v:IsA("Beam")
+		or v:IsA("Trail")
+		or v:IsA("ParticleEmitter") then
+
+		v:Destroy()
+
+	elseif v:IsA("Decal") or v:IsA("Texture") then
+		v:Destroy()
+
+	elseif v:IsA("PostEffect") then
+		v.Enabled = false
+	end
+end
+
+-- Hapus VFX yang muncul setelahnya
+workspace.DescendantAdded:Connect(function(child)
+	task.spawn(function()
+		RunService.Heartbeat:Wait()
+		
+		if child:IsA("ForceField")
+			or child:IsA("Sparkles")
+			or child:IsA("Smoke")
+			or child:IsA("Fire")
+			or child:IsA("Beam")
+			or child:IsA("Trail")
+			or child:IsA("ParticleEmitter")
+			or child:IsA("Decal")
+			or child:IsA("Texture") then
+			
+			child:Destroy()
+
+		elseif child:IsA("PostEffect") then
+			child.Enabled = false
+		end
+	end)
+end)
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local function disableAnimations(char)
+	-- Hapus Animator agar animasi tidak bisa play
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		-- Stop semua track
+		for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+			track:Stop()
+		end
+
+		-- Hapus Animator
+		local animator = humanoid:FindFirstChild("Animator")
+		if animator then
+			animator:Destroy()
+		end
+
+		-- Hapus Animate script Roblox
+		local animate = char:FindFirstChild("Animate")
+		if animate then
+			animate:Destroy()
+		end
+	end
+end
+
+-- Untuk saat respawn
+player.CharacterAdded:Connect(function(char)
+	char:WaitForChild("Humanoid")
+	task.wait(0.2)
+	disableAnimations(char)
+end)
+
+-- Jika sudah spawn duluan
+if player.Character then
+	disableAnimations(player.Character)
+end
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+
+local function deleteChar(plr)
+	if plr ~= localPlayer then
+		if plr.Character then
+			plr.Character:Destroy()
+		end
+		plr.CharacterAdded:Connect(function(char)
+			task.wait()
+			char:Destroy()
+		end)
+	end
+end
+
+-- Hapus semua char yang sudah ada
+for _, plr in ipairs(Players:GetPlayers()) do
+	deleteChar(plr)
+end
+
+-- Jika player baru join
+Players.PlayerAdded:Connect(function(plr)
+	deleteChar(plr)
+end)
+for _, s in ipairs(game:GetDescendants()) do
+	if s:IsA("Sound") then s:Stop() end
+end
+game.DescendantAdded:Connect(function(obj)
+	if obj:IsA("Sound") then obj:Stop() end
+end)
+local function cleanChar(char)
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then
+		for _, track in ipairs(hum:GetPlayingAnimationTracks()) do track:Stop() end
+		local anim = hum:FindFirstChild("Animator")
+		if anim then anim:Destroy() end
+		local scr = char:FindFirstChild("Animate")
+		if scr then scr:Destroy() end
+	end
+	for _, acc in ipairs(char:GetChildren()) do
+		if acc:IsA("Accessory") or acc:IsA("Hat") then acc:Destroy() end
+	end
+end
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+	task.wait(0.1)
+	cleanChar(char)
+end)
+if LocalPlayer.Character then cleanChar(LocalPlayer.Character) end
