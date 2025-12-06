@@ -162,22 +162,3 @@ end
 game.DescendantAdded:Connect(function(obj)
 	if obj:IsA("Sound") then obj:Stop() end
 end)
-local function cleanChar(char)
-	local hum = char:FindFirstChildOfClass("Humanoid")
-	if hum then
-		for _, track in ipairs(hum:GetPlayingAnimationTracks()) do track:Stop() end
-		local anim = hum:FindFirstChild("Animator")
-		if anim then anim:Destroy() end
-		local scr = char:FindFirstChild("Animate")
-		if scr then scr:Destroy() end
-	end
-	for _, acc in ipairs(char:GetChildren()) do
-		if acc:IsA("Accessory") or acc:IsA("Hat") then acc:Destroy() end
-	end
-end
-
-LocalPlayer.CharacterAdded:Connect(function(char)
-	task.wait(0.1)
-	cleanChar(char)
-end)
-if LocalPlayer.Character then cleanChar(LocalPlayer.Character) end
