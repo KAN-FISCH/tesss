@@ -156,9 +156,13 @@ end
 Players.PlayerAdded:Connect(function(plr)
 	deleteChar(plr)
 end)
-for _, s in ipairs(game:GetDescendants()) do
-	if s:IsA("Sound") then s:Stop() end
+local StarterGui = game:GetService("StarterGui")
+StarterGui:SetCore("ChatActive", false)
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false) 
+do
+    local function noop(...) return end
+    print = noop
+    warn = noop
+    error = noop
 end
-game.DescendantAdded:Connect(function(obj)
-	if obj:IsA("Sound") then obj:Stop() end
-end)
