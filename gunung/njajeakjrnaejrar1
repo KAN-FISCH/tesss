@@ -671,11 +671,11 @@ function Speed_Library:CreateWindow(Config)
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(1, 0),
         Position = UDim2.new(1, -12, 0, 0),
-        Size = UDim2.new(0, 32, 1, 0),
+        Size = UDim2.new(0, 52, 1, 0),
         Name = "RightButtonsContainer"
     }, Top)
 
-    -- Yellow Button (Minimize)
+    -- Yellow Button (Minimize) - Moved to Green's place (Left)
     local YellowButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacYellowButton,
@@ -695,11 +695,11 @@ function Speed_Library:CreateWindow(Config)
         Transparency = 0.3
     }, YellowButton)
 
-    -- Red Button (Close)
+    -- Red Button (Close) - Kept at Right (Gap created)
     local RedButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacRedButton,
-        Position = UDim2.new(0, 20, 0.5, 0),
+        Position = UDim2.new(0, 40, 0.5, 0),
         Size = UDim2.new(0, 12, 0, 12),
         Text = "",
         Name = "RedButton"
