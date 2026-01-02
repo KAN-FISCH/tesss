@@ -601,8 +601,8 @@ function Speed_Library:CreateWindow(Config)
 
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = Custom.BackgroundDark,
-        BackgroundTransparency = 0.05,
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0.3, -- Glass Effect
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -617,14 +617,14 @@ function Speed_Library:CreateWindow(Config)
     -- Removed UIGradient for clean iOS look
 
     Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(60, 60, 60), -- Subtle grey stroke
+        Color = Color3.fromRGB(255, 255, 255), -- Glass Edge
         Thickness = 1,
-        Transparency = 0.6
+        Transparency = 0.9
     }, Main)
 
     local Top = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0,
+        BackgroundTransparency = 1, -- Fully Transparent Header
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 38),
@@ -1297,7 +1297,7 @@ function Speed_Library:CreateWindow(Config)
             local SectionReal = Custom:Create("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0),
                 BackgroundColor3 = Custom.FrameDark,
-                BackgroundTransparency = 0.2,
+                BackgroundTransparency = 0.5,
                 BorderColor3 = Color3.fromRGB(0, 0, 0),
                 BorderSizePixel = 0,
                 LayoutOrder = 1,
@@ -1307,16 +1307,10 @@ function Speed_Library:CreateWindow(Config)
             }, Section)
     
             Custom:Create("UICorner", {
-                CornerRadius = UDim.new(0, 8)
+                CornerRadius = UDim.new(0, 12)
             }, SectionReal)
-
-            Custom:Create("UIGradient", {
-                Color = ColorSequence.new{
-                    ColorSequenceKeypoint.new(0, Custom.FrameDark),
-                    ColorSequenceKeypoint.new(1, Custom.AccentColor)
-                },
-                Rotation = 90,
-            }, SectionReal)
+            
+            -- Removed UIGradient for simpler look
 
             Custom:Create("UIStroke", {
                 Color = Custom.DarkBlue,
