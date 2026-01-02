@@ -1101,7 +1101,7 @@ function Speed_Library:CreateWindow(Config)
         }, LayersFolder)
 
         local ScrolLayersLayout = Custom:Create("UIListLayout", {
-            Padding = UDim.new(0, 4),
+            Padding = UDim.new(0, 15), -- Increased padding to separate sections
             SortOrder = Enum.SortOrder.LayoutOrder,
         }, ScrolLayers)
         
@@ -1283,7 +1283,7 @@ function Speed_Library:CreateWindow(Config)
             local SectionReal = Custom:Create("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0),
                 BackgroundColor3 = Custom.FrameDark,
-                BackgroundTransparency = 0.5,
+                BackgroundTransparency = 0.1, -- More solid to separate cards
                 BorderColor3 = Color3.fromRGB(0, 0, 0),
                 BorderSizePixel = 0,
                 LayoutOrder = 1,
