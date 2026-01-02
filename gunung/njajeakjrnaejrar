@@ -1361,19 +1361,18 @@ function Speed_Library:CreateWindow(Config)
             }, FeatureFrame)
     
             local SectionTitle = Custom:Create("TextLabel", {
-                Font = Enum.Font.GothamBold,
+                Font = Enum.Font.GothamBlack,
                 Text = Title,
                 TextColor3 = Color3.fromRGB(255, 255, 255),
-                TextStrokeColor3 = Custom.ColorRGB,
-                TextStrokeTransparency = 0.6,
-                TextSize = 14,
+                TextStrokeTransparency = 1, -- Removed visible stroke
+                TextSize = 15,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Center,
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                BackgroundTransparency = 0.9990000128746033,
+                BackgroundTransparency = 1,
                 BorderColor3 = Color3.fromRGB(0, 0, 0),
                 BorderSizePixel = 0,
-                Position = UDim2.new(0, 12, 0, 0),
+                Position = UDim2.new(0, 15, 0, 0),
                 Size = UDim2.new(1, -50, 1, 0),
                 Name = "SectionTitle"
             }, SectionReal)
