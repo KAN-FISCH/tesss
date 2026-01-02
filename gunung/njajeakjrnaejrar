@@ -851,7 +851,7 @@ function Speed_Library:CreateWindow(Config)
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 24,
         TextWrapped = true,
-        TextXAlignment = Enum.TextXAlignment.Center,
+        TextXAlignment = Enum.TextXAlignment.Left,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.9990000128746033,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
