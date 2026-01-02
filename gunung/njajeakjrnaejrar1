@@ -666,39 +666,20 @@ function Speed_Library:CreateWindow(Config)
         Transparency = 0.3
     }, GreenButton)
 
-    -- macOS/Linux Terminal Style Buttons Container (Kanan untuk Hijau, Kuning & Merah)
+    -- macOS/Linux Terminal Style Buttons Container
     local RightButtonsContainer = Custom:Create("Frame", {
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(1, 0),
         Position = UDim2.new(1, -12, 0, 0),
-        Size = UDim2.new(0, 52, 1, 0),
+        Size = UDim2.new(0, 32, 1, 0),
         Name = "RightButtonsContainer"
     }, Top)
 
-    -- Green Button 2 (Decorative - sebelah kiri kuning)
-    local GreenButton2 = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundColor3 = Custom.MacGreenButton,
-        Position = UDim2.new(0, 0, 0.5, 0),
-        Size = UDim2.new(0, 12, 0, 12),
-        Name = "GreenButton2"
-    }, RightButtonsContainer)
-
-    Custom:Create("UICorner", {
-        CornerRadius = UDim.new(1, 0)
-    }, GreenButton2)
-
-    Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(30, 150, 50),
-        Thickness = 1,
-        Transparency = 0.3
-    }, GreenButton2)
-
-    -- Yellow Button (Minimize - tengah)
+    -- Yellow Button (Minimize)
     local YellowButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacYellowButton,
-        Position = UDim2.new(0, 20, 0.5, 0),
+        Position = UDim2.new(0, 0, 0.5, 0),
         Size = UDim2.new(0, 12, 0, 12),
         Text = "",
         Name = "YellowButton"
@@ -714,11 +695,11 @@ function Speed_Library:CreateWindow(Config)
         Transparency = 0.3
     }, YellowButton)
 
-    -- Red Button (Close - paling kanan)
+    -- Red Button (Close)
     local RedButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacRedButton,
-        Position = UDim2.new(0, 40, 0.5, 0),
+        Position = UDim2.new(0, 20, 0.5, 0),
         Size = UDim2.new(0, 12, 0, 12),
         Text = "",
         Name = "RedButton"
