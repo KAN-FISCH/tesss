@@ -611,41 +611,33 @@ function Speed_Library:CreateWindow(Config)
     }, DropShadow)
 
     Custom:Create("UICorner", {
-        CornerRadius = UDim.new(0, 16)
+        CornerRadius = UDim.new(0, 20)
     }, Main)
 
-    Custom:Create("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Custom.BackgroundDark),
-            ColorSequenceKeypoint.new(0.3, Custom.FrameDark),
-            ColorSequenceKeypoint.new(0.7, Custom.AccentColor),
-            ColorSequenceKeypoint.new(1, Custom.DarkBlue)
-        },
-        Rotation = 135,
-    }, Main)
+    -- Removed UIGradient for clean iOS look
 
     Custom:Create("UIStroke", {
-        Color = Custom.ColorRGB,
-        Thickness = 2,
-        Transparency = 0.3
+        Color = Color3.fromRGB(60, 60, 60), -- Subtle grey stroke
+        Thickness = 1,
+        Transparency = 0.6
     }, Main)
 
     local Top = Custom:Create("Frame", {
-        BackgroundColor3 = Custom.BackgroundDark,
-        BackgroundTransparency = 0.2,
+        BackgroundColor3 = Custom.FrameDark,
+        BackgroundTransparency = 0,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 38),
         Name = "Top"
     }, Main)
-
-    Custom:Create("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Custom.FrameDark),
-            ColorSequenceKeypoint.new(1, Custom.AccentColor)
-        },
-        Rotation = 90,
-    }, Top)
+    
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 20) }, Top)
+    
+    -- Fix bottom corners of Top frame to be square? 
+    -- Actually with ClipsDescendants on Main, we don't need to worry, but Main ClipsDescendants is NOT set in this visible code.
+    -- I will add a "Filler" frame to square off the bottom of Top if needed, or just let it be rounded (iPad style).
+    
+    -- Removed UIGradient for Top
 
     -- macOS/Linux Terminal Style Buttons Container (Kiri untuk Hijau)
     local GreenButtonContainer = Custom:Create("Frame", {
@@ -708,10 +700,7 @@ function Speed_Library:CreateWindow(Config)
         BackgroundColor3 = Custom.MacYellowButton,
         Position = UDim2.new(0, 20, 0.5, 0),
         Size = UDim2.new(0, 12, 0, 12),
-        Text = "-",
-        TextColor3 = Color3.new(0,0,0),
-        TextSize = 9,
-        Font = Enum.Font.GothamBold,
+        Text = "",
         Name = "YellowButton"
     }, RightButtonsContainer)
 
@@ -731,11 +720,7 @@ function Speed_Library:CreateWindow(Config)
         BackgroundColor3 = Custom.MacRedButton,
         Position = UDim2.new(0, 40, 0.5, 0),
         Size = UDim2.new(0, 12, 0, 12),
-        Text = "x",
-        TextColor3 = Color3.new(0,0,0),
-        TextSize = 9,
-        TextYAlignment = Enum.TextYAlignment.Center,
-        Font = Enum.Font.GothamBold,
+        Text = "",
         Name = "RedButton"
     }, RightButtonsContainer)
 
