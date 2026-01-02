@@ -846,25 +846,21 @@ function Speed_Library:CreateWindow(Config)
     }, Layers)
 
     local NameTab = Custom:Create("TextLabel", {
-        Font = Enum.Font.GothamBold,
+        Font = Enum.Font.GothamBlack,
         Text = "",
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 24,
         TextWrapped = true,
-        TextXAlignment = Enum.TextXAlignment.Left,
+        TextXAlignment = Enum.TextXAlignment.Center,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 0.9990000128746033,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 30),
+        Size = UDim2.new(1, 0, 0, 45),
         Name = "NameTab"
     }, Layers)
 
-    Custom:Create("UIStroke", {
-        Color = Custom.ColorRGB,
-        Thickness = 0.8,
-        Transparency = 0.4
-    }, NameTab)
+    -- Removed UIStroke for cleaner look
 
     local LayersReal = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0, 1),
@@ -874,7 +870,7 @@ function Speed_Library:CreateWindow(Config)
         BorderSizePixel = 0,
         ClipsDescendants = true,
         Position = UDim2.new(0, 0, 1, 0),
-        Size = UDim2.new(1, 0, 1, -33),
+        Size = UDim2.new(1, 0, 1, -48), -- Adjusted for larger header
         Name = "LayersReal"
     }, Layers)
 
