@@ -2339,6 +2339,7 @@ function Item:AddDropdown(Config)
     function Funcs_Dropdown:AddOption(OptionName)
         OptionName = OptionName or "Option"
 
+        -- Option Frame
         local Option = Custom:Create("Frame", {
             BackgroundColor3 = Color3.fromRGB(255, 255, 255),
             BackgroundTransparency = 0.999,
@@ -2347,11 +2348,20 @@ function Item:AddDropdown(Config)
             LayoutOrder = DropCount,
             Size = UDim2.new(1, 0, 0, 30),
             Name = "Option",
-            Visible = true -- Ensure options are visible by default
+            Visible = true
         }, ScrollSelect)
 
-        Custom:Create("UICorner", {
-            CornerRadius = UDim.new(0, 3)
+        -- Removed UICorner to make it a list style
+        -- Custom:Create("UICorner", { CornerRadius = UDim.new(0, 3) }, Option)
+
+        -- Separator Line (iOS Style)
+        Custom:Create("Frame", {
+            BackgroundColor3 = Color3.fromRGB(80, 80, 80),
+            BackgroundTransparency = 0.5,
+            BorderSizePixel = 0,
+            Position = UDim2.new(0, 12, 1, -1),
+            Size = UDim2.new(1, -12, 0, 1),
+            Name = "Separator"
         }, Option)
 
         local OptionButton = Custom:Create("TextButton", {
