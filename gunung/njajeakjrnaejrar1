@@ -404,8 +404,10 @@ function Speed_Library:CreateWindow(Config)
     
   local SpeedHubXGui = Custom:Create("ScreenGui", {
       Name = "ShieldTeam || Luowis",
-      ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+      ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+      Enabled = false
     }, RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui"))
+    task.defer(function() SpeedHubXGui.Enabled = true end)
     ProtectGui(SpeedHubXGui)
 
     local DropShadowHolder = Custom:Create("Frame", {
@@ -512,7 +514,7 @@ function Speed_Library:CreateWindow(Config)
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(1, 0),
         Position = UDim2.new(1, -12, 0, 0),
-        Size = UDim2.new(0, 52, 1, 0),
+        Size = UDim2.new(0, 90, 1, 0),
         Name = "RightButtonsContainer"
     }, Top)
 
@@ -521,7 +523,7 @@ function Speed_Library:CreateWindow(Config)
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacGreenButton,
         Position = UDim2.new(0, 0, 0.5, 0),
-        Size = UDim2.new(0, 12, 0, 12),
+        Size = UDim2.new(0, 22, 0, 22),
         Name = "GreenButton2"
     }, RightButtonsContainer)
 
@@ -539,8 +541,8 @@ function Speed_Library:CreateWindow(Config)
     local YellowButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacYellowButton,
-        Position = UDim2.new(0, 20, 0.5, 0),
-        Size = UDim2.new(0, 12, 0, 12),
+        Position = UDim2.new(0, 30, 0.5, 0),
+        Size = UDim2.new(0, 22, 0, 22),
         Text = "",
         Name = "YellowButton"
     }, RightButtonsContainer)
@@ -559,8 +561,8 @@ function Speed_Library:CreateWindow(Config)
     local RedButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacRedButton,
-        Position = UDim2.new(0, 40, 0.5, 0),
-        Size = UDim2.new(0, 12, 0, 12),
+        Position = UDim2.new(0, 60, 0.5, 0),
+        Size = UDim2.new(0, 22, 0, 22),
         Text = "",
         Name = "RedButton"
     }, RightButtonsContainer)
@@ -1359,22 +1361,15 @@ function Item:AddParagraph(Config)
         TextYAlignment = Enum.TextYAlignment.Top,
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 10, 0, 25),
-        Size = UDim2.new(1, -16, 0, 12),
+        Size = UDim2.new(1, -16, 0, 0),
         Name = "ParagraphContent",
         RichText = true,
-        TextWrapped = true, -- wajib aktif
+        TextWrapped = true,
+        AutomaticSize = Enum.AutomaticSize.Y
     }, Paragraph)
-
-    local function UpdateParagraphSize()
-        local textHeight = ParagraphContent.TextBounds.Y
-        ParagraphContent.Size = UDim2.new(1, -16, 0, textHeight)
-        Paragraph.Size = UDim2.new(1, 0, 0, textHeight + 35)
-
-        UpdateSizeSection()
-    end
-
-    ParagraphContent:GetPropertyChangedSignal("Text"):Connect(UpdateParagraphSize)
-    ParagraphContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(UpdateParagraphSize)
+    
+    Paragraph.AutomaticSize = Enum.AutomaticSize.Y
+    Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Paragraph)
 
     local function parseColors(str)
         local coloredStr = str
@@ -1390,12 +1385,9 @@ function Item:AddParagraph(Config)
         local Content = Config[2] or Config.Content or ""
         ParagraphTitle.Text = Title
         ParagraphContent.Text = parseColors(Content)
-        UpdateParagraphSize()
     end
 
     ParagraphContent.Text = parseColors(Content)
-    UpdateParagraphSize()
-
     return SettingFuncs
 end
 
@@ -1527,25 +1519,13 @@ end
 					BackgroundTransparency = 0.999,
 					BorderSizePixel = 0,
 					Position = UDim2.new(0, 10, 0, 23),
-					Size = UDim2.new(1, -100, 0, 12)
+					Size = UDim2.new(1, -100, 0, 0),
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    TextWrapped = true
 				}, Button)
 
-        local function UpdateButtonSize()
-          local _Height = 12 + (12 * (ButtonContent.TextBounds.X // ButtonContent.AbsoluteSize.X))
-          ButtonContent.Size = UDim2.new(1, -100, 0, _Height)
-          
-          Button.Size = UDim2.new(1, 0, 0, ButtonContent.AbsoluteSize.Y + 33)
-        end
-      
-        ButtonContent.TextWrapped = true
-        UpdateButtonSize()
-      
-        ButtonContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-          ButtonContent.TextWrapped = false
-          UpdateButtonSize()
-          ButtonContent.TextWrapped = true
-          UpdateSizeSection()
-        end)
+          Button.AutomaticSize = Enum.AutomaticSize.Y
+          Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Button)
 
         local ButtonButton = Custom:Create("TextButton", {
 					Name = "ButtonButton",
@@ -1634,22 +1614,13 @@ function Item:AddToggle(Config)
         TextYAlignment = Enum.TextYAlignment.Bottom,
         BackgroundTransparency = 0.999,
         Position = UDim2.new(0, 10, 0, 23),
-        Size = UDim2.new(1, -100, 0, 12)
+        Size = UDim2.new(1, -100, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        TextWrapped = true
     }, Toggle)
 
-    local function UpdateToggleSize()
-        ToggleContent.TextWrapped = false
-        local Ratio = ToggleContent.TextBounds.X / ToggleContent.AbsoluteSize.X
-        ToggleContent.Size = UDim2.new(1, -100, 0, 12 + (12 * math.ceil(Ratio)))
-        Toggle.Size = UDim2.new(1, 0, 0, ToggleContent.AbsoluteSize.Y + 33)
-        ToggleContent.TextWrapped = true
-    end
-
-    UpdateToggleSize()
-    ToggleContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-        UpdateToggleSize()
-        UpdateSizeSection()
-    end)
+    Toggle.AutomaticSize = Enum.AutomaticSize.Y
+    Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Toggle)
 
     local ToggleButton = Custom:Create("TextButton", {
         Name = "ToggleButton",
@@ -1794,22 +1765,14 @@ end
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
 					BorderSizePixel = 0,
 					Position = UDim2.new(0, 10, 0, 23),
-					Size = UDim2.new(1, -180, 0, 12),
+					Size = UDim2.new(1, -180, 0, 0),
 					Name = "SliderContent",
+					AutomaticSize = Enum.AutomaticSize.Y,
+					TextWrapped = true
 				}, Slider)
 
-        local function UpdateSliderSize()
-          SliderContent.TextWrapped = false
-          SliderContent.Size = UDim2.new(1, -180, 0, 12 + (12 * math.floor(SliderContent.TextBounds.X / SliderContent.AbsoluteSize.X)))
-          Slider.Size = UDim2.new(1, 0, 0, SliderContent.AbsoluteSize.Y + 33)
-          SliderContent.TextWrapped = true
-        end
-
-        SliderContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-          UpdateSliderSize()
-          UpdateSizeSection()
-        end)
-        UpdateSliderSize()
+        Slider.AutomaticSize = Enum.AutomaticSize.Y
+        Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Slider)
 
         local SliderInput = Custom:Create("Frame", {
 					AnchorPoint = Vector2.new(0, 0.5),
