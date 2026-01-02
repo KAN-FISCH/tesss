@@ -18,16 +18,17 @@ local function generateRandomString(length)
 end
 
 local Custom = {} do
-    Custom.ColorRGB = Color3.fromRGB(25, 25, 112)
-    Custom.AccentColor = Color3.fromRGB(75, 0, 130)
-    Custom.DarkBlue = Color3.fromRGB(25, 25, 112)
-    Custom.BackgroundDark = Color3.fromRGB(12, 12, 25)
-    Custom.FrameDark = Color3.fromRGB(20, 20, 35)
+    -- iOS Dark Mode Inspired Palette
+    Custom.ColorRGB = Color3.fromRGB(10, 132, 255)   -- System Blue
+    Custom.AccentColor = Color3.fromRGB(0, 122, 255) -- Standard Blue
+    Custom.DarkBlue = Color3.fromRGB(28, 28, 30)     -- Secondary System Background
+    Custom.BackgroundDark = Color3.fromRGB(0, 0, 0)  -- System Background
+    Custom.FrameDark = Color3.fromRGB(44, 44, 46)    -- Secondary Grouped Background
     
     -- Terminal macOS Colors
-    Custom.MacRedButton = Color3.fromRGB(255, 95, 87)
-    Custom.MacYellowButton = Color3.fromRGB(255, 189, 68)
-    Custom.MacGreenButton = Color3.fromRGB(40, 201, 64)
+    Custom.MacRedButton = Color3.fromRGB(255, 69, 58)    -- System Red
+    Custom.MacYellowButton = Color3.fromRGB(255, 214, 10) -- System Yellow
+    Custom.MacGreenButton = Color3.fromRGB(48, 209, 88)   -- System Green
 
     function Custom:Create(Name, Properties, Parent)
         local _instance = Instance.new(Name)
@@ -43,6 +44,7 @@ local Custom = {} do
         return _instance
     end
 end
+
 
 local function OpenClose()
   local ScreenGui = Custom:Create("ScreenGui", {
@@ -400,6 +402,169 @@ function Speed_Library:CreateWindow(Config)
     local SizeUi = Config[4] or Config.SizeUi or UDim2.fromOffset(550, 315)
 
     local Funcs = {}
+    local Templates = {}
+    
+    -- Setup Toggle Template
+    do 
+      local Toggle = Custom:Create("Frame", {
+          Name = "Toggle",
+          BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+          BackgroundTransparency = 0.935,
+          BorderSizePixel = 0,
+          Size = UDim2.new(1, 0, 0, 35),
+          AutomaticSize = Enum.AutomaticSize.Y
+      })
+      Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, Toggle)
+      Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Toggle)
+
+      Custom:Create("TextLabel", {
+          Name = "ToggleTitle",
+          Font = Enum.Font.GothamBold,
+          Text = "Title",
+          TextSize = 13,
+          TextColor3 = Color3.fromRGB(231, 231, 231),
+          TextXAlignment = Enum.TextXAlignment.Left,
+          TextYAlignment = Enum.TextYAlignment.Top,
+          BackgroundTransparency = 0.999,
+          Position = UDim2.new(0, 10, 0, 10),
+          Size = UDim2.new(1, -100, 0, 13)
+      }, Toggle)
+
+      Custom:Create("TextLabel", {
+          Name = "ToggleContent",
+          Font = Enum.Font.GothamBold,
+          Text = "Content",
+          TextSize = 12,
+          TextColor3 = Color3.fromRGB(255, 255, 255),
+          TextTransparency = 0.6,
+          TextXAlignment = Enum.TextXAlignment.Left,
+          TextYAlignment = Enum.TextYAlignment.Bottom,
+          BackgroundTransparency = 0.999,
+          Position = UDim2.new(0, 10, 0, 23),
+          Size = UDim2.new(1, -100, 0, 0),
+          AutomaticSize = Enum.AutomaticSize.Y,
+          TextWrapped = true
+      }, Toggle)
+
+      Custom:Create("TextButton", {
+          Name = "ToggleButton",
+          Font = Enum.Font.SourceSans,
+          Text = "",
+          BackgroundTransparency = 0.999,
+          Size = UDim2.new(1, 0, 1, 0)
+      }, Toggle)
+
+      local FeatureFrame = Custom:Create("Frame", {
+          Name = "FeatureFrame",
+          AnchorPoint = Vector2.new(1, 0.5),
+          BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+          BackgroundTransparency = 0.92,
+          BorderSizePixel = 0,
+          Position = UDim2.new(1, -15, 0.5, 0),
+          Size = UDim2.new(0, 30, 0, 15)
+      }, Toggle)
+
+      Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, FeatureFrame)
+      Custom:Create("UIStroke", {
+          Name = "UIStroke",
+          Color = Color3.fromRGB(255, 255, 255),
+          Thickness = 2,
+          Transparency = 0.9
+      }, FeatureFrame)
+
+      local ToggleCircle = Custom:Create("Frame", {
+          Name = "ToggleCircle",
+          BackgroundColor3 = Color3.fromRGB(230, 230, 230),
+          BorderSizePixel = 0,
+          Size = UDim2.new(0, 14, 0, 14),
+          Position = UDim2.new(0, 0, 0, 0)
+      }, FeatureFrame)
+      Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, ToggleCircle)
+      
+      Templates.Toggle = Toggle
+    end
+    
+    -- Setup Button Template
+    do
+      local Button = Custom:Create("Frame", {
+					Name = "Button",
+					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+					BackgroundTransparency = 0.935,
+					BorderSizePixel = 0,
+					Size = UDim2.new(1, 0, 0, 35),
+                    AutomaticSize = Enum.AutomaticSize.Y
+				})
+        Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, Button)
+        Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Button)
+
+        Custom:Create("TextLabel", {
+					Name = "ButtonTitle",
+					Font = Enum.Font.GothamBold,
+					Text = "Title",
+					TextColor3 = Color3.fromRGB(231, 231, 231),
+					TextSize = 13,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					TextYAlignment = Enum.TextYAlignment.Top,
+					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+					BackgroundTransparency = 0.999,
+					BorderSizePixel = 0,
+					Position = UDim2.new(0, 10, 0, 10),
+					Size = UDim2.new(1, -100, 0, 13)
+				}, Button)
+
+      Custom:Create("TextLabel", {
+					Name = "ButtonContent",
+					Font = Enum.Font.GothamBold,
+					Text = "Content",
+					TextColor3 = Color3.fromRGB(255, 255, 255),
+					TextSize = 12,
+					TextTransparency = 0.6,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					TextYAlignment = Enum.TextYAlignment.Bottom,
+					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+					BackgroundTransparency = 0.999,
+					BorderSizePixel = 0,
+					Position = UDim2.new(0, 10, 0, 23),
+					Size = UDim2.new(1, -100, 0, 0),
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    TextWrapped = true
+				}, Button)
+        
+        Custom:Create("TextButton", {
+					Name = "ButtonButton",
+					Font = Enum.Font.SourceSans,
+					Text = "",
+					TextColor3 = Color3.fromRGB(0, 0, 0),
+					TextSize = 14,
+					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+					BackgroundTransparency = 0.999,
+					BorderSizePixel = 0,
+					Size = UDim2.new(1, 0, 1, 0)
+				}, Button)
+
+        local FeatureFrame1 = Custom:Create("Frame", {
+					Name = "FeatureFrame",
+					AnchorPoint = Vector2.new(1, 0.5),
+					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+					BackgroundTransparency = 0.999,
+					BorderSizePixel = 0,
+					Position = UDim2.new(1, -15, 0.5, 0),
+					Size = UDim2.new(0, 25, 0, 25)
+				}, Button)
+
+        Custom:Create("ImageLabel", {
+          Name = "FeatureImg",
+          Image = "",
+          AnchorPoint = Vector2.new(0.5, 0.5),
+          BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+          BackgroundTransparency = 0.999,
+          BorderSizePixel = 0,
+          Position = UDim2.new(0.5, 0, 0.5, 0),
+          Size = UDim2.new(1, 0, 1, 0)
+        }, FeatureFrame1)
+        
+        Templates.Button = Button
+    end
 
     
   local SpeedHubXGui = Custom:Create("ScreenGui", {
@@ -514,7 +679,7 @@ function Speed_Library:CreateWindow(Config)
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(1, 0),
         Position = UDim2.new(1, -12, 0, 0),
-        Size = UDim2.new(0, 90, 1, 0),
+        Size = UDim2.new(0, 52, 1, 0),
         Name = "RightButtonsContainer"
     }, Top)
 
@@ -523,7 +688,7 @@ function Speed_Library:CreateWindow(Config)
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacGreenButton,
         Position = UDim2.new(0, 0, 0.5, 0),
-        Size = UDim2.new(0, 22, 0, 22),
+        Size = UDim2.new(0, 12, 0, 12),
         Name = "GreenButton2"
     }, RightButtonsContainer)
 
@@ -541,9 +706,12 @@ function Speed_Library:CreateWindow(Config)
     local YellowButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacYellowButton,
-        Position = UDim2.new(0, 30, 0.5, 0),
-        Size = UDim2.new(0, 22, 0, 22),
-        Text = "",
+        Position = UDim2.new(0, 20, 0.5, 0),
+        Size = UDim2.new(0, 12, 0, 12),
+        Text = "-",
+        TextColor3 = Color3.new(0,0,0),
+        TextSize = 9,
+        Font = Enum.Font.GothamBold,
         Name = "YellowButton"
     }, RightButtonsContainer)
 
@@ -561,9 +729,13 @@ function Speed_Library:CreateWindow(Config)
     local RedButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Custom.MacRedButton,
-        Position = UDim2.new(0, 60, 0.5, 0),
-        Size = UDim2.new(0, 22, 0, 22),
-        Text = "",
+        Position = UDim2.new(0, 40, 0.5, 0),
+        Size = UDim2.new(0, 12, 0, 12),
+        Text = "x",
+        TextColor3 = Color3.new(0,0,0),
+        TextSize = 9,
+        TextYAlignment = Enum.TextYAlignment.Center,
+        Font = Enum.Font.GothamBold,
         Name = "RedButton"
     }, RightButtonsContainer)
 
@@ -1478,91 +1650,23 @@ end
         local Callback = Config[4] or Config.Callback or function() end
         local Funcs_Button = {}
 
-        local Button = Custom:Create("Frame", {
-					Name = "Button",
-					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-					BackgroundTransparency = 0.935,
-					BorderSizePixel = 0,
-					LayoutOrder = ItemCount,
-					Size = UDim2.new(1, 0, 0, 35)
-				}, SectionAdd)
-
-        Custom:Create("UICorner", {
-          CornerRadius = UDim.new(0, 4)
-        }, Button)
-
-        Custom:Create("TextLabel", {
-					Name = "ButtonTitle",
-					Font = Enum.Font.GothamBold,
-					Text = Title,
-					TextColor3 = Color3.fromRGB(231, 231, 231),
-					TextSize = 13,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					TextYAlignment = Enum.TextYAlignment.Top,
-					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-					BackgroundTransparency = 0.999,
-					BorderSizePixel = 0,
-					Position = UDim2.new(0, 10, 0, 10),
-					Size = UDim2.new(1, -100, 0, 13)
-				}, Button)
-
-        local ButtonContent = Custom:Create("TextLabel", {
-					Name = "ButtonContent",
-					Font = Enum.Font.GothamBold,
-					Text = Content,
-					TextColor3 = Color3.fromRGB(255, 255, 255),
-					TextSize = 12,
-					TextTransparency = 0.6,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					TextYAlignment = Enum.TextYAlignment.Bottom,
-					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-					BackgroundTransparency = 0.999,
-					BorderSizePixel = 0,
-					Position = UDim2.new(0, 10, 0, 23),
-					Size = UDim2.new(1, -100, 0, 0),
-                    AutomaticSize = Enum.AutomaticSize.Y,
-                    TextWrapped = true
-				}, Button)
-
-          Button.AutomaticSize = Enum.AutomaticSize.Y
-          Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Button)
-
-        local ButtonButton = Custom:Create("TextButton", {
-					Name = "ButtonButton",
-					Font = Enum.Font.SourceSans,
-					Text = "",
-					TextColor3 = Color3.fromRGB(0, 0, 0),
-					TextSize = 14,
-					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-					BackgroundTransparency = 0.999,
-					BorderSizePixel = 0,
-					Size = UDim2.new(1, 0, 1, 0)
-				}, Button)
-
-        local FeatureFrame1 = Custom:Create("Frame", {
-					Name = "FeatureFrame",
-					AnchorPoint = Vector2.new(1, 0.5),
-					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-					BackgroundTransparency = 0.999,
-					BorderSizePixel = 0,
-					Position = UDim2.new(1, -15, 0.5, 0),
-					Size = UDim2.new(0, 25, 0, 25)
-				}, Button)
-
-        Custom:Create("ImageLabel", {
-          Name = "FeatureImg",
-          Image = Icon,
-          AnchorPoint = Vector2.new(0.5, 0.5),
-          BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-          BackgroundTransparency = 0.999,
-          BorderSizePixel = 0,
-          Position = UDim2.new(0.5, 0, 0.5, 0),
-          Size = UDim2.new(1, 0, 1, 0)
-        }, FeatureFrame1)
+        local Button = Templates.Button:Clone()
+        Button.LayoutOrder = ItemCount
+        Button.Parent = SectionAdd
+        
+        local ButtonTitle = Button.ButtonTitle
+        ButtonTitle.Text = Title
+        
+        local ButtonContent = Button.ButtonContent
+        ButtonContent.Text = Content
+        
+        local ButtonButton = Button.ButtonButton
+        local FeatureFrame = Button.FeatureFrame
+        local FeatureImg = FeatureFrame.FeatureImg
+        FeatureImg.Image = Icon
 
         ButtonButton.Activated:Connect(function()
 					CircleClick(ButtonButton, Player:GetMouse().X, Player:GetMouse().Y)
-
 					Callback()
 				end)
 
@@ -1579,90 +1683,29 @@ function Item:AddToggle(Config)
 
     local Funcs_Toggle = {Value = Default}
 
-    local Toggle = Custom:Create("Frame", {
-        Name = "Toggle",
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.935,
-        BorderSizePixel = 0,
-        LayoutOrder = ItemCount,
-        Size = UDim2.new(1, 0, 0, 35)
-    }, SectionAdd)
+    local Toggle = Templates.Toggle:Clone()
+    Toggle.LayoutOrder = ItemCount
+    Toggle.Parent = SectionAdd
+    
+    local ToggleTitle = Toggle.ToggleTitle
+    ToggleTitle.Text = Title
+    
+    local ToggleContent = Toggle.ToggleContent
+    ToggleContent.Text = Content
+    
+    local ToggleButton = Toggle.ToggleButton
+    local FeatureFrame = Toggle.FeatureFrame
+    local UIStroke = FeatureFrame.UIStroke
+    local ToggleCircle = FeatureFrame:FindFirstChild("ToggleCircle") -- Keep this dynamic
 
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, Toggle)
-
-    local ToggleTitle = Custom:Create("TextLabel", {
-        Name = "ToggleTitle",
-        Font = Enum.Font.GothamBold,
-        Text = Title,
-        TextSize = 13,
-        TextColor3 = Color3.fromRGB(231, 231, 231),
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextYAlignment = Enum.TextYAlignment.Top,
-        BackgroundTransparency = 0.999,
-        Position = UDim2.new(0, 10, 0, 10),
-        Size = UDim2.new(1, -100, 0, 13)
-    }, Toggle)
-
-    local ToggleContent = Custom:Create("TextLabel", {
-        Name = "ToggleContent",
-        Font = Enum.Font.GothamBold,
-        Text = Content,
-        TextSize = 12,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextTransparency = 0.6,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextYAlignment = Enum.TextYAlignment.Bottom,
-        BackgroundTransparency = 0.999,
-        Position = UDim2.new(0, 10, 0, 23),
-        Size = UDim2.new(1, -100, 0, 0),
-        AutomaticSize = Enum.AutomaticSize.Y,
-        TextWrapped = true
-    }, Toggle)
-
-    Toggle.AutomaticSize = Enum.AutomaticSize.Y
-    Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Toggle)
-
-    local ToggleButton = Custom:Create("TextButton", {
-        Name = "ToggleButton",
-        Font = Enum.Font.SourceSans,
-        Text = "",
-        BackgroundTransparency = 0.999,
-        Size = UDim2.new(1, 0, 1, 0)
-    }, Toggle)
-
-    -- Buat Box / Toggle
-    local FeatureFrame = Custom:Create("Frame", {
-        Name = "FeatureFrame",
-        AnchorPoint = Vector2.new(1, 0.5),
-        BackgroundColor3 = (Mode == "Toggle") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 0, 0),
-        BackgroundTransparency = (Mode == "Toggle") and 0.92 or 0.3,
-        BorderSizePixel = 0,
-        Position = UDim2.new(1, -15, 0.5, 0),
-        Size = UDim2.new(0, 30, 0, 15)
-    }, Toggle)
-
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, FeatureFrame)
-    local UIStroke = Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(255, 255, 255),
-        Thickness = 2,
-        Transparency = (Mode == "Toggle") and 0.9 or 0.6
-    }, FeatureFrame)
-
-    local ToggleCircle
-    if Mode == "Toggle" then
-        ToggleCircle = Custom:Create("Frame", {
-            Name = "ToggleCircle",
-            BackgroundColor3 = Color3.fromRGB(230, 230, 230),
-            BorderSizePixel = 0,
-            Size = UDim2.new(0, 14, 0, 14),
-            Position = UDim2.new(0, 0, 0, 0)
-        }, FeatureFrame)
-        Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, ToggleCircle)
+    if Mode ~= "Toggle" and ToggleCircle then
+         ToggleCircle:Destroy()
+         ToggleCircle = nil
     end
 
     local function Animate(Value, Instant)
         if Mode == "Toggle" then
-            local TitleColor = Value and Custom.ColorRGB or Color3.fromRGB(230, 230, 230)
+            local TitleColor = Value and Custom.ColorRGB or Color3.fromRGB(231, 231, 231)
             local CirclePosition = Value and UDim2.new(0, 15, 0, 0) or UDim2.new(0, 0, 0, 0)
             local StrokeColor = Value and Custom.ColorRGB or Color3.fromRGB(255, 255, 255)
             local StrokeTransparency = Value and 0 or 0.9
@@ -1671,7 +1714,7 @@ function Item:AddToggle(Config)
 
             if Instant then
                 ToggleTitle.TextColor3 = TitleColor
-                ToggleCircle.Position = CirclePosition
+                if ToggleCircle then ToggleCircle.Position = CirclePosition end
                 UIStroke.Color = StrokeColor
                 UIStroke.Transparency = StrokeTransparency
                 FeatureFrame.BackgroundColor3 = FrameColor
@@ -1679,7 +1722,7 @@ function Item:AddToggle(Config)
             else
                 local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
                 TweenService:Create(ToggleTitle, tweenInfo, {TextColor3 = TitleColor}):Play()
-                TweenService:Create(ToggleCircle, tweenInfo, {Position = CirclePosition}):Play()
+                if ToggleCircle then TweenService:Create(ToggleCircle, tweenInfo, {Position = CirclePosition}):Play() end
                 TweenService:Create(UIStroke, tweenInfo, {Color = StrokeColor, Transparency = StrokeTransparency}):Play()
                 TweenService:Create(FeatureFrame, tweenInfo, {BackgroundColor3 = FrameColor, BackgroundTransparency = FrameTransparency}):Play()
             end
