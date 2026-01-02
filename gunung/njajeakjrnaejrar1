@@ -833,12 +833,13 @@ function Speed_Library:CreateWindow(Config)
     -- Clean Layers Frame (No Stroke/Gradient)
 
     local NameTab = Custom:Create("TextLabel", {
-        Font = Enum.Font.GothamBlack,
+        Font = Enum.Font.GothamBold,
         Text = "",
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 32,
+        TextStrokeTransparency = 1,
+        TextSize = 24,
         TextWrapped = true,
-        TextXAlignment = Enum.TextXAlignment.Left,
+        TextXAlignment = Enum.TextXAlignment.Center,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -847,7 +848,7 @@ function Speed_Library:CreateWindow(Config)
         Name = "NameTab"
     }, Layers)
 
-    Custom:Create("UIPadding", {PaddingLeft = UDim.new(0, 10)}, NameTab)
+    -- Custom:Create("UIPadding", {PaddingLeft = UDim.new(0, 10)}, NameTab) -- Removed padding for Center alignment
 
     -- Removed UIStroke for modern clean look
 
