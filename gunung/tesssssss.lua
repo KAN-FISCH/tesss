@@ -1,4 +1,4 @@
-https://discord.gg/f7P7qxtJFq--[[
+--[[
                                                                                                                                                                                                                                 
                         **                                                                                  ***      
                     ==*                                                                                  #==      
