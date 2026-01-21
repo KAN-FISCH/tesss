@@ -504,12 +504,6 @@ install_script() {
     systemctl -q stop ping-instances.service
   fi
   NEXTID=$(pvesh get /cluster/nextid)
-  timezone=$(
-    { [ -f /etc/timezone ] && cat /etc/timezone; } \
-    || timedatectl show -p Timezone --value 2>/dev/null \
-    || cat /etc/TZ 2>/dev/null \
-    || echo "UTC"
-  )
 
   header_info
   if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "SETTINGS" --yesno "Use Default Settings?" --no-button Advanced 10 58); then
@@ -565,7 +559,6 @@ build_container() {
   fi
   export CACHER="$APT_CACHER"
   export CACHER_IP="$APT_CACHER_IP"
-  export tz="$timezone"
   export DISABLEIPV6="$DISABLEIP6"
   export APPLICATION="$APP"
   export app="$NSAPP"
