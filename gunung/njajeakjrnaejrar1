@@ -192,17 +192,6 @@ function CircleClick(Button, X, Y)
             Position = UDim2.new(0.5, -Size/2, 0.5, -Size/2)
         })
         
-        Tween:Play()
-        
-        Tween.Completed:Connect(function()
-            for i = 1, 10 do
-                Circle.ImageTransparency = Circle.ImageTransparency + 0.01
-                wait(Time / 10)
-            end
-            Circle:Destroy()
-            -- Restore original ClipsDescendants setting
-            Button.ClipsDescendants = originalClips
-        end)
     end)
 end
 
