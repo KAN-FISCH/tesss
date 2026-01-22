@@ -164,45 +164,24 @@ MakeDraggable(Open_Close, Open_Close)
 
 function CircleClick(Button, X, Y)
     task.spawn(function()
-        -- Jangan ubah ClipsDescendants, biarkan sesuai setting asli
-        local originalClips = Button.ClipsDescendants
-        Button.ClipsDescendants = true
+        -- Simpan warna dan transparency asli
+        local originalBgColor = Button.BackgroundColor3
+        local originalBgTransparency = Button.BackgroundTransparency
         
-        -- Buat hover overlay (abu-abu/putih semi transparan)
-        local HoverOverlay = Instance.new("Frame")
-        HoverOverlay.Name = "HoverOverlay"
-        HoverOverlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        HoverOverlay.BackgroundTransparency = 0.85 -- Semi transparan putih
-        HoverOverlay.BorderSizePixel = 0
-        HoverOverlay.Size = UDim2.new(1, 0, 1, 0)
-        HoverOverlay.Position = UDim2.new(0, 0, 0, 0)
-        HoverOverlay.ZIndex = 9
-        HoverOverlay.AutomaticSize = Enum.AutomaticSize.None -- Cegah melebar
-        HoverOverlay.Parent = Button
-        
-        -- Copy corner radius dari button (jika ada)
-        local existingCorner = Button:FindFirstChildOfClass("UICorner")
-        if existingCorner then
-            local overlayCorner = Instance.new("UICorner")
-            overlayCorner.CornerRadius = existingCorner.CornerRadius
-            overlayCorner.Parent = HoverOverlay
-        end
+        -- Flash putih/abu-abu dengan mengubah background button langsung
+        Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Button.BackgroundTransparency = math.max(0, originalBgTransparency - 0.15) -- Lebih terang
         
         local Time = 0.3
         
-        -- Animasi fade out hover overlay
-        local OverlayTween = TweenService:Create(HoverOverlay, TweenInfo.new(Time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundTransparency = 1
+        -- Animasi kembali ke warna asli
+        local ButtonTween = TweenService:Create(Button, TweenInfo.new(Time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = originalBgColor,
+            BackgroundTransparency = originalBgTransparency
         })
         
         -- Play animasi
-        OverlayTween:Play()
-        
-        -- Cleanup setelah animasi selesai
-        task.delay(Time, function()
-            HoverOverlay:Destroy()
-            Button.ClipsDescendants = originalClips
-        end)
+        ButtonTween:Play()
     end)
 end
 
