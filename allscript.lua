@@ -1,7 +1,6 @@
-
 local placeScriptsPremium = {
-    [131716211654599] = "https://api.shieldteam.asia/api/raw/fisch/premium",
-    [16732694052] = "https://api.shieldteam.asia/api/raw/fisch/premium",
+    [131716211654599] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/UITES",
+    [16732694052] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/UITES",
 }
 
 local placeScriptsFree = {
@@ -10,8 +9,8 @@ local placeScriptsFree = {
     [76558904092080] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/TheForge/tes",
     [131884594917121] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/TheForge/tes",
     [2693023319] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Antartika.lua",
-    [131716211654599] = "https://api.shieldteam.asia/api/raw/fisch/free",
-    [16732694052] = "https://api.shieldteam.asia/api/raw/fisch/free",
+    [131716211654599] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/tesssssssssssssssssss",
+    [16732694052] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/tesssssssssssssssssss",
     [95777993643016] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Arunika.lua",
     [102234703920418] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Daun.lua",
     [89100225746834] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Tanditek.lua",
