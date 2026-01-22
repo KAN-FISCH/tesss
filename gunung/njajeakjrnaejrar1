@@ -187,32 +187,7 @@ function CircleClick(Button, X, Y)
             overlayCorner.Parent = HoverOverlay
         end
         
-        -- Buat circle ripple effect
-        local Circle = Instance.new("ImageLabel")
-        Circle.Image = "rbxassetid://266543268"
-        Circle.ImageColor3 = Color3.fromRGB(200, 200, 200) -- Abu-abu terang untuk ripple
-        Circle.ImageTransparency = 0.5
-        Circle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        Circle.BackgroundTransparency = 1
-        Circle.ZIndex = 10
-        Circle.Name = "Circle"
-        Circle.Parent = Button
-        
-        local NewX = X - Button.AbsolutePosition.X
-        local NewY = Y - Button.AbsolutePosition.Y
-        Circle.Position = UDim2.new(0, NewX, 0, NewY)
-        Circle.Size = UDim2.new(0, 0, 0, 0)
-
-        local Size = math.max(Button.AbsoluteSize.X, Button.AbsoluteSize.Y) * 1.5
-        local Time = 0.5
-        local RippleTweenInfo = TweenInfo.new(Time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-
-        -- Animasi ripple circle expand
-        local RippleTween = TweenService:Create(Circle, RippleTweenInfo, {
-            Size = UDim2.new(0, Size, 0, Size),
-            Position = UDim2.new(0.5, -Size/2, 0.5, -Size/2),
-            ImageTransparency = 1
-        })
+        local Time = 0.3
         
         -- Animasi fade out hover overlay
         local OverlayTween = TweenService:Create(HoverOverlay, TweenInfo.new(Time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
@@ -220,12 +195,10 @@ function CircleClick(Button, X, Y)
         })
         
         -- Play animasi
-        RippleTween:Play()
         OverlayTween:Play()
         
         -- Cleanup setelah animasi selesai
         task.delay(Time, function()
-            Circle:Destroy()
             HoverOverlay:Destroy()
             Button.ClipsDescendants = originalClips
         end)
