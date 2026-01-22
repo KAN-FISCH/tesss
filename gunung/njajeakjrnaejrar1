@@ -164,6 +164,8 @@ MakeDraggable(Open_Close, Open_Close)
 
 function CircleClick(Button, X, Y)
     task.spawn(function()
+        -- Jangan ubah ClipsDescendants, biarkan sesuai setting asli
+        local originalClips = Button.ClipsDescendants
         Button.ClipsDescendants = true
         
         local Circle = Instance.new("ImageLabel")
@@ -198,6 +200,8 @@ function CircleClick(Button, X, Y)
                 wait(Time / 10)
             end
             Circle:Destroy()
+            -- Restore original ClipsDescendants setting
+            Button.ClipsDescendants = originalClips
         end)
     end)
 end
