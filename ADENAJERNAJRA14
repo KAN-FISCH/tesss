@@ -52,55 +52,60 @@ local function OpenClose()
     ZIndexBehavior = Enum.ZIndexBehavior.Sibling
   }, RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui"))
   ProtectGui(ScreenGui)
-  local Close_ImageButton = Custom:Create("ImageButton", {
-    BackgroundColor3 = Custom.BackgroundDark,
-    BorderColor3 = Custom.ColorRGB,
-    BorderSizePixel = 1,
+
+  -- Cat Eye Container (Invisible Button Area)
+  local Close_ImageButton = Custom:Create("TextButton", {
+    Text = "",
+    BackgroundTransparency = 1,
     Position = UDim2.new(0.1021, 0, 0.0743, 0),
-    Size = UDim2.new(0, 59, 0, 49),
-    Image = "rbxassetid://125992172976297",
-    Visible = false
+    Size = UDim2.new(0, 60, 0, 40),
+    Visible = false,
+    Name = "RestoreEye"
   }, ScreenGui)
 
-  local UICorner = Custom:Create("UICorner", {
-    Name = "MainCorner",
-    CornerRadius = UDim.new(0, 12),
+  -- Sclera (White Outer Eye)
+  local Sclera = Custom:Create("Frame", {
+    Name = "Sclera",
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    BackgroundColor3 = Color3.fromRGB(240, 240, 240),
+    Position = UDim2.new(0.5, 0, 0.5, 0),
+    Size = UDim2.new(1, 0, 1, 0),
+    ZIndex = 1
   }, Close_ImageButton)
-  local UIGradient = Custom:Create("UIGradient", {
-    Color = ColorSequence.new{
-      ColorSequenceKeypoint.new(0, Custom.ColorRGB),
-      ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
-      ColorSequenceKeypoint.new(1, Custom.DarkBlue)
-    },
-    Rotation = 45,
-  }, Close_ImageButton)
+  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Sclera) -- Oval Shape
+  Custom:Create("UIStroke", { Color = Color3.fromRGB(30, 30, 30), Thickness = 2 }, Sclera)
 
-  local dragging, dragStart, startPos = false, nil, nil
+  -- Iris (Amber/Gold)
+  local Iris = Custom:Create("Frame", {
+     Name = "Iris",
+     AnchorPoint = Vector2.new(0.5, 0.5),
+     BackgroundColor3 = Color3.fromRGB(255, 190, 0), 
+     Position = UDim2.new(0.5, 0, 0.5, 0),
+     Size = UDim2.new(0, 34, 0, 34),
+     ZIndex = 2
+  }, Sclera)
+  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Iris)
 
-  local function UpdateDraggable(input)
-    local delta = input.Position - dragStart
-    Close_ImageButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-  end
-
-  Close_ImageButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-      dragging = true
-      dragStart = input.Position
-      startPos = Close_ImageButton.Position
-
-      input.Changed:Connect(function()
-        if input.UserInputState == Enum.UserInputState.End then
-          dragging = false
-        end
-      end)
-    end
-  end)
-
-  Close_ImageButton.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-      UpdateDraggable(input)
-    end
-  end)
+  -- Pupil (Black Vertical Slit)
+  local Pupil = Custom:Create("Frame", {
+     Name = "Pupil",
+     AnchorPoint = Vector2.new(0.5, 0.5),
+     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+     Position = UDim2.new(0.5, 0, 0.5, 0),
+     Size = UDim2.new(0, 8, 0, 26), 
+     ZIndex = 3
+  }, Iris)
+  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Pupil)
+  
+  -- Eye Glint
+  local Glint = Custom:Create("Frame", {
+      BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+      BackgroundTransparency = 0.2,
+      Position = UDim2.new(0.25, 0, 0.25, 0),
+      Size = UDim2.new(0, 8, 0, 8),
+      ZIndex = 4
+  }, Iris)
+  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Glint)
 
   return Close_ImageButton
 end
@@ -827,7 +832,7 @@ function Speed_Library:CreateWindow(Config)
         task.wait(0.1)
         
         TweenService:Create(MinimizeButton, TweenInfo.new(0.15), {
-            BackgroundTransparency = 0.3
+            BackgroundTransparency = 0
         }):Play()
         
         -- Fade out animation
