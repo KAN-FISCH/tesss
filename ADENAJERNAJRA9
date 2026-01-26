@@ -585,140 +585,71 @@ function Speed_Library:CreateWindow(Config)
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0, -- Solid Opaque
+        BackgroundTransparency = 0.05, -- Slightly transparent again for cool look
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = SizeUi,
         Name = generateRandomString(12),
-        ZIndex = 10 -- Bring to front
+        ZIndex = 2
     }, DropShadow)
 
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 24) }, Main)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, Main)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 6) }, Main) -- Sharper corners for Lightning theme
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 230, 50), Thickness = 1, Transparency = 0.5 }, Main) -- Yellow stroke
 
-    -- HUGE Cat Ears
-    local EarLeft = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0, -- Solid Opaque
-        Position = UDim2.new(0, 10, 0, -35), 
-        Size = UDim2.new(0, 85, 0, 85),
-        Rotation = 30,
-        Name = "EarLeft",
-        ZIndex = 9 -- Behind Main
-    }, DropShadow)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, EarLeft)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, EarLeft)
-    
-    local InnerEarLeft = Custom:Create("Frame", {
-         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-         Position = UDim2.new(0.3, 0, 0.3, 0),
-         Size = UDim2.new(0.4, 0, 0.4, 0),
-         ZIndex = 10
-    }, EarLeft)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarLeft)
-
-    local EarRight = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(1, 0),
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0, -- Solid Opaque
-        Position = UDim2.new(1, -10, 0, -35),
-        Size = UDim2.new(0, 85, 0, 85),
-        Rotation = -30,
-        Name = "EarRight",
-        ZIndex = 9
-    }, DropShadow)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, EarRight)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, EarRight)
-
-    local InnerEarRight = Custom:Create("Frame", {
-         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-         Position = UDim2.new(0.3, 0, 0.3, 0),
-         Size = UDim2.new(0.4, 0, 0.4, 0),
-         ZIndex = 10
-    }, EarRight)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarRight)
-
-    -- TAIL (Buntut) - Hierarchical smooth curve
-    local TailContainer = Custom:Create("Frame", {
+    -- LIGHTNING BOLT DECORATION
+    local LightningContainer = Custom:Create("Frame", {
         BackgroundTransparency = 1,
-        Position = UDim2.new(1, -15, 1, -20), -- Bottom right corner
-        Size = UDim2.new(0, 5, 0, 5),
-        ZIndex = 8,
-        Name = "TailContainer"
-    }, Main) -- Parent to Main so it moves with window
+        Position = UDim2.new(1, -20, 0, -20), -- Top Right floating
+        Size = UDim2.new(0, 40, 0, 60),
+        ZIndex = 5,
+        Name = "LightningContainer"
+    }, DropShadow)
 
-    -- Base Segment (Connected to Container)
-    local TailBase = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(0.5, 1),
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0,
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0, 24, 0, 50),
-        Rotation = 45, -- Initial angle
-        ZIndex = 8,
-        Name = "TailBase"
-    }, TailContainer)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 12) }, TailBase)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailBase)
+    -- Upper Bolt
+    local Bolt1 = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(255, 230, 50),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.5, 0, 0, 0),
+        Size = UDim2.new(0, 15, 0, 35),
+        Rotation = 15,
+        ZIndex = 5
+    }, LightningContainer)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 2) }, Bolt1)
+    
+    -- Middle Bolt
+    local Bolt2 = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(255, 230, 50),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.5, -5, 0.4, 0),
+        Size = UDim2.new(0, 15, 0, 25),
+        Rotation = -35, -- Sharp turn
+        ZIndex = 5
+    }, LightningContainer)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 2) }, Bolt2)
 
-    -- Middle Segment (Connected to Top of Base)
-    local TailMid = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(0.5, 1),
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0,
-        Position = UDim2.new(0.5, 0, 0.2, 0), -- Overlap slightly to hide seams
-        Size = UDim2.new(0, 20, 0, 45),
-        Rotation = 25, -- Relative curve
-        ZIndex = 8,
-        Name = "TailMid"
-    }, TailBase)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 10) }, TailMid)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailMid)
+    -- Lower Bolt (Tip)
+    local Bolt3 = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(255, 230, 50),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.5, 0, 0.7, 0),
+        Size = UDim2.new(0, 10, 0, 30),
+        Rotation = 15,
+        ZIndex = 5
+    }, LightningContainer)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 2) }, Bolt3)
 
-    -- Tip Segment (Connected to Top of Mid)
-    local TailTip = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(0.5, 1),
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0,
-        Position = UDim2.new(0.5, 0, 0.2, 0), -- Overlap slightly
-        Size = UDim2.new(0, 16, 0, 40),
-        Rotation = 25, -- Relative curve
-        ZIndex = 8,
-        Name = "TailTip"
-    }, TailMid)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, TailTip)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailTip)
-
-    -- Smooth Wag Animation
+    -- Glow/Pulse Animation
     task.spawn(function()
-        local tweenInfo = TweenInfo.new(1.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
-        -- Animate base rotation (entire tail moves)
-        TweenService:Create(TailBase, tweenInfo, {Rotation = 65}):Play()
-        -- Animate text/tip curl slightly for realism
-        TweenService:Create(TailMid, tweenInfo, {Rotation = 15}):Play()
-        TweenService:Create(TailTip, tweenInfo, {Rotation = 15}):Play()
+        local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true)
+        TweenService:Create(Main.UIStroke, tweenInfo, {Transparency = 0.2}):Play()
+        
+        -- Animate bolt slightly
+        TweenService:Create(LightningContainer, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+            Position = UDim2.new(1, -20, 0, -25) -- Floating up and down
+        }):Play()
     end)
 
-
-    -- WHISKERS (Kumis)
-    local function CreateWhisker(parent, pos, rot)
-       local w = Custom:Create("Frame", {
-            BackgroundColor3 = Color3.fromRGB(200, 200, 200),
-            BackgroundTransparency = 0.5,
-            Size = UDim2.new(0, 60, 0, 2),
-            Position = pos,
-            Rotation = rot,
-            ZIndex = 8
-       }, parent)
-       Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, w)
-    end
-    
-    CreateWhisker(DropShadow, UDim2.new(0, -45, 0.3, 0), 10)
-    CreateWhisker(DropShadow, UDim2.new(0, -45, 0.4, 0), -5)
-    
-    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.3, 0), -10)
-    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.4, 0), 5)
 
     local Top = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
