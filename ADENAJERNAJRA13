@@ -639,93 +639,52 @@ function Speed_Library:CreateWindow(Config)
     }, EarRight)
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarRight)
 
-    -- LIGHTNING TAIL (Buntut Petir) - Seamless Connection
-    
-    -- 1. The Connector (Patch to hide the Main Border)
-    local TailConnector = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(1, 1),
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15), -- Same as body
-        BackgroundTransparency = 0,
-        BorderSizePixel = 0,
-        Position = UDim2.new(1, -1, 0.9, 0), -- Positioned on the edge
-        Size = UDim2.new(0, 30, 0, 20),
-        ZIndex = 11, -- Above Main (10) and Stroke
-        Name = "TailConnector"
-    }, Main) -- Parented to Main to move with it
-    
-    -- 2. The Tail Container
+    -- TAIL (Buntut) - Curved shape using a frame
     local TailContainer = Custom:Create("Frame", {
         BackgroundTransparency = 1,
-        Position = UDim2.new(1, -15, 0.75, 0), -- Shifted to align with connector
-        Size = UDim2.new(0, 80, 0, 80),
-        ZIndex = 8, -- Behind Main
+        Position = UDim2.new(1, -30, 0.8, 0),
+        Size = UDim2.new(0, 60, 0, 60),
+        ZIndex = 8,
         Name = "Tail"
     }, DropShadow)
 
-    -- Part 1 (Base - Connecting to body)
-    local Bolt1 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15), 
+    local TailPart1 = Custom:Create("Frame", {
+        AnchorPoint = Vector2.new(0.5,1),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
         BackgroundTransparency = 0,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 0, 0.6, 0),
-        Size = UDim2.new(0, 25, 0, 45),
+        Position = UDim2.new(0.5, 0, 1, 0),
+        Size = UDim2.new(0, 20, 0, 140), -- Panjangin lagi (80 -> 140)
         Rotation = 45,
         ZIndex = 8
     }, TailContainer)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, TailPart1)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailPart1)
     
-    -- Part 2 (Zig)
-    local Bolt2 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15), 
-        BackgroundTransparency = 0,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 25, 0.3, 0),
-        Size = UDim2.new(0, 20, 0, 45),
-        Rotation = -45,
-        ZIndex = 8
-    }, TailContainer)
-
-    -- Part 3 (Tip)
-    local Bolt3 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(15, 15, 15), 
-        BackgroundTransparency = 0,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 45, 0.1, 0),
-        Size = UDim2.new(0, 15, 0, 40),
-        Rotation = 30,
-        ZIndex = 8
-    }, TailContainer)
-
-    -- Animate Lightning Tail (Subtle Wag)
+    -- Using TweenService to animate tail wagging slightly
     task.spawn(function()
-        local tweenInfo = TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
-        TweenService:Create(TailContainer, tweenInfo, {Rotation = 10}):Play()
+        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+        TweenService:Create(TailPart1, tweenInfo, {Rotation = 65}):Play()
     end)
 
 
-    -- WHISKERS (3 Kumis, Opaque)
+    -- WHISKERS (Kumis)
     local function CreateWhisker(parent, pos, rot)
        local w = Custom:Create("Frame", {
-            BackgroundColor3 = Color3.fromRGB(220, 220, 220),
-            BackgroundTransparency = 0, -- Solid
-            Size = UDim2.new(0, 70, 0, 3), -- Longer, Thicker
+            BackgroundColor3 = Color3.fromRGB(200, 200, 200),
+            BackgroundTransparency = 0.5,
+            Size = UDim2.new(0, 60, 0, 2),
             Position = pos,
             Rotation = rot,
             ZIndex = 8
        }, parent)
        Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, w)
-       -- Stroke for visibility
-       Custom:Create("UIStroke", {Color = Color3.fromRGB(0,0,0), Thickness = 1, Transparency = 0.5}, w)
     end
     
-    -- Left Side (3 Whiskers)
-    CreateWhisker(DropShadow, UDim2.new(0, -55, 0.25, 0), 15)
-    CreateWhisker(DropShadow, UDim2.new(0, -60, 0.35, 0), 0)
-    CreateWhisker(DropShadow, UDim2.new(0, -55, 0.45, 0), -15)
+    CreateWhisker(DropShadow, UDim2.new(0, -45, 0.3, 0), 10)
+    CreateWhisker(DropShadow, UDim2.new(0, -45, 0.4, 0), -5)
     
-    -- Right Side (3 Whiskers)
-    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.25, 0), -15)
-    CreateWhisker(DropShadow, UDim2.new(1, -10, 0.35, 0), 0)
-    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.45, 0), 15)
+    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.3, 0), -10)
+    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.4, 0), 5)
 
     local Top = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
@@ -757,7 +716,7 @@ function Speed_Library:CreateWindow(Config)
     local MinimizeButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-        BackgroundTransparency = 0.3,
+        BackgroundTransparency = 0, -- Solid Opaque
         Position = UDim2.new(0, 0, 0.5, 0),
         Size = UDim2.new(0, 25, 0, 25),
         Text = "—",
@@ -775,7 +734,7 @@ function Speed_Library:CreateWindow(Config)
     local CloseButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-        BackgroundTransparency = 0.3,
+        BackgroundTransparency = 0, -- Solid Opaque
         Position = UDim2.new(0, 35, 0.5, 0),
         Size = UDim2.new(0, 25, 0, 25),
         Text = "×",
@@ -832,7 +791,7 @@ function Speed_Library:CreateWindow(Config)
         Thickness = 0.6
     }, TextLabel1)
 
-    -- Smooth Hover Effects
+    -- Update SmoothHover to prevent transparency
     local function AddSmoothHover(button, hoverColor, normalColor)
         local isCooldown = false
         
@@ -840,7 +799,7 @@ function Speed_Library:CreateWindow(Config)
             if not isCooldown then
                 TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
                     BackgroundColor3 = hoverColor,
-                    BackgroundTransparency = 0.1
+                    BackgroundTransparency = 0 -- Opaque
                 }):Play()
             end
         end)
@@ -849,7 +808,7 @@ function Speed_Library:CreateWindow(Config)
             if not isCooldown then
                 TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
                     BackgroundColor3 = normalColor,
-                    BackgroundTransparency = 0.3
+                    BackgroundTransparency = 0 -- Opaque
                 }):Play()
             end
         end)
@@ -931,7 +890,7 @@ function Speed_Library:CreateWindow(Config)
 
     local LayersTab = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0.1,
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0, 9, 0, 50),
@@ -960,7 +919,7 @@ function Speed_Library:CreateWindow(Config)
     Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0),
         BackgroundColor3 = Custom.ColorRGB,
-        BackgroundTransparency = 0.3,
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0, 38),
@@ -970,7 +929,7 @@ function Speed_Library:CreateWindow(Config)
 
     local Layers = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0.1,
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0, TabWidth + 18, 0, 50),
