@@ -585,54 +585,99 @@ function Speed_Library:CreateWindow(Config)
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0.05, -- Solid for Cat Shape
+        BackgroundTransparency = 0.05,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = SizeUi,
         Name = generateRandomString(12),
-        ZIndex = 2 -- Above ears
+        ZIndex = 10 -- Bring to front
     }, DropShadow)
 
-    Custom:Create("UICorner", {
-        CornerRadius = UDim.new(0, 16) -- Rounded logic
-    }, Main)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 24) }, Main)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, Main)
 
-    -- Cat Ears (Behind Main)
+    -- HUGE Cat Ears
     local EarLeft = Custom:Create("Frame", {
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
         BackgroundTransparency = 0.05,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 10, 0, -10),
-        Size = UDim2.new(0, 50, 0, 50),
-        Rotation = 35,
+        Position = UDim2.new(0, 10, 0, -35), -- Stick out more
+        Size = UDim2.new(0, 85, 0, 85),
+        Rotation = 30,
         Name = "EarLeft",
-        ZIndex = 1
+        ZIndex = 9 -- Behind Main
     }, DropShadow)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, EarLeft)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1, Transparency = 0.9 }, EarLeft)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, EarLeft)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, EarLeft)
+    
+    local InnerEarLeft = Custom:Create("Frame", {
+         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+         Position = UDim2.new(0.3, 0, 0.3, 0),
+         Size = UDim2.new(0.4, 0, 0.4, 0),
+         ZIndex = 10
+    }, EarLeft)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarLeft)
 
     local EarRight = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(1, 0),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
         BackgroundTransparency = 0.05,
-        BorderSizePixel = 0,
-        Position = UDim2.new(1, -10, 0, -10),
-        Size = UDim2.new(0, 50, 0, 50),
-        Rotation = -35,
+        Position = UDim2.new(1, -10, 0, -35),
+        Size = UDim2.new(0, 85, 0, 85),
+        Rotation = -30,
         Name = "EarRight",
-        ZIndex = 1
+        ZIndex = 9
     }, DropShadow)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, EarRight)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1, Transparency = 0.9 }, EarRight)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, EarRight)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, EarRight)
 
-    -- Removed UIGradient for clean iOS look
+    local InnerEarRight = Custom:Create("Frame", {
+         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+         Position = UDim2.new(0.3, 0, 0.3, 0),
+         Size = UDim2.new(0.4, 0, 0.4, 0),
+         ZIndex = 10
+    }, EarRight)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarRight)
 
-    Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(255, 255, 255), -- Glass Edge
-        Thickness = 1,
-        Transparency = 0.9
+    -- EYES (Mata)
+    local EyeLeft = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 0.4,
+        Position = UDim2.new(0.5, -45, 0, 12),
+        Size = UDim2.new(0, 25, 0, 8),
+        ZIndex = 12,
+        Name = "EyeLeft"
     }, Main)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, EyeLeft)
+    
+    local EyeRight = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 0.4,
+        Position = UDim2.new(0.5, 20, 0, 12),
+        Size = UDim2.new(0, 25, 0, 8),
+        ZIndex = 12,
+        Name = "EyeRight"
+    }, Main)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, EyeRight)
+
+    -- WHISKERS (Kumis)
+    local function CreateWhisker(parent, pos, rot)
+       local w = Custom:Create("Frame", {
+            BackgroundColor3 = Color3.fromRGB(200, 200, 200),
+            BackgroundTransparency = 0.5,
+            Size = UDim2.new(0, 60, 0, 2),
+            Position = pos,
+            Rotation = rot,
+            ZIndex = 8
+       }, parent)
+       Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, w)
+    end
+    
+    CreateWhisker(DropShadow, UDim2.new(0, -45, 0.3, 0), 10)
+    CreateWhisker(DropShadow, UDim2.new(0, -45, 0.4, 0), -5)
+    
+    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.3, 0), -10)
+    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.4, 0), 5)
 
     local Top = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
