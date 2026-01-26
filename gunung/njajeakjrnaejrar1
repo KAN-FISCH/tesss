@@ -52,55 +52,23 @@ local function OpenClose()
     ZIndexBehavior = Enum.ZIndexBehavior.Sibling
   }, RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui"))
   ProtectGui(ScreenGui)
+
+  -- Restore to standard ImageButton (User Image)
   local Close_ImageButton = Custom:Create("ImageButton", {
-    BackgroundColor3 = Custom.BackgroundDark,
-    BorderColor3 = Custom.ColorRGB,
-    BorderSizePixel = 1,
+    BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+    BackgroundTransparency = 0,
     Position = UDim2.new(0.1021, 0, 0.0743, 0),
-    Size = UDim2.new(0, 59, 0, 49),
+    Size = UDim2.new(0, 60, 0, 60), -- Circle Shape
     Image = "rbxassetid://125992172976297",
-    Visible = false
+    Visible = false,
+    Name = "RestoreButton"
   }, ScreenGui)
 
-  local UICorner = Custom:Create("UICorner", {
-    Name = "MainCorner",
-    CornerRadius = UDim.new(0, 12),
-  }, Close_ImageButton)
-  local UIGradient = Custom:Create("UIGradient", {
-    Color = ColorSequence.new{
-      ColorSequenceKeypoint.new(0, Custom.ColorRGB),
-      ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
-      ColorSequenceKeypoint.new(1, Custom.DarkBlue)
-    },
-    Rotation = 45,
-  }, Close_ImageButton)
+  -- Make it Circular/Eye-like
+  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Close_ImageButton)
+  Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 2, Transparency = 0.8 }, Close_ImageButton)
 
-  local dragging, dragStart, startPos = false, nil, nil
 
-  local function UpdateDraggable(input)
-    local delta = input.Position - dragStart
-    Close_ImageButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-  end
-
-  Close_ImageButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-      dragging = true
-      dragStart = input.Position
-      startPos = Close_ImageButton.Position
-
-      input.Changed:Connect(function()
-        if input.UserInputState == Enum.UserInputState.End then
-          dragging = false
-        end
-      end)
-    end
-  end)
-
-  Close_ImageButton.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-      UpdateDraggable(input)
-    end
-  end)
 
   return Close_ImageButton
 end
@@ -585,25 +553,106 @@ function Speed_Library:CreateWindow(Config)
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0.3, -- Glass Effect
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = SizeUi,
-        Name = generateRandomString(12)
+        Name = generateRandomString(12),
+        ZIndex = 10 -- Bring to front
     }, DropShadow)
 
-    Custom:Create("UICorner", {
-        CornerRadius = UDim.new(0, 6) -- Sharper Window
-    }, Main)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 24) }, Main)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, Main)
 
-    -- Removed UIGradient for clean iOS look
+    -- HUGE Cat Ears
+    local EarLeft = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0, -- Solid Opaque
+        Position = UDim2.new(0, 10, 0, -35), 
+        Size = UDim2.new(0, 85, 0, 85),
+        Rotation = 30,
+        Name = "EarLeft",
+        ZIndex = 9 -- Behind Main
+    }, DropShadow)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, EarLeft)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, EarLeft)
+    
+    local InnerEarLeft = Custom:Create("Frame", {
+         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+         Position = UDim2.new(0.3, 0, 0.3, 0),
+         Size = UDim2.new(0.4, 0, 0.4, 0),
+         ZIndex = 10
+    }, EarLeft)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarLeft)
 
-    Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(255, 255, 255), -- Glass Edge
-        Thickness = 1,
-        Transparency = 0.9
-    }, Main)
+    local EarRight = Custom:Create("Frame", {
+        AnchorPoint = Vector2.new(1, 0),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0, -- Solid Opaque
+        Position = UDim2.new(1, -10, 0, -35),
+        Size = UDim2.new(0, 85, 0, 85),
+        Rotation = -30,
+        Name = "EarRight",
+        ZIndex = 9
+    }, DropShadow)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, EarRight)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, EarRight)
+
+    local InnerEarRight = Custom:Create("Frame", {
+         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+         Position = UDim2.new(0.3, 0, 0.3, 0),
+         Size = UDim2.new(0.4, 0, 0.4, 0),
+         ZIndex = 10
+    }, EarRight)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarRight)
+
+    -- TAIL (Buntut) - Curved shape using a frame
+    local TailContainer = Custom:Create("Frame", {
+        BackgroundTransparency = 1,
+        Position = UDim2.new(1, -30, 0.8, 0),
+        Size = UDim2.new(0, 60, 0, 60),
+        ZIndex = 8,
+        Name = "Tail"
+    }, DropShadow)
+
+    local TailPart1 = Custom:Create("Frame", {
+        AnchorPoint = Vector2.new(0.5,1),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0,
+        Position = UDim2.new(0.5, 0, 1, 0),
+        Size = UDim2.new(0, 20, 0, 140), -- Panjangin lagi (80 -> 140)
+        Rotation = 45,
+        ZIndex = 8
+    }, TailContainer)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, TailPart1)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailPart1)
+    
+    -- Using TweenService to animate tail wagging slightly
+    task.spawn(function()
+        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+        TweenService:Create(TailPart1, tweenInfo, {Rotation = 65}):Play()
+    end)
+
+
+    -- WHISKERS (Kumis)
+    local function CreateWhisker(parent, pos, rot)
+       local w = Custom:Create("Frame", {
+            BackgroundColor3 = Color3.fromRGB(200, 200, 200),
+            BackgroundTransparency = 0.5,
+            Size = UDim2.new(0, 60, 0, 2),
+            Position = pos,
+            Rotation = rot,
+            ZIndex = 8
+       }, parent)
+       Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, w)
+    end
+    
+    CreateWhisker(DropShadow, UDim2.new(0, -45, 0.3, 0), 10)
+    CreateWhisker(DropShadow, UDim2.new(0, -45, 0.4, 0), -5)
+    
+    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.3, 0), -10)
+    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.4, 0), 5)
 
     local Top = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
@@ -622,81 +671,50 @@ function Speed_Library:CreateWindow(Config)
     
     -- Removed UIGradient for Top
 
-    -- macOS/Linux Terminal Style Buttons Container (Kiri untuk Hijau)
-    local GreenButtonContainer = Custom:Create("Frame", {
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 12, 0, 0),
-        Size = UDim2.new(0, 12, 1, 0),
-        Name = "GreenButtonContainer"
-    }, Top)
-
-    -- Green Button (Decorative - paling kiri sendiri)
-    local GreenButton = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundColor3 = Custom.MacGreenButton,
-        Position = UDim2.new(0, 0, 0.5, 0),
-        Size = UDim2.new(0, 12, 0, 12),
-        Name = "GreenButton"
-    }, GreenButtonContainer)
-
-    Custom:Create("UICorner", {
-        CornerRadius = UDim.new(1, 0)
-    }, GreenButton)
-
-    Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(30, 150, 50),
-        Thickness = 1,
-        Transparency = 0.3
-    }, GreenButton)
-
-    -- macOS/Linux Terminal Style Buttons Container
-    local RightButtonsContainer = Custom:Create("Frame", {
+    -- Modern Minimalist Buttons Container
+    local ButtonsContainer = Custom:Create("Frame", {
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(1, 0),
         Position = UDim2.new(1, -12, 0, 0),
-        Size = UDim2.new(0, 52, 1, 0),
-        Name = "RightButtonsContainer"
+        Size = UDim2.new(0, 60, 1, 0),
+        Name = "ButtonsContainer"
     }, Top)
 
-    -- Yellow Button (Minimize) - Moved to Green's place (Left)
-    local YellowButton = Custom:Create("TextButton", {
+    -- Minimize Button (-)
+    local MinimizeButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundColor3 = Custom.MacYellowButton,
+        BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+        BackgroundTransparency = 0, -- Solid Opaque
         Position = UDim2.new(0, 0, 0.5, 0),
-        Size = UDim2.new(0, 12, 0, 12),
-        Text = "",
-        Name = "YellowButton"
-    }, RightButtonsContainer)
+        Size = UDim2.new(0, 25, 0, 25),
+        Text = "—",
+        Font = Enum.Font.GothamBold,
+        TextSize = 16,
+        TextColor3 = Color3.fromRGB(200, 200, 200),
+        Name = "MinimizeButton"
+    }, ButtonsContainer)
 
     Custom:Create("UICorner", {
-        CornerRadius = UDim.new(1, 0)
-    }, YellowButton)
+        CornerRadius = UDim.new(0, 6)
+    }, MinimizeButton)
 
-    Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(200, 150, 50),
-        Thickness = 1,
-        Transparency = 0.3
-    }, YellowButton)
-
-    -- Red Button (Close) - Kept at Right (Gap created)
-    local RedButton = Custom:Create("TextButton", {
+    -- Close Button (×)
+    local CloseButton = Custom:Create("TextButton", {
         AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundColor3 = Custom.MacRedButton,
-        Position = UDim2.new(0, 40, 0.5, 0),
-        Size = UDim2.new(0, 12, 0, 12),
-        Text = "",
-        Name = "RedButton"
-    }, RightButtonsContainer)
+        BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+        BackgroundTransparency = 0, -- Solid Opaque
+        Position = UDim2.new(0, 35, 0.5, 0),
+        Size = UDim2.new(0, 25, 0, 25),
+        Text = "×",
+        Font = Enum.Font.GothamBold,
+        TextSize = 20,
+        TextColor3 = Color3.fromRGB(200, 200, 200),
+        Name = "CloseButton"
+    }, ButtonsContainer)
 
     Custom:Create("UICorner", {
-        CornerRadius = UDim.new(1, 0)
-    }, RedButton)
-
-    Custom:Create("UIStroke", {
-        Color = Color3.fromRGB(200, 70, 60),
-        Thickness = 1,
-        Transparency = 0.3
-    }, RedButton)
+        CornerRadius = UDim.new(0, 6)
+    }, CloseButton)
 
     local TextLabel = Custom:Create("TextLabel", {
         Font = Enum.Font.GothamBold,
@@ -741,9 +759,106 @@ function Speed_Library:CreateWindow(Config)
         Thickness = 0.6
     }, TextLabel1)
 
+    -- Update SmoothHover to prevent transparency
+    local function AddSmoothHover(button, hoverColor, normalColor)
+        local isCooldown = false
+        
+        button.MouseEnter:Connect(function()
+            if not isCooldown then
+                TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
+                    BackgroundColor3 = hoverColor,
+                    BackgroundTransparency = 0 -- Opaque
+                }):Play()
+            end
+        end)
+
+        button.MouseLeave:Connect(function()
+            if not isCooldown then
+                TweenService:Create(button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
+                    BackgroundColor3 = normalColor,
+                    BackgroundTransparency = 0 -- Opaque
+                }):Play()
+            end
+        end)
+    end
+
+    AddSmoothHover(MinimizeButton, Color3.fromRGB(80, 80, 80), Color3.fromRGB(50, 50, 50))
+    AddSmoothHover(CloseButton, Color3.fromRGB(255, 80, 80), Color3.fromRGB(50, 50, 50))
+
+    -- Minimize functionality - lebih smooth
+    MinimizeButton.Activated:Connect(function()
+        -- Quick flash animation
+        TweenService:Create(MinimizeButton, TweenInfo.new(0.1), {
+            BackgroundTransparency = 0
+        }):Play()
+        
+        task.wait(0.1)
+        
+        TweenService:Create(MinimizeButton, TweenInfo.new(0.15), {
+            BackgroundTransparency = 0
+        }):Play()
+        
+        -- Fade out animation
+        TweenService:Create(DropShadowHolder, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
+            Size = UDim2.new(DropShadowHolder.Size.X.Scale, DropShadowHolder.Size.X.Offset, 0, 0)
+        }):Play()
+        
+        task.wait(0.2)
+        DropShadowHolder.Visible = false
+        -- Adjust size for restored state using TextBounds
+        DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
+        
+        if not Open_Close.Visible then 
+            Open_Close.Visible = true 
+        end
+    end)
+
+    -- Restore window dengan smooth animation
+    Open_Close.Activated:Connect(function()
+        DropShadowHolder.Visible = true
+        DropShadowHolder.Size = UDim2.new(0, 0, 0, 0)
+        
+        TweenService:Create(DropShadowHolder, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
+        }):Play()
+        
+        if Open_Close.Visible then 
+            Open_Close.Visible = false 
+        end
+    end)
+
+    -- Close functionality - lebih smooth
+    CloseButton.Activated:Connect(function()
+        -- Flash red
+        TweenService:Create(CloseButton, TweenInfo.new(0.1), {
+            BackgroundColor3 = Color3.fromRGB(255, 100, 100),
+            BackgroundTransparency = 0
+        }):Play()
+        
+        task.wait(0.1)
+        
+        -- Fade out animation
+        TweenService:Create(DropShadowHolder, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
+            Size = UDim2.new(0, 0, 0, 0)
+        }):Play()
+        
+        TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
+            BackgroundTransparency = 1
+        }):Play()
+        
+        task.wait(0.2)
+        
+        if SpeedHubXGui then 
+            SpeedHubXGui:Destroy() 
+        end
+        if not Speed_Library.Unloaded then 
+            Speed_Library.Unloaded = true 
+        end
+    end)
+
     local LayersTab = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0.1,
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0, 9, 0, 50),
@@ -772,7 +887,7 @@ function Speed_Library:CreateWindow(Config)
     Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0),
         BackgroundColor3 = Custom.ColorRGB,
-        BackgroundTransparency = 0.3,
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0, 38),
@@ -782,7 +897,7 @@ function Speed_Library:CreateWindow(Config)
 
     local Layers = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0.1,
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0, TabWidth + 18, 0, 50),
@@ -874,48 +989,7 @@ function Speed_Library:CreateWindow(Config)
     
     UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateSize)
 
-    -- Yellow Button (Minimize) functionality
-    YellowButton.Activated:Connect(function()
-        -- Hover effect
-        TweenService:Create(YellowButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(255, 200, 90)}):Play()
-        task.wait(0.1)
-        TweenService:Create(YellowButton, TweenInfo.new(0.1), {BackgroundColor3 = Custom.MacYellowButton}):Play()
-        
-        DropShadowHolder.Visible = false
-        if not Open_Close.Visible then Open_Close.Visible = true end
-    end)
 
-    Open_Close.Activated:Connect(function()
-        DropShadowHolder.Visible = true
-        if Open_Close.Visible then Open_Close.Visible = false end
-    end)
-
-    -- Red Button (Close) functionality
-    RedButton.Activated:Connect(function()
-        -- Hover effect
-        TweenService:Create(RedButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(255, 120, 110)}):Play()
-        task.wait(0.1)
-        
-        if SpeedHubXGui then SpeedHubXGui:Destroy() end
-        if not Speed_Library.Unloaded then Speed_Library.Unloaded = true end
-    end)
-
-    -- Hover effects for mac buttons
-    RedButton.MouseEnter:Connect(function()
-        TweenService:Create(RedButton, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(255, 120, 110)}):Play()
-    end)
-
-    RedButton.MouseLeave:Connect(function()
-        TweenService:Create(RedButton, TweenInfo.new(0.15), {BackgroundColor3 = Custom.MacRedButton}):Play()
-    end)
-
-    YellowButton.MouseEnter:Connect(function()
-        TweenService:Create(YellowButton, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(255, 200, 90)}):Play()
-    end)
-
-    YellowButton.MouseLeave:Connect(function()
-        TweenService:Create(YellowButton, TweenInfo.new(0.15), {BackgroundColor3 = Custom.MacYellowButton}):Play()
-    end)
 
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
     MakeDraggable(Top, DropShadowHolder)
