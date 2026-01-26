@@ -68,17 +68,7 @@ local function OpenClose()
   Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Close_ImageButton)
   Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 2, Transparency = 0.8 }, Close_ImageButton)
 
-  -- Alis (Eyebrow) - Black, Straight, Close to eye
-  local Eyebrow = Custom:Create("Frame", {
-      AnchorPoint = Vector2.new(0.5, 0.5),
-      BackgroundColor3 = Color3.fromRGB(0, 0, 0), -- Hitam
-      BackgroundTransparency = 0,
-      Position = UDim2.new(0.5, 0, -0.1, 0), -- Deket mata
-      Size = UDim2.new(0.8, 0, 0, 8),
-      Rotation = 0, -- Lurus
-      ZIndex = 2
-  }, Close_ImageButton)
-  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Eyebrow)
+
 
   return Close_ImageButton
 end
