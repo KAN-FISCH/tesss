@@ -585,7 +585,7 @@ function Speed_Library:CreateWindow(Config)
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0.05,
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -600,8 +600,8 @@ function Speed_Library:CreateWindow(Config)
     -- HUGE Cat Ears
     local EarLeft = Custom:Create("Frame", {
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0.05,
-        Position = UDim2.new(0, 10, 0, -35), -- Stick out more
+        BackgroundTransparency = 0, -- Solid Opaque
+        Position = UDim2.new(0, 10, 0, -35), 
         Size = UDim2.new(0, 85, 0, 85),
         Rotation = 30,
         Name = "EarLeft",
@@ -621,7 +621,7 @@ function Speed_Library:CreateWindow(Config)
     local EarRight = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(1, 0),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0.05,
+        BackgroundTransparency = 0, -- Solid Opaque
         Position = UDim2.new(1, -10, 0, -35),
         Size = UDim2.new(0, 85, 0, 85),
         Rotation = -30,
@@ -639,26 +639,33 @@ function Speed_Library:CreateWindow(Config)
     }, EarRight)
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarRight)
 
-    -- EYES (Mata)
-    local EyeLeft = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.4,
-        Position = UDim2.new(0.5, -45, 0, 12),
-        Size = UDim2.new(0, 25, 0, 8),
-        ZIndex = 12,
-        Name = "EyeLeft"
-    }, Main)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, EyeLeft)
+    -- TAIL (Buntut) - Curved shape using a frame
+    local TailContainer = Custom:Create("Frame", {
+        BackgroundTransparency = 1,
+        Position = UDim2.new(1, -30, 0.8, 0),
+        Size = UDim2.new(0, 60, 0, 60),
+        ZIndex = 8,
+        Name = "Tail"
+    }, DropShadow)
+
+    local TailPart1 = Custom:Create("Frame", {
+        AnchorPoint = Vector2.new(0.5,1),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0,
+        Position = UDim2.new(0.5, 0, 1, 0),
+        Size = UDim2.new(0, 20, 0, 80),
+        Rotation = 45,
+        ZIndex = 8
+    }, TailContainer)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, TailPart1)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailPart1)
     
-    local EyeRight = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.4,
-        Position = UDim2.new(0.5, 20, 0, 12),
-        Size = UDim2.new(0, 25, 0, 8),
-        ZIndex = 12,
-        Name = "EyeRight"
-    }, Main)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, EyeRight)
+    -- Using TweenService to animate tail wagging slightly
+    task.spawn(function()
+        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+        TweenService:Create(TailPart1, tweenInfo, {Rotation = 65}):Play()
+    end)
+
 
     -- WHISKERS (Kumis)
     local function CreateWhisker(parent, pos, rot)
