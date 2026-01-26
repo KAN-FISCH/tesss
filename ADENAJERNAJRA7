@@ -639,31 +639,60 @@ function Speed_Library:CreateWindow(Config)
     }, EarRight)
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarRight)
 
-    -- TAIL (Buntut) - Curved shape using a frame
+    -- TAIL (Buntut) - Organic Curved Shape
     local TailContainer = Custom:Create("Frame", {
         BackgroundTransparency = 1,
-        Position = UDim2.new(1, -30, 0.8, 0),
-        Size = UDim2.new(0, 60, 0, 60),
+        AnchorPoint = Vector2.new(0, 0),
+        Position = UDim2.new(1, -25, 0.75, 0), -- Positioned at bottom right
+        Size = UDim2.new(0, 100, 0, 100),
         ZIndex = 8,
-        Name = "Tail"
+        Name = "TailContainer"
     }, DropShadow)
 
-    local TailPart1 = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(0.5,1),
+    -- Segment 1 (Base)
+    local TailBase = Custom:Create("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
         BackgroundTransparency = 0,
-        Position = UDim2.new(0.5, 0, 1, 0),
-        Size = UDim2.new(0, 20, 0, 80),
+        Position = UDim2.new(0.2, 0, 0.2, 0),
+        Size = UDim2.new(0, 25, 0, 45),
         Rotation = 45,
         ZIndex = 8
     }, TailContainer)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, TailPart1)
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailPart1)
-    
-    -- Using TweenService to animate tail wagging slightly
+    Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, TailBase)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailBase)
+
+    -- Segment 2 (Middle)
+    local TailMid = Custom:Create("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0,
+        Position = UDim2.new(0.5, 0, 0.5, 0), -- Diagonal offset
+        Size = UDim2.new(0, 22, 0, 45),
+        Rotation = 70,
+        ZIndex = 8
+    }, TailContainer)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, TailMid)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailMid)
+
+    -- Segment 3 (Tip)
+    local TailTip = Custom:Create("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0,
+        Position = UDim2.new(0.8, 0, 0.6, 0), 
+        Size = UDim2.new(0, 20, 0, 40),
+        Rotation = 90,
+        ZIndex = 8
+    }, TailContainer)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, TailTip)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, TailTip)
+
+    -- Wagging Animation
     task.spawn(function()
-        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
-        TweenService:Create(TailPart1, tweenInfo, {Rotation = 65}):Play()
+        local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+        -- Rotate the whole container slightly
+        TweenService:Create(TailContainer, tweenInfo, {Rotation = 15}):Play()
     end)
 
 
