@@ -68,17 +68,18 @@ local function OpenClose()
   Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Close_ImageButton)
   Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 2, Transparency = 0.8 }, Close_ImageButton)
 
-  -- Alis (Eyebrow) - Added as requested
+  -- Alis (Eyebrow) - Fixed to look like a floating white line
   local Eyebrow = Custom:Create("Frame", {
       AnchorPoint = Vector2.new(0.5, 0.5),
-      BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-      Position = UDim2.new(0.5, 0, 0.15, 0), -- Top part covering the "eye"
-      Size = UDim2.new(1.1, 0, 0.45, 0),
-      Rotation = 12, -- Angled for expression
+      BackgroundColor3 = Color3.fromRGB(255, 255, 255), -- White for visibility
+      BackgroundTransparency = 0,
+      Position = UDim2.new(0.5, 0, -0.2, 0), -- Floating above the icon
+      Size = UDim2.new(0.8, 0, 0, 8), -- Thinner line
+      Rotation = 15, -- Angled for expression
       ZIndex = 2
   }, Close_ImageButton)
-  Custom:Create("UICorner", { CornerRadius = UDim.new(0, 12) }, Eyebrow)
-  Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 2, Transparency = 0.8 }, Eyebrow)
+  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Eyebrow)
+  Custom:Create("UIStroke", { Color = Color3.fromRGB(0, 0, 0), Thickness = 1, Transparency = 0.5 }, Eyebrow)
 
   return Close_ImageButton
 end
