@@ -639,7 +639,7 @@ function Speed_Library:CreateWindow(Config)
     }, EarRight)
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarRight)
 
-    -- LIGHTNING TAIL (Buntut Petir)
+    -- LIGHTNING TAIL (Buntut Petir) - Full Black & Seamless
     local TailContainer = Custom:Create("Frame", {
         BackgroundTransparency = 1,
         Position = UDim2.new(1, -20, 0.75, 0),
@@ -650,7 +650,7 @@ function Speed_Library:CreateWindow(Config)
 
     -- Part 1 (Base)
     local Bolt1 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(255, 215, 0), -- Gold/Yellow color for lightning
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15), -- Matched to Body Color
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 10, 0.6, 0),
@@ -661,7 +661,7 @@ function Speed_Library:CreateWindow(Config)
     
     -- Part 2 (Zig)
     local Bolt2 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(255, 215, 0),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15), -- Matched to Body Color
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 25, 0.3, 0),
@@ -672,7 +672,7 @@ function Speed_Library:CreateWindow(Config)
 
     -- Part 3 (Tip)
     local Bolt3 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(255, 215, 0),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15), -- Matched to Body Color
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 50, 0, 0),
@@ -681,10 +681,7 @@ function Speed_Library:CreateWindow(Config)
         ZIndex = 8
     }, TailContainer)
 
-    -- Add strokes for definition
-    for _, part in pairs({Bolt1, Bolt2, Bolt3}) do
-        Custom:Create("UIStroke", {Color = Color3.fromRGB(0,0,0), Thickness = 1.5}, part)
-    end
+    -- No borders (UIStroke removed) to make it look unified ("nyatu")
     
     -- Animate Lightning Tail
     task.spawn(function()
