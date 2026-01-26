@@ -585,71 +585,138 @@ function Speed_Library:CreateWindow(Config)
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
-        BackgroundTransparency = 0.05, -- Slightly transparent again for cool look
+        BackgroundTransparency = 0, -- Solid Opaque
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = SizeUi,
         Name = generateRandomString(12),
-        ZIndex = 2
+        ZIndex = 10 -- Bring to front
     }, DropShadow)
 
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 6) }, Main) -- Sharper corners for Lightning theme
-    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 230, 50), Thickness = 1, Transparency = 0.5 }, Main) -- Yellow stroke
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 24) }, Main)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, Main)
 
-    -- LIGHTNING BOLT DECORATION
-    local LightningContainer = Custom:Create("Frame", {
-        BackgroundTransparency = 1,
-        Position = UDim2.new(1, -20, 0, -20), -- Top Right floating
-        Size = UDim2.new(0, 40, 0, 60),
-        ZIndex = 5,
-        Name = "LightningContainer"
+    -- HUGE Cat Ears
+    local EarLeft = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0, -- Solid Opaque
+        Position = UDim2.new(0, 10, 0, -35), 
+        Size = UDim2.new(0, 85, 0, 85),
+        Rotation = 30,
+        Name = "EarLeft",
+        ZIndex = 9 -- Behind Main
     }, DropShadow)
-
-    -- Upper Bolt
-    local Bolt1 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(255, 230, 50),
-        BorderSizePixel = 0,
-        Position = UDim2.new(0.5, 0, 0, 0),
-        Size = UDim2.new(0, 15, 0, 35),
-        Rotation = 15,
-        ZIndex = 5
-    }, LightningContainer)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 2) }, Bolt1)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, EarLeft)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, EarLeft)
     
-    -- Middle Bolt
+    local InnerEarLeft = Custom:Create("Frame", {
+         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+         Position = UDim2.new(0.3, 0, 0.3, 0),
+         Size = UDim2.new(0.4, 0, 0.4, 0),
+         ZIndex = 10
+    }, EarLeft)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarLeft)
+
+    local EarRight = Custom:Create("Frame", {
+        AnchorPoint = Vector2.new(1, 0),
+        BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+        BackgroundTransparency = 0, -- Solid Opaque
+        Position = UDim2.new(1, -10, 0, -35),
+        Size = UDim2.new(0, 85, 0, 85),
+        Rotation = -30,
+        Name = "EarRight",
+        ZIndex = 9
+    }, DropShadow)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 15) }, EarRight)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 1.2, Transparency = 0.8 }, EarRight)
+
+    local InnerEarRight = Custom:Create("Frame", {
+         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+         Position = UDim2.new(0.3, 0, 0.3, 0),
+         Size = UDim2.new(0.4, 0, 0.4, 0),
+         ZIndex = 10
+    }, EarRight)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, InnerEarRight)
+
+    -- LIGHTNING TAIL (Buntut Petir)
+    local TailContainer = Custom:Create("Frame", {
+        BackgroundTransparency = 1,
+        Position = UDim2.new(1, -20, 0.75, 0),
+        Size = UDim2.new(0, 80, 0, 80),
+        ZIndex = 8,
+        Name = "Tail"
+    }, DropShadow)
+
+    -- Part 1 (Base)
+    local Bolt1 = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(255, 215, 0), -- Gold/Yellow color for lightning
+        BackgroundTransparency = 0,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 10, 0.6, 0),
+        Size = UDim2.new(0, 20, 0, 45),
+        Rotation = 35,
+        ZIndex = 8
+    }, TailContainer)
+    
+    -- Part 2 (Zig)
     local Bolt2 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(255, 230, 50),
+        BackgroundColor3 = Color3.fromRGB(255, 215, 0),
+        BackgroundTransparency = 0,
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, -5, 0.4, 0),
-        Size = UDim2.new(0, 15, 0, 25),
-        Rotation = -35, -- Sharp turn
-        ZIndex = 5
-    }, LightningContainer)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 2) }, Bolt2)
+        Position = UDim2.new(0, 25, 0.3, 0),
+        Size = UDim2.new(0, 20, 0, 45),
+        Rotation = -35,
+        ZIndex = 8
+    }, TailContainer)
 
-    -- Lower Bolt (Tip)
+    -- Part 3 (Tip)
     local Bolt3 = Custom:Create("Frame", {
-        BackgroundColor3 = Color3.fromRGB(255, 230, 50),
+        BackgroundColor3 = Color3.fromRGB(255, 215, 0),
+        BackgroundTransparency = 0,
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, 0, 0.7, 0),
-        Size = UDim2.new(0, 10, 0, 30),
-        Rotation = 15,
-        ZIndex = 5
-    }, LightningContainer)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 2) }, Bolt3)
+        Position = UDim2.new(0, 50, 0, 0),
+        Size = UDim2.new(0, 20, 0, 40),
+        Rotation = 30,
+        ZIndex = 8
+    }, TailContainer)
 
-    -- Glow/Pulse Animation
+    -- Add strokes for definition
+    for _, part in pairs({Bolt1, Bolt2, Bolt3}) do
+        Custom:Create("UIStroke", {Color = Color3.fromRGB(0,0,0), Thickness = 1.5}, part)
+    end
+    
+    -- Animate Lightning Tail
     task.spawn(function()
-        local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true)
-        TweenService:Create(Main.UIStroke, tweenInfo, {Transparency = 0.2}):Play()
-        
-        -- Animate bolt slightly
-        TweenService:Create(LightningContainer, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-            Position = UDim2.new(1, -20, 0, -25) -- Floating up and down
-        }):Play()
+        local tweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out, -1, true)
+        TweenService:Create(TailContainer, tweenInfo, {Rotation = 15}):Play()
     end)
 
+
+    -- WHISKERS (3 Kumis, Opaque)
+    local function CreateWhisker(parent, pos, rot)
+       local w = Custom:Create("Frame", {
+            BackgroundColor3 = Color3.fromRGB(220, 220, 220),
+            BackgroundTransparency = 0, -- Solid
+            Size = UDim2.new(0, 70, 0, 3), -- Longer, Thicker
+            Position = pos,
+            Rotation = rot,
+            ZIndex = 8
+       }, parent)
+       Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, w)
+       -- Stroke for visibility
+       Custom:Create("UIStroke", {Color = Color3.fromRGB(0,0,0), Thickness = 1, Transparency = 0.5}, w)
+    end
+    
+    -- Left Side (3 Whiskers)
+    CreateWhisker(DropShadow, UDim2.new(0, -55, 0.25, 0), 15)
+    CreateWhisker(DropShadow, UDim2.new(0, -60, 0.35, 0), 0)
+    CreateWhisker(DropShadow, UDim2.new(0, -55, 0.45, 0), -15)
+    
+    -- Right Side (3 Whiskers)
+    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.25, 0), -15)
+    CreateWhisker(DropShadow, UDim2.new(1, -10, 0.35, 0), 0)
+    CreateWhisker(DropShadow, UDim2.new(1, -15, 0.45, 0), 15)
 
     local Top = Custom:Create("Frame", {
         BackgroundColor3 = Custom.FrameDark,
