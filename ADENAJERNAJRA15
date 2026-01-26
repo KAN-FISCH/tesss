@@ -53,59 +53,32 @@ local function OpenClose()
   }, RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui"))
   ProtectGui(ScreenGui)
 
-  -- Cat Eye Container (Invisible Button Area)
-  local Close_ImageButton = Custom:Create("TextButton", {
-    Text = "",
-    BackgroundTransparency = 1,
+  -- Restore to standard ImageButton (User Image)
+  local Close_ImageButton = Custom:Create("ImageButton", {
+    BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+    BackgroundTransparency = 0,
     Position = UDim2.new(0.1021, 0, 0.0743, 0),
-    Size = UDim2.new(0, 60, 0, 40),
+    Size = UDim2.new(0, 60, 0, 60), -- Circle Shape
+    Image = "rbxassetid://125992172976297",
     Visible = false,
-    Name = "RestoreEye"
+    Name = "RestoreButton"
   }, ScreenGui)
 
-  -- Sclera (White Outer Eye)
-  local Sclera = Custom:Create("Frame", {
-    Name = "Sclera",
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    BackgroundColor3 = Color3.fromRGB(240, 240, 240),
-    Position = UDim2.new(0.5, 0, 0.5, 0),
-    Size = UDim2.new(1, 0, 1, 0),
-    ZIndex = 1
+  -- Make it Circular/Eye-like
+  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Close_ImageButton)
+  Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 2, Transparency = 0.8 }, Close_ImageButton)
+
+  -- Alis (Eyebrow) - Added as requested
+  local Eyebrow = Custom:Create("Frame", {
+      AnchorPoint = Vector2.new(0.5, 0.5),
+      BackgroundColor3 = Color3.fromRGB(15, 15, 15),
+      Position = UDim2.new(0.5, 0, 0.15, 0), -- Top part covering the "eye"
+      Size = UDim2.new(1.1, 0, 0.45, 0),
+      Rotation = 12, -- Angled for expression
+      ZIndex = 2
   }, Close_ImageButton)
-  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Sclera) -- Oval Shape
-  Custom:Create("UIStroke", { Color = Color3.fromRGB(30, 30, 30), Thickness = 2 }, Sclera)
-
-  -- Iris (Amber/Gold)
-  local Iris = Custom:Create("Frame", {
-     Name = "Iris",
-     AnchorPoint = Vector2.new(0.5, 0.5),
-     BackgroundColor3 = Color3.fromRGB(255, 190, 0), 
-     Position = UDim2.new(0.5, 0, 0.5, 0),
-     Size = UDim2.new(0, 34, 0, 34),
-     ZIndex = 2
-  }, Sclera)
-  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Iris)
-
-  -- Pupil (Black Vertical Slit)
-  local Pupil = Custom:Create("Frame", {
-     Name = "Pupil",
-     AnchorPoint = Vector2.new(0.5, 0.5),
-     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-     Position = UDim2.new(0.5, 0, 0.5, 0),
-     Size = UDim2.new(0, 8, 0, 26), 
-     ZIndex = 3
-  }, Iris)
-  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Pupil)
-  
-  -- Eye Glint
-  local Glint = Custom:Create("Frame", {
-      BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-      BackgroundTransparency = 0.2,
-      Position = UDim2.new(0.25, 0, 0.25, 0),
-      Size = UDim2.new(0, 8, 0, 8),
-      ZIndex = 4
-  }, Iris)
-  Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, Glint)
+  Custom:Create("UICorner", { CornerRadius = UDim.new(0, 12) }, Eyebrow)
+  Custom:Create("UIStroke", { Color = Color3.fromRGB(255, 255, 255), Thickness = 2, Transparency = 0.8 }, Eyebrow)
 
   return Close_ImageButton
 end
