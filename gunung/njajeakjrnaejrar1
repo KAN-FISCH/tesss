@@ -664,6 +664,18 @@ function Speed_Library:CreateWindow(Config)
     }, Main)
     
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 20) }, Top)
+
+    -- Icon placed in center top, protruding upwards
+    Custom:Create("ImageLabel", {
+        Image = "rbxassetid://123091588302961",
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0.5, 0, 0, -20), -- Raised slightly to sit better
+        Size = UDim2.new(0, 100, 0, 100),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Name = "IconSHIELD",
+        ZIndex = 20,
+        Parent = Main -- Parented to Main to move with window, but ZIndex > Main
+    }, Main)
     
     -- Fix bottom corners of Top frame to be square? 
     -- Actually with ClipsDescendants on Main, we don't need to worry, but Main ClipsDescendants is NOT set in this visible code.
