@@ -1,6 +1,7 @@
 local placeScriptsPremium = {
     [131716211654599] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/UITES",
     [16732694052] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/UITES",
+    [127794225497302] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/Abyss",
 }
 
 local placeScriptsFree = {
