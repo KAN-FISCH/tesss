@@ -3,9 +3,11 @@ local placeScriptsPremium = {
     [16732694052] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/UITES",
     [127794225497302] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/Abyss",
     [2753915549] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/BloxFruit.lua",
+    [130594398886540] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/HorizonGardenPrem.lua",
 }
 
 local placeScriptsFree = {
+    [130594398886540] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/HorizonGarden.lua",
     [2753915549] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/BloxFruit.lua",
     [86710642002144] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/Talamau.lua",
     [129009554587176] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/TheForge/tes",
