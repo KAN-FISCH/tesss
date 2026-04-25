@@ -636,6 +636,7 @@ function Speed_Library:CreateWindow(Config)
 
 
     -- WHISKERS (Kumis)
+    local _whiskers = {}  -- simpan referensi untuk di-scale saat resize
     local function CreateWhisker(parent, pos, rot)
        local w = Custom:Create("Frame", {
             BackgroundColor3 = Color3.fromRGB(200, 200, 200),
@@ -646,6 +647,7 @@ function Speed_Library:CreateWindow(Config)
             ZIndex = 8
        }, parent)
        Custom:Create("UICorner", { CornerRadius = UDim.new(1,0) }, w)
+       table.insert(_whiskers, {frame = w, basePos = pos})
     end
     
     CreateWhisker(DropShadow, UDim2.new(0, -45, 0.3, 0), 10)
@@ -1220,6 +1222,40 @@ function Speed_Library:CreateWindow(Config)
         -- UIScale: scale semua konten (slider, input, dropdown, teks, dll) proporsional
         local scaleRatio = math.clamp(newW / BASE_W, 0.45, 1.6)
         MainUIScale.Scale = scaleRatio
+
+        -- Scale cat decorations (ears, tail, whiskers) - mereka sibling Main di DropShadow
+        -- sehingga tidak terpengaruh UIScale, harus di-scale manual
+        local earSize = math.round(85 * scaleRatio)
+        local earYOff = math.round(35 * scaleRatio)
+        local earXOff = math.round(10 * scaleRatio)
+        local earCorner = math.round(15 * scaleRatio)
+
+        EarLeft.Size = UDim2.fromOffset(earSize, earSize)
+        EarLeft.Position = UDim2.new(0, earXOff, 0, -earYOff)
+        local elCorner = EarLeft:FindFirstChildOfClass("UICorner")
+        if elCorner then elCorner.CornerRadius = UDim.new(0, earCorner) end
+
+        EarRight.Size = UDim2.fromOffset(earSize, earSize)
+        EarRight.Position = UDim2.new(1, -earXOff, 0, -earYOff)
+        local erCorner = EarRight:FindFirstChildOfClass("UICorner")
+        if erCorner then erCorner.CornerRadius = UDim.new(0, earCorner) end
+
+        local tailContainerSize = math.round(60 * scaleRatio)
+        local tailXOff = math.round(30 * scaleRatio)
+        TailContainer.Size = UDim2.fromOffset(tailContainerSize, tailContainerSize)
+        TailContainer.Position = UDim2.new(1, -tailXOff, 0.8, 0)
+        TailPart1.Size = UDim2.new(0, math.round(20 * scaleRatio), 0, math.round(140 * scaleRatio))
+
+        local whiskerW = math.round(60 * scaleRatio)
+        local whiskerXOff = math.round(45 * scaleRatio)
+        local whiskerXOffR = math.round(15 * scaleRatio)
+        for i, wData in ipairs(_whiskers) do
+            if wData.frame and wData.frame.Parent then
+                wData.frame.Size = UDim2.new(0, whiskerW, 0, 2)
+                local xOff = (i <= 2) and -whiskerXOff or -whiskerXOffR
+                wData.frame.Position = UDim2.new(wData.basePos.X.Scale, math.round(wData.basePos.X.Offset * scaleRatio), wData.basePos.Y.Scale, 0)
+            end
+        end
     end
 
     local function onResizeEnd()
