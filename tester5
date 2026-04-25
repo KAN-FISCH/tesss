@@ -1132,31 +1132,12 @@ function Speed_Library:CreateWindow(Config)
         return nil, nil
     end
 
-    -- ---- Kumpulkan semua TextLabel di dalam Main untuk di-scale ----
-    -- Map: instance → ukuran TextSize asli (saat BASE_W)
-    local _textScaleMap = {}
-    local function collectTextLabels(parent)
-        for _, obj in ipairs(parent:GetDescendants()) do
-            if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
-                if obj.TextSize > 0 and not obj.TextScaled then
-                    _textScaleMap[obj] = obj.TextSize
-                end
-            end
-        end
-    end
-    -- Collect setelah semua elemen selesai dibuat (delay 0.05s agar semua child sudah ada)
-    task.delay(0.05, function()
-        collectTextLabels(Main)
-    end)
-
-    local function scaleTexts(newW)
-        local ratio = math.clamp(newW / BASE_W, 0.55, 1.6)
-        for obj, baseSize in pairs(_textScaleMap) do
-            if obj and obj.Parent then
-                obj.TextSize = math.clamp(math.round(baseSize * ratio), 8, 28)
-            end
-        end
-    end
+    -- ---- UIScale: cara paling efisien scale SEMUA descendant (slider, input, dropdown, teks, dll) ----
+    -- UIScale di Main akan scale semua pixel size secara uniform otomatis
+    local MainUIScale = Custom:Create("UIScale", {
+        Scale = 1,
+        Name = "MainUIScale"
+    }, Main)
 
     -- ---- Detect platform (Mobile vs PC) ----
     local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
@@ -1236,8 +1217,9 @@ function Speed_Library:CreateWindow(Config)
         DropShadow.Size = newSize
         Main.Size = newSize
         DropShadowHolder.Size = UDim2.fromOffset(newW, newH)
-        -- Scale semua teks proporsional terhadap lebar
-        scaleTexts(newW)
+        -- UIScale: scale semua konten (slider, input, dropdown, teks, dll) proporsional
+        local scaleRatio = math.clamp(newW / BASE_W, 0.45, 1.6)
+        MainUIScale.Scale = scaleRatio
     end
 
     local function onResizeEnd()
@@ -1301,8 +1283,7 @@ function Speed_Library:CreateWindow(Config)
     end
 
     -- ---- Restore ukuran dari JSON saat startup ----
-    -- Pakai delay 0.1s agar collectTextLabels(0.05s) sudah selesai duluan
-    task.delay(0.1, function()
+    task.defer(function()
         local savedW, savedH = loadSavedSize()
         if savedW and savedH then
             applyResize(savedW, savedH)
