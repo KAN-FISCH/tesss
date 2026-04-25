@@ -1100,12 +1100,65 @@ function Speed_Library:CreateWindow(Config)
     MakeDraggable(Top, DropShadowHolder)
 
     -- ============================================================
-    -- RESIZE HANDLE (pojok kanan bawah)
+    -- RESIZE HANDLE (pojok kanan bawah) + TEXT SCALE + JSON SAVE
     -- ============================================================
     local MIN_W, MIN_H = 400, 260
     local MAX_W, MAX_H = 1100, 700
 
-    -- Resize handle visual (pojok kanan bawah Main)
+    -- Base size (default ukuran pertama kali GUI dibuat)
+    local BASE_W = SizeUi.X.Offset
+    local BASE_H = SizeUi.Y.Offset
+
+    -- ---- JSON Save/Load ----
+    local SAVE_FILE = "ShieldGUI_size.json"
+
+    local function saveSize(w, h)
+        pcall(function()
+            local json = game:GetService("HttpService"):JSONEncode({width = w, height = h})
+            writefile(SAVE_FILE, json)
+        end)
+    end
+
+    local function loadSavedSize()
+        local ok, result = pcall(function()
+            if isfile(SAVE_FILE) then
+                local raw = readfile(SAVE_FILE)
+                return game:GetService("HttpService"):JSONDecode(raw)
+            end
+        end)
+        if ok and result and result.width and result.height then
+            return result.width, result.height
+        end
+        return nil, nil
+    end
+
+    -- ---- Kumpulkan semua TextLabel di dalam Main untuk di-scale ----
+    -- Map: instance → ukuran TextSize asli (saat BASE_W)
+    local _textScaleMap = {}
+    local function collectTextLabels(parent)
+        for _, obj in ipairs(parent:GetDescendants()) do
+            if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
+                if obj.TextSize > 0 and not obj.TextScaled then
+                    _textScaleMap[obj] = obj.TextSize
+                end
+            end
+        end
+    end
+    -- Collect setelah semua elemen selesai dibuat (delay 0.05s agar semua child sudah ada)
+    task.delay(0.05, function()
+        collectTextLabels(Main)
+    end)
+
+    local function scaleTexts(newW)
+        local ratio = math.clamp(newW / BASE_W, 0.55, 1.6)
+        for obj, baseSize in pairs(_textScaleMap) do
+            if obj and obj.Parent then
+                obj.TextSize = math.clamp(math.round(baseSize * ratio), 8, 28)
+            end
+        end
+    end
+
+    -- ---- Resize handle visual ----
     local ResizeHandle = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(1, 1),
         BackgroundColor3 = Custom.ColorRGB,
@@ -1119,7 +1172,7 @@ function Speed_Library:CreateWindow(Config)
     }, Main)
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, ResizeHandle)
 
-    -- Icon resize (garis diagonal)
+    -- Icon resize (3 garis diagonal)
     local ResizeIcon = Custom:Create("Frame", {
         BackgroundTransparency = 1,
         Size = UDim2.new(1, 0, 1, 0),
@@ -1139,7 +1192,7 @@ function Speed_Library:CreateWindow(Config)
         }, ResizeIcon)
     end
 
-    -- Hover effect
+    -- Transparent button overlay untuk input
     local ResizeBtn = Custom:Create("TextButton", {
         Text = "",
         BackgroundTransparency = 1,
@@ -1148,6 +1201,7 @@ function Speed_Library:CreateWindow(Config)
         Name = "ResizeBtn",
     }, ResizeHandle)
 
+    -- Hover effect
     ResizeBtn.MouseEnter:Connect(function()
         TweenService:Create(ResizeHandle, TweenInfo.new(0.15), {
             BackgroundTransparency = 0.1,
@@ -1161,7 +1215,7 @@ function Speed_Library:CreateWindow(Config)
         }):Play()
     end)
 
-    -- Resize drag logic
+    -- ---- Resize logic ----
     local resizing = false
     local resizeStart = nil
     local resizeStartSize = nil
@@ -1170,11 +1224,11 @@ function Speed_Library:CreateWindow(Config)
         newW = math.clamp(newW, MIN_W, MAX_W)
         newH = math.clamp(newH, MIN_H, MAX_H)
         local newSize = UDim2.fromOffset(newW, newH)
-        -- Update DropShadow dan Main
         DropShadow.Size = newSize
         Main.Size = newSize
-        -- Update DropShadowHolder agar window box ikut (pertahankan posisi)
         DropShadowHolder.Size = UDim2.fromOffset(newW, newH)
+        -- Scale semua teks proporsional terhadap lebar
+        scaleTexts(newW)
     end
 
     ResizeBtn.InputBegan:Connect(function(input)
@@ -1194,7 +1248,22 @@ function Speed_Library:CreateWindow(Config)
 
     UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            resizing = false
+            if resizing then
+                resizing = false
+                -- Simpan ukuran terakhir ke JSON saat drag selesai
+                local finalW = math.clamp(math.round(Main.AbsoluteSize.X), MIN_W, MAX_W)
+                local finalH = math.clamp(math.round(Main.AbsoluteSize.Y), MIN_H, MAX_H)
+                saveSize(finalW, finalH)
+            end
+        end
+    end)
+
+    -- ---- Restore ukuran dari JSON saat startup ----
+    -- Pakai delay 0.1s agar collectTextLabels(0.05s) sudah selesai duluan
+    task.delay(0.1, function()
+        local savedW, savedH = loadSavedSize()
+        if savedW and savedH then
+            applyResize(savedW, savedH)
         end
     end)
 
