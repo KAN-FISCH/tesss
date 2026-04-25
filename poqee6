@@ -2314,35 +2314,32 @@ function Item:AddDropdown(Config)
         TextSize = 13,
         TextTruncate = Enum.TextTruncate.AtEnd,
         TextXAlignment = Enum.TextXAlignment.Left,
-        TextYAlignment = Enum.TextYAlignment.Top,
+        TextYAlignment = Enum.TextYAlignment.Center,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        Position = UDim2.new(0, 10, 0, 10),
-        Size = UDim2.new(1, -50, 0, 13),
+        Position = UDim2.new(0, 10, 0, 0),
+        Size = UDim2.new(1, -165, 1, 0),  -- leave 155px for SelectOptionsFrame + 10px gap
         Name = "DropdownTitle",
         Parent = Dropdown
     })
 
+    -- DropdownContent not shown inline (fits in title row via truncate)
     local DropdownContent = Custom:Create("TextLabel", {
-        Font = Enum.Font.GothamBold,
+        Font = Enum.Font.Gotham,
         Text = Content,
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 11,
-        TextTransparency = 0.6,
-        TextWrapped = true,
+        TextSize = 10,
+        TextTransparency = 0.7,
+        TextTruncate = Enum.TextTruncate.AtEnd,
         TextXAlignment = Enum.TextXAlignment.Left,
-        TextYAlignment = Enum.TextYAlignment.Top,
+        TextYAlignment = Enum.TextYAlignment.Center,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        Position = UDim2.new(0, 10, 0, 24),
-        Size = UDim2.new(1, -50, 0, 0),
-        AutomaticSize = Enum.AutomaticSize.Y,
+        -- positioned below title inside the same row (not shown when row is 35px)
+        Visible = false,
         Name = "DropdownContent",
         Parent = Dropdown
     })
-
-    Dropdown.AutomaticSize = Enum.AutomaticSize.Y
-    Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Dropdown)
 
     DropdownContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
         UpdateSizeSection()
