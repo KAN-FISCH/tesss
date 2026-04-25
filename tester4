@@ -1158,19 +1158,25 @@ function Speed_Library:CreateWindow(Config)
         end
     end
 
+    -- ---- Detect platform (Mobile vs PC) ----
+    local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+
+    -- Handle size: lebih besar di mobile agar mudah dijangkau jari
+    local HANDLE_SIZE = isMobile and 32 or 18
+
     -- ---- Resize handle visual ----
     local ResizeHandle = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(1, 1),
         BackgroundColor3 = Custom.ColorRGB,
-        BackgroundTransparency = 0.5,
+        BackgroundTransparency = isMobile and 0.3 or 0.5,
         BorderSizePixel = 0,
         Position = UDim2.new(1, 0, 1, 0),
-        Size = UDim2.new(0, 18, 0, 18),
+        Size = UDim2.new(0, HANDLE_SIZE, 0, HANDLE_SIZE),
         ZIndex = 50,
         Name = "ResizeHandle",
         ClipsDescendants = true,
     }, Main)
-    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, ResizeHandle)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, isMobile and 10 or 4) }, ResizeHandle)
 
     -- Icon resize (3 garis diagonal)
     local ResizeIcon = Custom:Create("Frame", {
@@ -1185,8 +1191,8 @@ function Speed_Library:CreateWindow(Config)
             BackgroundTransparency = 0.2,
             BorderSizePixel = 0,
             AnchorPoint = Vector2.new(1, 1),
-            Position = UDim2.new(1, -(i * 4 - 3), 1, -(i * 4 - 3)),
-            Size = UDim2.new(0, (4 - i) * 3 + 3, 0, 2),
+            Position = UDim2.new(1, -(i * 5 - 3), 1, -(i * 5 - 3)),
+            Size = UDim2.new(0, (4 - i) * 4 + 4, 0, 2),
             Rotation = -45,
             ZIndex = 52,
         }, ResizeIcon)
@@ -1201,24 +1207,27 @@ function Speed_Library:CreateWindow(Config)
         Name = "ResizeBtn",
     }, ResizeHandle)
 
-    -- Hover effect
-    ResizeBtn.MouseEnter:Connect(function()
-        TweenService:Create(ResizeHandle, TweenInfo.new(0.15), {
-            BackgroundTransparency = 0.1,
-            BackgroundColor3 = Color3.fromRGB(170, 80, 255)
-        }):Play()
-    end)
-    ResizeBtn.MouseLeave:Connect(function()
-        TweenService:Create(ResizeHandle, TweenInfo.new(0.15), {
-            BackgroundTransparency = 0.5,
-            BackgroundColor3 = Custom.ColorRGB
-        }):Play()
-    end)
+    -- Hover effect (PC only - mobile tidak punya MouseEnter)
+    if not isMobile then
+        ResizeBtn.MouseEnter:Connect(function()
+            TweenService:Create(ResizeHandle, TweenInfo.new(0.15), {
+                BackgroundTransparency = 0.1,
+                BackgroundColor3 = Color3.fromRGB(170, 80, 255)
+            }):Play()
+        end)
+        ResizeBtn.MouseLeave:Connect(function()
+            TweenService:Create(ResizeHandle, TweenInfo.new(0.15), {
+                BackgroundTransparency = 0.5,
+                BackgroundColor3 = Custom.ColorRGB
+            }):Play()
+        end)
+    end
 
     -- ---- Resize logic ----
     local resizing = false
     local resizeStart = nil
     local resizeStartSize = nil
+    local _activeResizeInput = nil  -- track specific touch input agar tidak kena jari lain
 
     local function applyResize(newW, newH)
         newW = math.clamp(newW, MIN_W, MAX_W)
@@ -1231,32 +1240,65 @@ function Speed_Library:CreateWindow(Config)
         scaleTexts(newW)
     end
 
+    local function onResizeEnd()
+        if resizing then
+            resizing = false
+            _activeResizeInput = nil
+            -- Restore handle appearance
+            TweenService:Create(ResizeHandle, TweenInfo.new(0.15), {
+                BackgroundTransparency = isMobile and 0.3 or 0.5,
+                BackgroundColor3 = Custom.ColorRGB
+            }):Play()
+            -- Simpan ukuran terakhir ke JSON
+            local finalW = math.clamp(math.round(Main.AbsoluteSize.X), MIN_W, MAX_W)
+            local finalH = math.clamp(math.round(Main.AbsoluteSize.Y), MIN_H, MAX_H)
+            saveSize(finalW, finalH)
+        end
+    end
+
     ResizeBtn.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             resizing = true
+            _activeResizeInput = input
             resizeStart = input.Position
             resizeStartSize = {W = Main.AbsoluteSize.X, H = Main.AbsoluteSize.Y}
+
+            -- Visual feedback saat mulai resize
+            TweenService:Create(ResizeHandle, TweenInfo.new(0.1), {
+                BackgroundTransparency = 0.05,
+                BackgroundColor3 = Color3.fromRGB(170, 80, 255)
+            }):Play()
+
+            -- MOBILE: Track langsung dari objek input ini (bukan InputChanged global)
+            -- Ini cara yang benar untuk multi-touch: hanya ikuti jari yang tap handle
+            input.Changed:Connect(function()
+                if resizing and _activeResizeInput == input then
+                    if input.UserInputState == Enum.UserInputState.Change then
+                        local delta = input.Position - resizeStart
+                        applyResize(resizeStartSize.W + delta.X, resizeStartSize.H + delta.Y)
+                    elseif input.UserInputState == Enum.UserInputState.End then
+                        onResizeEnd()
+                    end
+                end
+            end)
         end
     end)
 
-    UserInputService.InputChanged:Connect(function(input)
-        if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - resizeStart
-            applyResize(resizeStartSize.W + delta.X, resizeStartSize.H + delta.Y)
-        end
-    end)
-
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            if resizing then
-                resizing = false
-                -- Simpan ukuran terakhir ke JSON saat drag selesai
-                local finalW = math.clamp(math.round(Main.AbsoluteSize.X), MIN_W, MAX_W)
-                local finalH = math.clamp(math.round(Main.AbsoluteSize.Y), MIN_H, MAX_H)
-                saveSize(finalW, finalH)
+    -- PC: Juga pakai InputChanged global (fallback untuk mouse movement)
+    if not isMobile then
+        UserInputService.InputChanged:Connect(function(input)
+            if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+                local delta = input.Position - resizeStart
+                applyResize(resizeStartSize.W + delta.X, resizeStartSize.H + delta.Y)
             end
-        end
-    end)
+        end)
+
+        UserInputService.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                onResizeEnd()
+            end
+        end)
+    end
 
     -- ---- Restore ukuran dari JSON saat startup ----
     -- Pakai delay 0.1s agar collectTextLabels(0.05s) sudah selesai duluan
