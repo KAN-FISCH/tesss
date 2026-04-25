@@ -868,46 +868,92 @@ function Speed_Library:CreateWindow(Config)
         end
     end)
 
+    -- ============================================================
+    -- SIDEBAR (LayersTab)
+    -- ============================================================
     local LayersTab = Custom:Create("Frame", {
-        BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0, -- Solid Opaque
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundColor3 = Color3.fromRGB(18, 18, 22),
+        BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 9, 0, 50),
         Size = UDim2.new(0, TabWidth, 1, -59),
         Name = "LayersTab"
     }, Main)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 10) }, LayersTab)
+    Custom:Create("UIStroke", { Color = Custom.ColorRGB, Thickness = 1, Transparency = 0.7 }, LayersTab)
 
-    Custom:Create("UICorner", {
-        CornerRadius = UDim.new(0, 8)
+    -- Logo area at top of sidebar
+    local LogoArea = Custom:Create("Frame", {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 58),
+        Name = "LogoArea"
     }, LayersTab)
 
-    Custom:Create("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Custom.FrameDark),
-            ColorSequenceKeypoint.new(1, Custom.AccentColor)
-        },
-        Rotation = 45,
+    Custom:Create("TextLabel", {
+        Font = Enum.Font.GothamBlack,
+        Text = "ShielD",
+        TextColor3 = Custom.ColorRGB,
+        TextSize = 16,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0.6, 0),
+        Position = UDim2.new(0, 0, 0.2, 0),
+        Name = "LogoText"
+    }, LogoArea)
+
+    -- Divider under logo
+    Custom:Create("Frame", {
+        BackgroundColor3 = Custom.ColorRGB,
+        BackgroundTransparency = 0.7,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.05, 0, 1, -1),
+        Size = UDim2.new(0.9, 0, 0, 1),
+        Name = "LogoDivider"
+    }, LogoArea)
+
+    local ScrollTab = Custom:Create("ScrollingFrame", {
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ScrollBarImageColor3 = Custom.ColorRGB,
+        ScrollBarThickness = 2,
+        Active = true,
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 0, 60),
+        Size = UDim2.new(1, 0, 1, -64),
+        Name = "ScrollTab",
+        ScrollBarImageTransparency = 0.5
     }, LayersTab)
 
-    Custom:Create("UIStroke", {
-        Color = Custom.ColorRGB,
-        Thickness = 1,
-        Transparency = 0.6
-    }, LayersTab)
+    local SidebarLayout = Custom:Create("UIListLayout", {
+        Padding = UDim.new(0, 1),
+        SortOrder = Enum.SortOrder.LayoutOrder
+    }, ScrollTab)
 
+    local SidebarPadding = Custom:Create("UIPadding", {
+        PaddingLeft = UDim.new(0, 5),
+        PaddingRight = UDim.new(0, 5),
+        PaddingTop = UDim.new(0, 4)
+    }, ScrollTab)
+
+    local function UpdateSidebarSize()
+        ScrollTab.CanvasSize = UDim2.new(0, 0, 0, SidebarLayout.AbsoluteContentSize.Y + 10)
+    end
+    SidebarLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateSidebarSize)
+
+    -- Accent divider below Top bar
     Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0),
         BackgroundColor3 = Custom.ColorRGB,
-        BackgroundTransparency = 0, -- Solid Opaque
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, 0, 0, 38),
         Size = UDim2.new(1, 0, 0, 2),
         Name = "DecideFrame"
     }, Main)
 
-    -- Content area: split into LEFT and RIGHT panels
+    -- ============================================================
+    -- CONTENT AREA: Header + two column panels
+    -- ============================================================
     local ContentArea = Custom:Create("Frame", {
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
@@ -916,117 +962,92 @@ function Speed_Library:CreateWindow(Config)
         Name = "ContentArea"
     }, Main)
 
-    -- LEFT PANEL
-    local Layers = Custom:Create("Frame", {
-        BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 0, 0, 0),
-        Size = UDim2.new(0.5, -3, 1, 0),
-        Name = "Layers"
+    -- Content header (sub-tab name + description)
+    local ContentHeader = Custom:Create("Frame", {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 38),
+        Name = "ContentHeader"
     }, ContentArea)
-
-    Custom:Create("UICorner", {
-        CornerRadius = UDim.new(0, 8)
-    }, Layers)
-
-    Custom:Create("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Custom.FrameDark),
-            ColorSequenceKeypoint.new(0.6, Custom.BackgroundDark),
-            ColorSequenceKeypoint.new(1, Custom.AccentColor)
-        },
-        Rotation = 90,
-    }, Layers)
-
-    Custom:Create("UIStroke", {
-        Color = Custom.DarkBlue,
-        Thickness = 1,
-        Transparency = 0.5
-    }, Layers)
-
-    -- RIGHT PANEL
-    local LayersRight = Custom:Create("Frame", {
-        BackgroundColor3 = Custom.FrameDark,
-        BackgroundTransparency = 0,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
-        Position = UDim2.new(0.5, 3, 0, 0),
-        Size = UDim2.new(0.5, -3, 1, 0),
-        Name = "LayersRight"
-    }, ContentArea)
-
-    Custom:Create("UICorner", {
-        CornerRadius = UDim.new(0, 8)
-    }, LayersRight)
-
-    Custom:Create("UIGradient", {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Custom.FrameDark),
-            ColorSequenceKeypoint.new(0.6, Custom.BackgroundDark),
-            ColorSequenceKeypoint.new(1, Custom.AccentColor)
-        },
-        Rotation = 90,
-    }, LayersRight)
-
-    Custom:Create("UIStroke", {
-        Color = Custom.DarkBlue,
-        Thickness = 1,
-        Transparency = 0.5
-    }, LayersRight)
 
     local NameTab = Custom:Create("TextLabel", {
         Font = Enum.Font.GothamBlack,
         Text = "",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 14,
-        TextWrapped = true,
-        TextXAlignment = Enum.TextXAlignment.Center,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.9990000128746033,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 38),
+        TextColor3 = Custom.ColorRGB,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 6, 0, 2),
+        Size = UDim2.new(0.5, 0, 0, 20),
         Name = "NameTab"
-    }, Layers)
+    }, ContentHeader)
 
-    local NameTabRight = Custom:Create("TextLabel", {
-        Font = Enum.Font.GothamBlack,
+    local NameTabSub = Custom:Create("TextLabel", {
+        Font = Enum.Font.Gotham,
         Text = "",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 14,
-        TextWrapped = true,
-        TextXAlignment = Enum.TextXAlignment.Center,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.9990000128746033,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 38),
-        Name = "NameTabRight"
-    }, LayersRight)
+        TextColor3 = Color3.fromRGB(160, 160, 180),
+        TextSize = 11,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 7, 0, 22),
+        Size = UDim2.new(0.5, 0, 0, 14),
+        Name = "NameTabSub"
+    }, ContentHeader)
 
+    -- Divider below header
+    Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(50, 50, 65),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 1, -1),
+        Size = UDim2.new(1, 0, 0, 1),
+        Name = "HeaderDivider"
+    }, ContentHeader)
+
+    -- Two column panels area
+    local PanelsArea = Custom:Create("Frame", {
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0, 40),
+        Size = UDim2.new(1, 0, 1, -40),
+        Name = "PanelsArea"
+    }, ContentArea)
+
+    -- LEFT PANEL
+    local Layers = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(20, 20, 26),
+        BackgroundTransparency = 0,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 0, 0),
+        Size = UDim2.new(0.5, -3, 1, 0),
+        Name = "Layers"
+    }, PanelsArea)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, Layers)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(50, 50, 70), Thickness = 1, Transparency = 0.3 }, Layers)
+
+    -- RIGHT PANEL
+    local LayersRight = Custom:Create("Frame", {
+        BackgroundColor3 = Color3.fromRGB(20, 20, 26),
+        BackgroundTransparency = 0,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.5, 3, 0, 0),
+        Size = UDim2.new(0.5, -3, 1, 0),
+        Name = "LayersRight"
+    }, PanelsArea)
+    Custom:Create("UICorner", { CornerRadius = UDim.new(0, 8) }, LayersRight)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(50, 50, 70), Thickness = 1, Transparency = 0.3 }, LayersRight)
+
+    -- Container frames for scrollframes (Visible-switching)
     local LayersReal = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(0, 1),
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.9990000128746033,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         ClipsDescendants = true,
-        Position = UDim2.new(0, 0, 1, 0),
-        Size = UDim2.new(1, 0, 1, -41),
+        Size = UDim2.new(1, 0, 1, 0),
         Name = "LayersReal"
     }, Layers)
 
     local LayersRealRight = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(0, 1),
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.9990000128746033,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         ClipsDescendants = true,
-        Position = UDim2.new(0, 0, 1, 0),
-        Size = UDim2.new(1, 0, 1, -41),
+        Size = UDim2.new(1, 0, 1, 0),
         Name = "LayersRealRight"
     }, LayersRight)
 
@@ -1038,46 +1059,35 @@ function Speed_Library:CreateWindow(Config)
         Name = "LayersFolderRight"
     }, LayersRealRight)
 
-    local LayersPageLayout = Custom:Create("UIPageLayout", {
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Name = "LayersPageLayout",
-        TweenTime = 0,
-        EasingDirection = Enum.EasingDirection.InOut,
-        EasingStyle = Enum.EasingStyle.Quad
-    }, LayersFolder)
+    -- Helper: switch active sub-tab scrollframes
+    local _activeSubScrollLeft = nil
+    local _activeSubScrollRight = nil
 
-    local LayersPageLayoutRight = Custom:Create("UIPageLayout", {
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Name = "LayersPageLayoutRight",
-        TweenTime = 0,
-        EasingDirection = Enum.EasingDirection.InOut,
-        EasingStyle = Enum.EasingStyle.Quad
-    }, LayersFolderRight)
-
-    local ScrollTab = Custom:Create("ScrollingFrame", {
-        CanvasSize = UDim2.new(0, 0, 2.10000002, 0),
-        ScrollBarImageColor3 = Custom.ColorRGB,
-        ScrollBarThickness = 3,
-        Active = true,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.9990000128746033,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 1, -10),
-        Name = "ScrollTab"
-    }, LayersTab)
-
-    local UIListLayout = Custom:Create("UIListLayout", {
-        Padding = UDim.new(0, 2),
-        SortOrder = Enum.SortOrder.LayoutOrder
-    }, ScrollTab)
-
-    local function UpdateSize()
-        ScrollTab.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+    local function switchSubTab(scrollLeft, scrollRight)
+        -- Hide previous
+        if _activeSubScrollLeft and _activeSubScrollLeft ~= scrollLeft then
+            _activeSubScrollLeft.Visible = false
+        end
+        if _activeSubScrollRight and _activeSubScrollRight ~= scrollRight then
+            _activeSubScrollRight.Visible = false
+        end
+        -- Show new
+        _activeSubScrollLeft = scrollLeft
+        _activeSubScrollRight = scrollRight
+        if scrollLeft then scrollLeft.Visible = true end
+        if scrollRight then scrollRight.Visible = true end
     end
-    
-    UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateSize)
 
+    -- Compat stubs (keep names available for MoreBlur section below)
+    local LayersPageLayout = {JumpToIndex = function() end}
+    local LayersPageLayoutRight = {JumpToIndex = function() end}
+    local NameTabRight = Custom:Create("TextLabel", {
+        Font = Enum.Font.GothamBlack, Text = "",
+        TextColor3 = Color3.fromRGB(160, 160, 180), TextSize = 11,
+        TextXAlignment = Enum.TextXAlignment.Left, BackgroundTransparency = 1,
+        Position = UDim2.new(0, 6, 0, 22), Size = UDim2.new(0.5, 0, 0, 14),
+        Name = "NameTabRight"
+    }, ContentHeader)
 
 
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, SizeUi.Y.Offset)
@@ -1214,225 +1224,287 @@ function Speed_Library:CreateWindow(Config)
         Name = "DropPageLayout",
     }, DropdownFolder)
 
-    -- Create Tab Function
+    -- ============================================================
+    -- TAB SYSTEM: CreateGroup + Group:CreateTab
+    -- ============================================================
     local Tabs = {}
     local CountTab = 0
     local CountDropdown = 0
+    local _activeSubTabBtn = nil  -- currently selected sub-tab button
 
-    function Tabs:CreateTab(Config)
-        local _Name = Config[1] or Config.Name or "" 
-        local Icon = Config[2] or Config.Icon or ""
-        local _NameRight = Config[3] or Config.NameRight or ""
+    -- Helper: deselect all sub-tab buttons
+    local function deselectAllSubTabs()
+        for _, child in ipairs(ScrollTab:GetChildren()) do
+            if child.Name == "GroupItems" then
+                for _, subBtn in ipairs(child:GetChildren()) do
+                    if subBtn.Name == "SubTabBtn" then
+                        subBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                        subBtn.BackgroundTransparency = 1
+                        local lbl = subBtn:FindFirstChild("SubLabel")
+                        if lbl then lbl.TextColor3 = Color3.fromRGB(180, 180, 200) end
+                        local dot = subBtn:FindFirstChild("ActiveDot")
+                        if dot then dot.Visible = false end
+                    end
+                end
+            end
+        end
+    end
 
-        -- LEFT panel scrolling frame
-        local ScrolLayers = Custom:Create("ScrollingFrame", {
-            ScrollBarImageColor3 = Custom.ColorRGB,
-            ScrollBarThickness = 4,
-            Active = true,
-            LayoutOrder = CountTab,
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-            BackgroundTransparency = 0.999,
-            BorderColor3 = Color3.fromRGB(0, 0, 0),
+    -- Helper: select a sub-tab button
+    local function selectSubTabBtn(btn)
+        deselectAllSubTabs()
+        btn.BackgroundColor3 = Custom.ColorRGB
+        btn.BackgroundTransparency = 0.75
+        local lbl = btn:FindFirstChild("SubLabel")
+        if lbl then lbl.TextColor3 = Color3.fromRGB(255, 255, 255) end
+        local dot = btn:FindFirstChild("ActiveDot")
+        if dot then dot.Visible = true end
+        _activeSubTabBtn = btn
+    end
+
+    function Tabs:CreateGroup(Config)
+        local GroupName = Config[1] or Config.Name or ""
+        local GroupIcon = Config[2] or Config.Icon or ""
+        local isExpanded = true
+
+        local GroupOrder = CountTab
+        CountTab += 1
+
+        -- GROUP HEADER
+        local GroupHeader = Custom:Create("Frame", {
+            BackgroundTransparency = 1,
             BorderSizePixel = 0,
-            Size = UDim2.new(1, 0, 1, 0),
-            Name = "ScrolLayers",
-        }, LayersFolder)
-
-        local ScrolLayersLayout = Custom:Create("UIListLayout", {
-            Padding = UDim.new(0, 4),
-            SortOrder = Enum.SortOrder.LayoutOrder,
-        }, ScrolLayers)
-        
-        ScrolLayersLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-             ScrolLayers.CanvasSize = UDim2.new(0,0,0, ScrolLayersLayout.AbsoluteContentSize.Y + 10)
-        end)
-
-        -- RIGHT panel scrolling frame
-        local ScrolLayersRight = Custom:Create("ScrollingFrame", {
-            ScrollBarImageColor3 = Custom.ColorRGB,
-            ScrollBarThickness = 4,
-            Active = true,
-            LayoutOrder = CountTab,
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-            BackgroundTransparency = 0.999,
-            BorderColor3 = Color3.fromRGB(0, 0, 0),
-            BorderSizePixel = 0,
-            Size = UDim2.new(1, 0, 1, 0),
-            Name = "ScrolLayersRight",
-        }, LayersFolderRight)
-
-        local ScrolLayersLayoutRight = Custom:Create("UIListLayout", {
-            Padding = UDim.new(0, 4),
-            SortOrder = Enum.SortOrder.LayoutOrder,
-        }, ScrolLayersRight)
-        
-        ScrolLayersLayoutRight:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-             ScrolLayersRight.CanvasSize = UDim2.new(0,0,0, ScrolLayersLayoutRight.AbsoluteContentSize.Y + 10)
-        end)
-
-        local Tab = Custom:Create("Frame", {
-            BackgroundColor3 = CountTab == 0 and Custom.FrameDark or Custom.BackgroundDark,
-            BackgroundTransparency = CountTab == 0 and 0.3 or 0.7,
-            BorderColor3 = Color3.fromRGB(0, 0, 0),
-            BorderSizePixel = 0,
-            LayoutOrder = CountTab,
-            Size = UDim2.new(1, 0, 0, 35),
-            Name = "Tab",
+            LayoutOrder = GroupOrder * 100,
+            Size = UDim2.new(1, 0, 0, 34),
+            Name = "GroupHeader"
         }, ScrollTab)
 
-        Custom:Create("UICorner", {
-            CornerRadius = UDim.new(0, 8),
-        }, Tab)
-
-        Custom:Create("UIGradient", {
-            Color = ColorSequence.new{
-                ColorSequenceKeypoint.new(0, Custom.FrameDark),
-                ColorSequenceKeypoint.new(0.5, Custom.AccentColor),
-                ColorSequenceKeypoint.new(1, Custom.DarkBlue)
-            },
-            Rotation = 45,
-        }, Tab)
-
-        Custom:Create("UIStroke", {
-            Color = CountTab == 0 and Custom.ColorRGB or Color3.fromRGB(60, 60, 80),
-            Thickness = 1.5,
-            Transparency = CountTab == 0 and 0.2 or 0.8
-        }, Tab)
-
-        local TabButton = Custom:Create("TextButton", {
+        local GroupBtn = Custom:Create("TextButton", {
             Font = Enum.Font.GothamBold,
             Text = "",
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            TextSize = 13,
-            TextXAlignment = Enum.TextXAlignment.Left,
             BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-            BackgroundTransparency = 0.999,
-            BorderColor3 = Color3.fromRGB(0, 0, 0),
+            BackgroundTransparency = 1,
             BorderSizePixel = 0,
             Size = UDim2.new(1, 0, 1, 0),
-            Name = "TabButton",
-        }, Tab)
+            Name = "GroupBtn"
+        }, GroupHeader)
 
-        local TabName = Custom:Create("TextLabel", {
-            Font = Enum.Font.GothamBold,
-            Text = _Name,
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            TextSize = 13,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-            BackgroundTransparency = 0.9990000128746033,
-            BorderColor3 = Color3.fromRGB(0, 0, 0),
-            BorderSizePixel = 0,
-            Size = UDim2.new(1, 0, 1, 0),
-            Position = UDim2.new(0, 32, 0, 0),
-            Name = "TabName",
-        }, Tab)
-
-        Custom:Create("UIStroke", {
-            Color = Color3.fromRGB(255, 255, 255),
-            Thickness = 0.6,
-            Transparency = 0.5
-        }, TabName)
-
+        -- Icon
         Custom:Create("ImageLabel", {
-            Image = Icon,
-            ImageColor3 = Custom.ColorRGB,
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-            BackgroundTransparency = 0.999,
-            BorderColor3 = Color3.fromRGB(0, 0, 0),
+            Image = GroupIcon,
+            ImageColor3 = Color3.fromRGB(150, 150, 180),
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 6, 0.5, -8),
+            Size = UDim2.new(0, 16, 0, 16),
+            Name = "GroupIcon"
+        }, GroupHeader)
+
+        -- Label
+        Custom:Create("TextLabel", {
+            Font = Enum.Font.GothamBold,
+            Text = string.upper(GroupName),
+            TextColor3 = Color3.fromRGB(160, 160, 190),
+            TextSize = 10,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 26, 0.5, -6),
+            Size = UDim2.new(1, -48, 0, 14),
+            Name = "GroupLabel"
+        }, GroupHeader)
+
+        -- Arrow indicator
+        local ArrowLabel = Custom:Create("TextLabel", {
+            Font = Enum.Font.GothamBold,
+            Text = "▾",
+            TextColor3 = Color3.fromRGB(120, 120, 150),
+            TextSize = 12,
+            BackgroundTransparency = 1,
+            AnchorPoint = Vector2.new(1, 0.5),
+            Position = UDim2.new(1, -4, 0.5, 0),
+            Size = UDim2.new(0, 16, 0, 16),
+            Name = "Arrow"
+        }, GroupHeader)
+
+        -- Sub-tabs container
+        local GroupItems = Custom:Create("Frame", {
+            BackgroundTransparency = 1,
             BorderSizePixel = 0,
-            Position = UDim2.new(0, 8, 0, 8),
-            Size = UDim2.new(0, 18, 0, 18),
-            Name = "FeatureImg",
-        }, Tab)
+            LayoutOrder = GroupOrder * 100 + 1,
+            Size = UDim2.new(1, 0, 0, 0),
+            ClipsDescendants = true,
+            Name = "GroupItems"
+        }, ScrollTab)
 
-        if CountTab == 0 then
-            LayersPageLayout:JumpToIndex(0)
-            LayersPageLayoutRight:JumpToIndex(0)
-            NameTab.Text = _Name
-            NameTabRight.Text = _NameRight
-    
-            local ChooseFrame = Custom:Create("Frame", {
-                BackgroundColor3 = Custom.ColorRGB,
-                BorderColor3 = Color3.fromRGB(0, 0, 0),
-                BorderSizePixel = 0,
-                Position = UDim2.new(0, 3, 0, 12),
-                Size = UDim2.new(0, 2, 0, 16),
-                Name = "ChooseFrame",
-            }, Tab)
-    
-            Custom:Create("UIStroke", {
-                Color = Custom.ColorRGB,
-                Thickness = 2,
-            }, ChooseFrame)
-    
-            Custom:Create("UICorner", {
-                CornerRadius = UDim.new(0, 3)
-            }, ChooseFrame)
+        local GroupItemsLayout = Custom:Create("UIListLayout", {
+            Padding = UDim.new(0, 1),
+            SortOrder = Enum.SortOrder.LayoutOrder
+        }, GroupItems)
 
-            Custom:Create("UIGradient", {
-                Color = ColorSequence.new{
-                    ColorSequenceKeypoint.new(0, Custom.ColorRGB),
-                    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-                    ColorSequenceKeypoint.new(1, Custom.ColorRGB)
-                },
-                Rotation = 90,
-            }, ChooseFrame)
+        local function refreshGroupSize()
+            if isExpanded then
+                GroupItems.Size = UDim2.new(1, 0, 0, GroupItemsLayout.AbsoluteContentSize.Y)
+                ArrowLabel.Text = "▾"
+            else
+                GroupItems.Size = UDim2.new(1, 0, 0, 0)
+                ArrowLabel.Text = "▸"
+            end
+            UpdateSidebarSize()
         end
 
-        TabButton.Activated:Connect(function()
-            CircleClick(TabButton, Player:GetMouse().X, Player:GetMouse().Y)
-            local FrameChoose = nil
+        GroupItemsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(refreshGroupSize)
 
-            for _, s in pairs(ScrollTab:GetChildren()) do
-                for _, v in pairs(s:GetChildren()) do
-                    if v.Name == "ChooseFrame" then
-                        FrameChoose = v
-                        break
-                    end
-                end
-
-                if FrameChoose then break end
-            end
-    
-            if FrameChoose and Tab.LayoutOrder ~= LayersPageLayout.CurrentPage.LayoutOrder then
-                for _, TabFrame in pairs(ScrollTab:GetChildren()) do
-                    if TabFrame.Name == "Tab" then
-                        TabFrame.BackgroundTransparency = 0.7
-                        local stroke = TabFrame:FindFirstChild("UIStroke")
-                        if stroke then
-                            stroke.Transparency = 0.8
-                        end
-                    end
-                end
-    
-                Tab.BackgroundTransparency = 0.3
-                local tabStroke = Tab:FindFirstChild("UIStroke")
-                if tabStroke then tabStroke.Transparency = 0.2 end
-                
-                FrameChoose.Position = UDim2.new(0, 3, 0, 12 + (37 * Tab.LayoutOrder))
-    
-                LayersPageLayout:JumpToIndex(Tab.LayoutOrder)
-                LayersPageLayoutRight:JumpToIndex(Tab.LayoutOrder)
-    
-                NameTab.Text = _Name
-                NameTabRight.Text = _NameRight
-    
-                FrameChoose.Size = UDim2.new(0, 2, 0, 22)
-                task.wait(0.05)
-                FrameChoose.Size = UDim2.new(0, 2, 0, 16)
-            end
+        GroupBtn.Activated:Connect(function()
+            isExpanded = not isExpanded
+            refreshGroupSize()
         end)
 
-        local Sections, CountSection = {}, 0
-        local CountSectionRight = 0
+        -- GROUP object returned to caller
+        local GroupObj = {}
+        local SubCountInGroup = 0
+        local isFirstSubTab = true
 
-        function Sections:AddSection(Title, OpenSection, Side)
-            local Title = Title or ""
-            local OpenSection = OpenSection or false
-            local Side = Side or "Left"
-            local TargetScrol = (Side == "Right") and ScrolLayersRight or ScrolLayers
-            local currentOrder = (Side == "Right") and CountSectionRight or CountSection
+        function GroupObj:CreateTab(TabConfig)
+            local TabName = TabConfig[1] or TabConfig.Name or ""
+            local TabIcon = TabConfig[2] or TabConfig.Icon or ""
+            local TabDescription = TabConfig[3] or TabConfig.Description or ""
+
+            SubCountInGroup += 1
+            local subOrder = SubCountInGroup
+
+            -- Create LEFT scroll frame
+            local ScrolLayers = Custom:Create("ScrollingFrame", {
+                ScrollBarImageColor3 = Custom.ColorRGB,
+                ScrollBarThickness = 3,
+                Active = true,
+                BackgroundTransparency = 1,
+                BorderSizePixel = 0,
+                Size = UDim2.new(1, 0, 1, 0),
+                Visible = false,
+                Name = "ScrolLayers",
+            }, LayersFolder)
+
+            Custom:Create("UIPadding", {
+                PaddingLeft = UDim.new(0, 4),
+                PaddingRight = UDim.new(0, 4),
+                PaddingTop = UDim.new(0, 4)
+            }, ScrolLayers)
+
+            local ScrolLayersLayout = Custom:Create("UIListLayout", {
+                Padding = UDim.new(0, 4),
+                SortOrder = Enum.SortOrder.LayoutOrder,
+            }, ScrolLayers)
+            ScrolLayersLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, ScrolLayersLayout.AbsoluteContentSize.Y + 10)
+            end)
+
+            -- Create RIGHT scroll frame
+            local ScrolLayersRight = Custom:Create("ScrollingFrame", {
+                ScrollBarImageColor3 = Custom.ColorRGB,
+                ScrollBarThickness = 3,
+                Active = true,
+                BackgroundTransparency = 1,
+                BorderSizePixel = 0,
+                Size = UDim2.new(1, 0, 1, 0),
+                Visible = false,
+                Name = "ScrolLayersRight",
+            }, LayersFolderRight)
+
+            Custom:Create("UIPadding", {
+                PaddingLeft = UDim.new(0, 4),
+                PaddingRight = UDim.new(0, 4),
+                PaddingTop = UDim.new(0, 4)
+            }, ScrolLayersRight)
+
+            local ScrolLayersLayoutRight = Custom:Create("UIListLayout", {
+                Padding = UDim.new(0, 4),
+                SortOrder = Enum.SortOrder.LayoutOrder,
+            }, ScrolLayersRight)
+            ScrolLayersLayoutRight:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                ScrolLayersRight.CanvasSize = UDim2.new(0, 0, 0, ScrolLayersLayoutRight.AbsoluteContentSize.Y + 10)
+            end)
+
+            -- SUB-TAB BUTTON in sidebar
+            local SubTabBtn = Custom:Create("Frame", {
+                BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+                BackgroundTransparency = 1,
+                BorderSizePixel = 0,
+                LayoutOrder = subOrder,
+                Size = UDim2.new(1, 0, 0, 30),
+                Name = "SubTabBtn"
+            }, GroupItems)
+            Custom:Create("UICorner", { CornerRadius = UDim.new(0, 6) }, SubTabBtn)
+
+            -- Active accent dot
+            local ActiveDot = Custom:Create("Frame", {
+                BackgroundColor3 = Custom.ColorRGB,
+                BorderSizePixel = 0,
+                AnchorPoint = Vector2.new(0, 0.5),
+                Position = UDim2.new(0, 4, 0.5, 0),
+                Size = UDim2.new(0, 3, 0, 14),
+                Visible = false,
+                Name = "ActiveDot"
+            }, SubTabBtn)
+            Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, ActiveDot)
+
+            -- Tab icon
+            Custom:Create("ImageLabel", {
+                Image = TabIcon,
+                ImageColor3 = Color3.fromRGB(180, 180, 210),
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 10, 0.5, -7),
+                Size = UDim2.new(0, 14, 0, 14),
+                Name = "SubIcon"
+            }, SubTabBtn)
+
+            -- Tab label
+            Custom:Create("TextLabel", {
+                Font = Enum.Font.Gotham,
+                Text = TabName,
+                TextColor3 = Color3.fromRGB(180, 180, 200),
+                TextSize = 12,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 28, 0, 0),
+                Size = UDim2.new(1, -32, 1, 0),
+                Name = "SubLabel"
+            }, SubTabBtn)
+
+            local SubClickBtn = Custom:Create("TextButton", {
+                Text = "", BackgroundTransparency = 1,
+                BorderSizePixel = 0, Size = UDim2.new(1, 0, 1, 0),
+                Name = "SubClick"
+            }, SubTabBtn)
+
+            -- Auto-select first sub-tab
+            if isFirstSubTab then
+                isFirstSubTab = false
+                selectSubTabBtn(SubTabBtn)
+                switchSubTab(ScrolLayers, ScrolLayersRight)
+                NameTab.Text = TabName
+                NameTabSub.Text = TabDescription ~= "" and TabDescription or (GroupName .. " › " .. TabName)
+            end
+
+            SubClickBtn.Activated:Connect(function()
+                CircleClick(SubClickBtn, Player:GetMouse().X, Player:GetMouse().Y)
+                selectSubTabBtn(SubTabBtn)
+                switchSubTab(ScrolLayers, ScrolLayersRight)
+                NameTab.Text = TabName
+                NameTabSub.Text = TabDescription ~= "" and TabDescription or (GroupName .. " › " .. TabName)
+            end)
+
+            refreshGroupSize()
+
+            -- TAB object
+            local TabObj = {}
+            local Sections, CountSection = {}, 0
+            local CountSectionRight = 0
+
+            function TabObj:AddSection(Title, OpenSection, Side)
+                local Title = Title or ""
+                local OpenSection = (OpenSection == nil) and true or OpenSection
+                local Side = Side or "Left"
+                local TargetScrol = (Side == "Right") and ScrolLayersRight or ScrolLayers
+                local currentOrder = (Side == "Right") and CountSectionRight or CountSection
     
             local Section = Custom:Create("Frame", {
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -2629,13 +2701,21 @@ end
           CountSection += 1
       end
       return Item
+            end  -- end TabObj:AddSection
+
+            return TabObj
+        end  -- end GroupObj:CreateTab
+
+        return GroupObj
+    end  -- end Tabs:CreateGroup
+
+    -- Backward-compat alias
+    function Tabs:CreateTab(Config)
+        local grp = self:CreateGroup({Config[1] or Config.Name or "", Config[2] or Config.Icon or ""})
+        return grp:CreateTab({Config[1] or Config.Name or "", Config[2] or Config.Icon or "", Config[3] or Config.Description or ""})
     end
 
-    CountTab += 1
-    return Sections
-  end
-
-  return Tabs
+    return Tabs
 end
 
 return Speed_Library
