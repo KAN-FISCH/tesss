@@ -870,6 +870,8 @@ function Speed_Library:CreateWindow(Config)
         if not Speed_Library.Unloaded then 
             Speed_Library.Unloaded = true 
         end
+        -- Reset guard agar script bisa dijalankan ulang setelah GUI ditutup
+        _G.ShieldScriptActive = nil
     end)
 
     -- ============================================================
