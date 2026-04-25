@@ -18,10 +18,10 @@ local function generateRandomString(length)
 end
 
 local Custom = {} do
-    -- iOS Dark Mode Inspired Palette
-    Custom.ColorRGB = Color3.fromRGB(10, 132, 255)   -- System Blue
-    Custom.AccentColor = Color3.fromRGB(0, 122, 255) -- Standard Blue
-    Custom.DarkBlue = Color3.fromRGB(28, 28, 30)     -- Secondary System Background
+    -- Purple Accent Palette
+    Custom.ColorRGB = Color3.fromRGB(138, 43, 226)   -- Purple
+    Custom.AccentColor = Color3.fromRGB(120, 60, 210) -- Dark Purple
+    Custom.DarkBlue = Color3.fromRGB(28, 28, 35)     -- Secondary Background (slight purple tint)
     Custom.BackgroundDark = Color3.fromRGB(0, 0, 0)  -- System Background
     Custom.FrameDark = Color3.fromRGB(44, 44, 46)    -- Secondary Grouped Background
     
