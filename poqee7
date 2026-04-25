@@ -550,6 +550,18 @@ function Speed_Library:CreateWindow(Config)
         Name = "DropShadow"
     }, DropShadowHolder)
 
+    -- ---- UIScale: cara paling efisien scale SEMUA descendant ----
+    local GlobalUIScale = Custom:Create("UIScale", {
+        Scale = 1,
+        Name = "GlobalUIScale"
+    }, DropShadowHolder)
+
+    local function GetUnscaledSize(sizePixels)
+        local scale = GlobalUIScale.Scale
+        if scale == 0 then scale = 1 end
+        return sizePixels / scale
+    end
+
     local Main = Custom:Create("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(15, 15, 15),
@@ -944,7 +956,7 @@ function Speed_Library:CreateWindow(Config)
     }, ScrollTab)
 
     local function UpdateSidebarSize()
-        ScrollTab.CanvasSize = UDim2.new(0, 0, 0, SidebarLayout.AbsoluteContentSize.Y + 10)
+        ScrollTab.CanvasSize = UDim2.new(0, 0, 0, GetUnscaledSize(SidebarLayout.AbsoluteContentSize.Y) + 10)
     end
     SidebarLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateSidebarSize)
 
@@ -1134,12 +1146,7 @@ function Speed_Library:CreateWindow(Config)
         return nil, nil
     end
 
-    -- ---- UIScale: cara paling efisien scale SEMUA descendant ----
-    -- Taruh di DropShadowHolder agar DropShadow, Main, Telinga, Ekor, Kumis terscale semua!
-    local GlobalUIScale = Custom:Create("UIScale", {
-        Scale = 1,
-        Name = "GlobalUIScale"
-    }, DropShadowHolder)
+    -- (GlobalUIScale dipindah ke atas)
 
     -- ---- Detect platform (Mobile vs PC) ----
     local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
@@ -1534,7 +1541,7 @@ function Speed_Library:CreateWindow(Config)
 
         local function refreshGroupSize()
             if isExpanded then
-                GroupItems.Size = UDim2.new(1, 0, 0, GroupItemsLayout.AbsoluteContentSize.Y)
+                GroupItems.Size = UDim2.new(1, 0, 0, GetUnscaledSize(GroupItemsLayout.AbsoluteContentSize.Y))
                 ArrowLabel.Rotation = 0    -- pointing down
             else
                 GroupItems.Size = UDim2.new(1, 0, 0, 0)
@@ -1586,7 +1593,7 @@ function Speed_Library:CreateWindow(Config)
                 SortOrder = Enum.SortOrder.LayoutOrder,
             }, ScrolLayers)
             ScrolLayersLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, ScrolLayersLayout.AbsoluteContentSize.Y + 10)
+                ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, GetUnscaledSize(ScrolLayersLayout.AbsoluteContentSize.Y) + 10)
             end)
 
             -- Create RIGHT scroll frame
@@ -1612,7 +1619,7 @@ function Speed_Library:CreateWindow(Config)
                 SortOrder = Enum.SortOrder.LayoutOrder,
             }, ScrolLayersRight)
             ScrolLayersLayoutRight:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                ScrolLayersRight.CanvasSize = UDim2.new(0, 0, 0, ScrolLayersLayoutRight.AbsoluteContentSize.Y + 10)
+                ScrolLayersRight.CanvasSize = UDim2.new(0, 0, 0, GetUnscaledSize(ScrolLayersLayoutRight.AbsoluteContentSize.Y) + 10)
             end)
 
             -- SUB-TAB BUTTON in sidebar
@@ -1832,7 +1839,7 @@ function Speed_Library:CreateWindow(Config)
     
       local function UpdateSizeSection()
         if OpenSection then
-          local SectionSizeYWitdh = SectionListLayout.AbsoluteContentSize.Y
+          local SectionSizeYWitdh = GetUnscaledSize(SectionListLayout.AbsoluteContentSize.Y)
   
           TweenService:Create(FeatureFrame, TweenInfo.new(0), {Rotation = 90, BackgroundTransparency = 0}):Play()
           TweenService:Create(Section, TweenInfo.new(0), {Size = UDim2.new(1, 1, 0, SectionSizeYWitdh + 44)}):Play()
@@ -1860,7 +1867,7 @@ function Speed_Library:CreateWindow(Config)
             -- Buka section
             OpenSection = true
     
-            local SectionSizeYWitdh = SectionListLayout.AbsoluteContentSize.Y 
+            local SectionSizeYWitdh = GetUnscaledSize(SectionListLayout.AbsoluteContentSize.Y)
             
             TweenService:Create(FeatureFrame, TweenInfo.new(0), {Rotation = 90}):Play()
             TweenService:Create(Section, TweenInfo.new(0), {Size = UDim2.new(1, 1, 0, SectionSizeYWitdh + 38)}):Play()
@@ -2386,11 +2393,11 @@ end
         })
 
         local function UpdateInputSize()
-          local Ratio = InputContent.TextBounds.X / InputContent.AbsoluteSize.X
+          local Ratio = InputContent.TextBounds.X / GetUnscaledSize(InputContent.AbsoluteSize.X)
           local Calculated = 12 + (12 * math.floor(Ratio))
 
           InputContent.Size = UDim2.new(1, -180, 0, Calculated)
-          Input.Size = UDim2.new(1, 0, 0, InputContent.AbsoluteSize.Y + 33)
+          Input.Size = UDim2.new(1, 0, 0, GetUnscaledSize(InputContent.AbsoluteSize.Y) + 33)
         end
       
         UpdateInputSize()
