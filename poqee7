@@ -2824,7 +2824,6 @@ function Item:AddDropdown(Config)
     
         -- Update canvas size function - Fixed
         local function UpdateCanvasSize()
-            task.wait() -- Small delay to ensure layout has updated
             local OffsetY = 28 -- Account for search bar height + padding
             
             for _, child in ipairs(ScrollSelect:GetChildren()) do
