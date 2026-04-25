@@ -1134,12 +1134,12 @@ function Speed_Library:CreateWindow(Config)
         return nil, nil
     end
 
-    -- ---- UIScale: cara paling efisien scale SEMUA descendant (slider, input, dropdown, teks, dll) ----
-    -- UIScale di Main akan scale semua pixel size secara uniform otomatis
-    local MainUIScale = Custom:Create("UIScale", {
+    -- ---- UIScale: cara paling efisien scale SEMUA descendant ----
+    -- Taruh di DropShadowHolder agar DropShadow, Main, Telinga, Ekor, Kumis terscale semua!
+    local GlobalUIScale = Custom:Create("UIScale", {
         Scale = 1,
-        Name = "MainUIScale"
-    }, Main)
+        Name = "GlobalUIScale"
+    }, DropShadowHolder)
 
     -- ---- Detect platform (Mobile vs PC) ----
     local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
@@ -1213,49 +1213,9 @@ function Speed_Library:CreateWindow(Config)
     local _activeResizeInput = nil  -- track specific touch input agar tidak kena jari lain
 
     local function applyResize(newW, newH)
-        newW = math.clamp(newW, MIN_W, MAX_W)
-        newH = math.clamp(newH, MIN_H, MAX_H)
-        local newSize = UDim2.fromOffset(newW, newH)
-        DropShadow.Size = newSize
-        Main.Size = newSize
-        DropShadowHolder.Size = UDim2.fromOffset(newW, newH)
-        -- UIScale: scale semua konten (slider, input, dropdown, teks, dll) proporsional
-        local scaleRatio = math.clamp(newW / BASE_W, 0.45, 1.6)
-        MainUIScale.Scale = scaleRatio
-
-        -- Scale cat decorations (ears, tail, whiskers) - mereka sibling Main di DropShadow
-        -- sehingga tidak terpengaruh UIScale, harus di-scale manual
-        local earSize = math.round(85 * scaleRatio)
-        local earYOff = math.round(35 * scaleRatio)
-        local earXOff = math.round(10 * scaleRatio)
-        local earCorner = math.round(15 * scaleRatio)
-
-        EarLeft.Size = UDim2.fromOffset(earSize, earSize)
-        EarLeft.Position = UDim2.new(0, earXOff, 0, -earYOff)
-        local elCorner = EarLeft:FindFirstChildOfClass("UICorner")
-        if elCorner then elCorner.CornerRadius = UDim.new(0, earCorner) end
-
-        EarRight.Size = UDim2.fromOffset(earSize, earSize)
-        EarRight.Position = UDim2.new(1, -earXOff, 0, -earYOff)
-        local erCorner = EarRight:FindFirstChildOfClass("UICorner")
-        if erCorner then erCorner.CornerRadius = UDim.new(0, earCorner) end
-
-        local tailContainerSize = math.round(60 * scaleRatio)
-        local tailXOff = math.round(30 * scaleRatio)
-        TailContainer.Size = UDim2.fromOffset(tailContainerSize, tailContainerSize)
-        TailContainer.Position = UDim2.new(1, -tailXOff, 0.8, 0)
-        TailPart1.Size = UDim2.new(0, math.round(20 * scaleRatio), 0, math.round(140 * scaleRatio))
-
-        local whiskerW = math.round(60 * scaleRatio)
-        local whiskerXOff = math.round(45 * scaleRatio)
-        local whiskerXOffR = math.round(15 * scaleRatio)
-        for i, wData in ipairs(_whiskers) do
-            if wData.frame and wData.frame.Parent then
-                wData.frame.Size = UDim2.new(0, whiskerW, 0, 2)
-                local xOff = (i <= 2) and -whiskerXOff or -whiskerXOffR
-                wData.frame.Position = UDim2.new(wData.basePos.X.Scale, math.round(wData.basePos.X.Offset * scaleRatio), wData.basePos.Y.Scale, 0)
-            end
-        end
+        -- UIScale: scale SEMUA konten di dalam DropShadowHolder (Main, Shadow, Telinga, Ekor)
+        local scaleRatio = math.clamp(newW / BASE_W, MIN_W / BASE_W, MAX_W / BASE_W)
+        GlobalUIScale.Scale = scaleRatio
     end
 
     local function onResizeEnd()
