@@ -1105,7 +1105,7 @@ function Speed_Library:CreateWindow(Config)
         BorderSizePixel = 0,
         ClipsDescendants = true,
         Position = UDim2.new(1, 8, 1, 8),
-        Size = UDim2.new(0.55, 0, 1, 16),
+        Size = UDim2.new(1, 8, 1, 16),
         Visible = false,
         Name = "MoreBlur"
     }, ContentArea)
