@@ -732,14 +732,16 @@ function Speed_Library:CreateWindow(Config)
         Font = Enum.Font.GothamBold,
         Text = Title,
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 16,
+        TextSize = 14,
+        TextScaled = false,
+        TextTruncate = Enum.TextTruncate.AtEnd,
         TextXAlignment = Enum.TextXAlignment.Center,
         TextYAlignment = Enum.TextYAlignment.Center,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0.6, 0, 0.5, 0)
+        Position = UDim2.new(0.5, 0, 0.5, -6),
+        Size = UDim2.new(1, -90, 0, 18)
     }, Top)
 
     Custom:Create("UICorner", {
@@ -756,14 +758,16 @@ function Speed_Library:CreateWindow(Config)
         Font = Enum.Font.GothamBold,
         Text = Description,
         TextColor3 = Custom.ColorRGB,
-        TextSize = 13,
+        TextSize = 11,
+        TextScaled = false,
+        TextTruncate = Enum.TextTruncate.AtEnd,
         TextXAlignment = Enum.TextXAlignment.Center,
         TextYAlignment = Enum.TextYAlignment.Center,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        AnchorPoint = Vector2.new(0, 0.5),
-        Position = UDim2.new(0.5, TextLabel.TextBounds.X/2 + 5, 0.5, 0),
-        Size = UDim2.new(0, 200, 0.5, 0)
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 9),
+        Size = UDim2.new(0.5, 0, 0, 12)
     }, Top)
 
     Custom:Create("UIStroke", {
@@ -1967,82 +1971,73 @@ end
         }, Slider)
 
         Custom:Create("TextLabel", {
-					Font = Enum.Font.GothamBold,
-					Text = Title,
-					TextColor3 = Color3.fromRGB(230, 230, 230),
-					TextSize = 13,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					TextYAlignment = Enum.TextYAlignment.Top,
-					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-					BackgroundTransparency = 0.9990000128746033,
-					BorderColor3 = Color3.fromRGB(0, 0, 0),
-					BorderSizePixel = 0,
-					Position = UDim2.new(0, 10, 0, 10),
-					Size = UDim2.new(1, -180, 0, 13),
-					Name = "SliderTitle",
-				}, Slider)
+            Font = Enum.Font.GothamBold,
+            Text = Title,
+            TextColor3 = Color3.fromRGB(230, 230, 230),
+            TextSize = 13,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Top,
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            Position = UDim2.new(0, 10, 0, 10),
+            Size = UDim2.new(1, -145, 0, 13),
+            Name = "SliderTitle",
+        }, Slider)
 
-				local SliderContent = Custom:Create("TextLabel", {
-					Font = Enum.Font.GothamBold,
-					Text = Content,
-					TextColor3 = Color3.fromRGB(255, 255, 255),
-					TextSize = 12,
-					TextTransparency = 0.6000000238418579,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					TextYAlignment = Enum.TextYAlignment.Bottom,
-					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-					BackgroundTransparency = 0.9990000128746033,
-					BorderColor3 = Color3.fromRGB(0, 0, 0),
-					BorderSizePixel = 0,
-					Position = UDim2.new(0, 10, 0, 23),
-					Size = UDim2.new(1, -180, 0, 0),
-					Name = "SliderContent",
-					AutomaticSize = Enum.AutomaticSize.Y,
-					TextWrapped = true
-				}, Slider)
+        local SliderContent = Custom:Create("TextLabel", {
+            Font = Enum.Font.GothamBold,
+            Text = Content,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextSize = 11,
+            TextTransparency = 0.6,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Top,
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            Position = UDim2.new(0, 10, 0, 24),
+            Size = UDim2.new(1, -145, 0, 0),
+            Name = "SliderContent",
+            AutomaticSize = Enum.AutomaticSize.Y,
+            TextWrapped = true
+        }, Slider)
 
         Slider.AutomaticSize = Enum.AutomaticSize.Y
         Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Slider)
 
         local SliderInput = Custom:Create("Frame", {
-					AnchorPoint = Vector2.new(0, 0.5),
-					BackgroundColor3 = Custom.ColorRGB,
-					BorderColor3 = Color3.fromRGB(0, 0, 0),
-					BorderSizePixel = 0,
-					Position = UDim2.new(1, -155, 0.5, 0),
-					Size = UDim2.new(0, 28, 0, 20),
-					Name = "SliderInput",
-				}, Slider)
+            AnchorPoint = Vector2.new(1, 0.5),
+            BackgroundColor3 = Custom.ColorRGB,
+            BorderSizePixel = 0,
+            Position = UDim2.new(1, -115, 0.5, 0),
+            Size = UDim2.new(0, 32, 0, 20),
+            Name = "SliderInput",
+        }, Slider)
 
         Custom:Create("UICorner", {
           CornerRadius = UDim.new(0, 5),
         }, SliderInput)
 
-         
-				local TextBox = Custom:Create("TextBox", {
-					Font = Enum.Font.GothamBold,
-					Text = "90",
-					TextColor3 = Color3.fromRGB(255, 255, 255),
-					TextSize = 13,
-					TextWrapped = true,
-					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-					BackgroundTransparency = 0.9990000128746033,
-					BorderColor3 = Color3.fromRGB(0, 0, 0),
-					BorderSizePixel = 0,
-					Position = UDim2.new(0, -1, 0, 0),
-					Size = UDim2.new(1, 0, 1, 0),
-				}, SliderInput)
+        local TextBox = Custom:Create("TextBox", {
+            Font = Enum.Font.GothamBold,
+            Text = "0",
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextSize = 12,
+            TextWrapped = true,
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            Size = UDim2.new(1, 0, 1, 0),
+        }, SliderInput)
 
         local SliderFrame = Custom:Create("Frame", {
-					AnchorPoint = Vector2.new(1, 0.5),
-					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-					BackgroundTransparency = 0.800000011920929,
-					BorderColor3 = Color3.fromRGB(0, 0, 0),
-					BorderSizePixel = 0,
-					Position = UDim2.new(1, -20, 0.5, 0),
-					Size = UDim2.new(0, 100, 0, 3),
-					Name = "SliderFrame",
-				}, Slider)
+            AnchorPoint = Vector2.new(1, 0.5),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 0.80,
+            BorderSizePixel = 0,
+            Position = UDim2.new(1, -8, 0.5, 0),
+            Size = UDim2.new(0, 100, 0, 3),
+            Name = "SliderFrame",
+        }, Slider)
 
         Custom:Create("UICorner", {}, SliderFrame)
 
@@ -2317,14 +2312,13 @@ function Item:AddDropdown(Config)
         Text = Title,
         TextColor3 = Color3.fromRGB(230, 230, 230),
         TextSize = 13,
+        TextTruncate = Enum.TextTruncate.AtEnd,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Top,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.999,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 10, 0, 10),
-        Size = UDim2.new(1, -180, 0, 13),
+        Size = UDim2.new(1, -50, 0, 13),
         Name = "DropdownTitle",
         Parent = Dropdown
     })
@@ -2333,32 +2327,24 @@ function Item:AddDropdown(Config)
         Font = Enum.Font.GothamBold,
         Text = Content,
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 12,
+        TextSize = 11,
         TextTransparency = 0.6,
         TextWrapped = true,
         TextXAlignment = Enum.TextXAlignment.Left,
-        TextYAlignment = Enum.TextYAlignment.Bottom,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.999,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
+        TextYAlignment = Enum.TextYAlignment.Top,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        Position = UDim2.new(0, 10, 0, 23),
-        Size = UDim2.new(1, -180, 0, 12),
+        Position = UDim2.new(0, 10, 0, 24),
+        Size = UDim2.new(1, -50, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
         Name = "DropdownContent",
         Parent = Dropdown
     })
-    
-    DropdownContent.Size = UDim2.new(1, -180, 0, 12 + (12 * (DropdownContent.TextBounds.X // DropdownContent.AbsoluteSize.X)))
-    DropdownContent.TextWrapped = true
-    Dropdown.Size = UDim2.new(1, 0, 0, DropdownContent.AbsoluteSize.Y + 33)
-    
+
+    Dropdown.AutomaticSize = Enum.AutomaticSize.Y
+    Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Dropdown)
+
     DropdownContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-        DropdownContent.TextWrapped = false
-        
-        DropdownContent.Size = UDim2.new(1, -180, 0, 12 + (12 * (DropdownContent.TextBounds.X // DropdownContent.AbsoluteSize.X)))
-        Dropdown.Size = UDim2.new(1, 0, 0, DropdownContent.AbsoluteSize.Y + 33)
-        
-        DropdownContent.TextWrapped = true
         UpdateSizeSection()
     end)
 
