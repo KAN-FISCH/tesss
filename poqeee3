@@ -1241,7 +1241,7 @@ function Speed_Library:CreateWindow(Config)
                         subBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                         subBtn.BackgroundTransparency = 1
                         local lbl = subBtn:FindFirstChild("SubLabel")
-                        if lbl then lbl.TextColor3 = Color3.fromRGB(180, 180, 200) end
+                        if lbl then lbl.TextColor3 = Color3.fromRGB(160, 160, 190) end
                         local dot = subBtn:FindFirstChild("ActiveDot")
                         if dot then dot.Visible = false end
                     end
@@ -1253,7 +1253,7 @@ function Speed_Library:CreateWindow(Config)
     -- Helper: select a sub-tab button
     local function selectSubTabBtn(btn)
         deselectAllSubTabs()
-        btn.BackgroundColor3 = Custom.ColorRGB
+        btn.BackgroundColor3 = Color3.fromRGB(120, 60, 210)
         btn.BackgroundTransparency = 0.75
         local lbl = btn:FindFirstChild("SubLabel")
         if lbl then lbl.TextColor3 = Color3.fromRGB(255, 255, 255) end
@@ -1433,9 +1433,9 @@ function Speed_Library:CreateWindow(Config)
             }, GroupItems)
             Custom:Create("UICorner", { CornerRadius = UDim.new(0, 6) }, SubTabBtn)
 
-            -- Active accent dot
+            -- Active accent dot (purple)
             local ActiveDot = Custom:Create("Frame", {
-                BackgroundColor3 = Custom.ColorRGB,
+                BackgroundColor3 = Color3.fromRGB(150, 80, 255),
                 BorderSizePixel = 0,
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0, 4, 0.5, 0),
@@ -1445,26 +1445,16 @@ function Speed_Library:CreateWindow(Config)
             }, SubTabBtn)
             Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, ActiveDot)
 
-            -- Tab icon
-            Custom:Create("ImageLabel", {
-                Image = TabIcon,
-                ImageColor3 = Color3.fromRGB(180, 180, 210),
-                BackgroundTransparency = 1,
-                Position = UDim2.new(0, 10, 0.5, -7),
-                Size = UDim2.new(0, 14, 0, 14),
-                Name = "SubIcon"
-            }, SubTabBtn)
-
-            -- Tab label
+            -- Tab label (no icon, start from left)
             Custom:Create("TextLabel", {
                 Font = Enum.Font.Gotham,
                 Text = TabName,
-                TextColor3 = Color3.fromRGB(180, 180, 200),
+                TextColor3 = Color3.fromRGB(160, 160, 190),
                 TextSize = 12,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, 28, 0, 0),
-                Size = UDim2.new(1, -32, 1, 0),
+                Position = UDim2.new(0, 12, 0, 0),
+                Size = UDim2.new(1, -16, 1, 0),
                 Name = "SubLabel"
             }, SubTabBtn)
 
