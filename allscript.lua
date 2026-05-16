@@ -7,10 +7,12 @@ local placeScriptsPremium = {
     [130594398886540] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/HorizonGardenPrem.lua",
     [130342654546662] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/sambungkata.lua",
     [77747658251236] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/SailorPiece",
+    [93978595733734] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/vd.lua",
 }
 
 local placeScriptsFree = {
     [77747658251236] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/SailorPiece",
+    [93978595733734] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/vd.lua",
     [130342654546662] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/sambungkata.lua",
     [130594398886540] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/HorizonGarden.lua",
     [2753915549] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/BloxFruit.lua",
