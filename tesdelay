@@ -2844,6 +2844,10 @@ function Item:AddDropdown(Config)
         RefreshList = RefreshList or {}
         Selecting = Selecting or {}
 
+        table.sort(RefreshList, function(a, b)
+            return tostring(a):lower() < tostring(b):lower()
+        end)
+
         Funcs_Dropdown:Clear()
 
         if LoadMode == "slow" then
