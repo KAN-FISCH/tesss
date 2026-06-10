@@ -161,7 +161,7 @@ local function LockItem(ItemFrame, InteractiveElements)
             Size = UDim2.new(1, 0, 1, 0),
             Position = UDim2.new(0, 0, 0, 0),
             BackgroundColor3 = Color3.fromRGB(15, 15, 20),
-            BackgroundTransparency = 0.7,
+            BackgroundTransparency = 0.86,
             ZIndex = 40,
             Active = true
         }, ItemFrame)
