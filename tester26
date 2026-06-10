@@ -816,9 +816,9 @@ function Speed_Library:CreateWindow(Config)
         Size = UDim2.new(0, 100, 0, 100),
         AnchorPoint = Vector2.new(0.5, 0.5),
         Name = "IconSHIELD",
-        ZIndex = 20,
-        Parent = Main -- Parented to Main to move with window, but ZIndex > Main
-    }, Main)
+        ZIndex = 9,
+        Parent = DropShadow -- Layered behind Main so it doesn't overlap text
+    }, DropShadow)
     
     -- Fix bottom corners of Top frame to be square? 
     -- Actually with ClipsDescendants on Main, we don't need to worry, but Main ClipsDescendants is NOT set in this visible code.
@@ -1029,7 +1029,7 @@ function Speed_Library:CreateWindow(Config)
         Name = "LayersTab"
     }, Main)
     Custom:Create("UICorner", { CornerRadius = UDim.new(0, 10) }, LayersTab)
-    Custom:Create("UIStroke", { Color = Custom.ColorRGB, Thickness = 1, Transparency = 0.7 }, LayersTab)
+    Custom:Create("UIStroke", { Color = Color3.fromRGB(35, 35, 45), Thickness = 1, Transparency = 0.5 }, LayersTab)
 
     -- Logo area at top of sidebar (compact)
     local LogoArea = Custom:Create("Frame", {
