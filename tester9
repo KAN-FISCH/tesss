@@ -154,6 +154,7 @@ function CircleClick(Button, X, Y)
 end
 
 local function LockItem(ItemFrame, InteractiveElements)
+    local isTab = (ItemFrame.Name == "SubTabBtn")
     local LockOverlay = ItemFrame:FindFirstChild("LockOverlay")
     if not LockOverlay then
         LockOverlay = Custom:Create("Frame", {
@@ -161,7 +162,7 @@ local function LockItem(ItemFrame, InteractiveElements)
             Size = UDim2.new(1, 0, 1, 0),
             Position = UDim2.new(0, 0, 0, 0),
             BackgroundColor3 = Color3.fromRGB(15, 15, 20),
-            BackgroundTransparency = 0.5,
+            BackgroundTransparency = isTab and 1 or 0.5,
             ZIndex = 40,
             Active = true
         }, ItemFrame)
@@ -172,16 +173,58 @@ local function LockItem(ItemFrame, InteractiveElements)
         
         local LockIcon = Custom:Create("ImageLabel", {
             Name = "LockIcon",
-            Image = "rbxassetid://6031087270",
+            Image = "http://www.roblox.com/asset/?id=7733992528",
             ImageColor3 = Color3.fromRGB(220, 220, 220),
             BackgroundTransparency = 1,
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Position = UDim2.new(0.5, 0, 0.5, 0),
-            Size = UDim2.new(0, 16, 0, 16),
+            AnchorPoint = isTab and Vector2.new(1, 0.5) or Vector2.new(0.5, 0.5),
+            Position = isTab and UDim2.new(1, -8, 0.5, 0) or UDim2.new(0.5, 0, 0.5, -6),
+            Size = UDim2.new(0, 14, 0, 14),
             ZIndex = 41
         }, LockOverlay)
+
+        if not isTab then
+            Custom:Create("TextLabel", {
+                Name = "LockText",
+                Font = Enum.Font.GothamBold,
+                Text = "Premium Feature Locked",
+                TextColor3 = Color3.fromRGB(180, 180, 190),
+                TextSize = 8,
+                BackgroundTransparency = 1,
+                AnchorPoint = Vector2.new(0.5, 0),
+                Position = UDim2.new(0.5, 0, 0.5, 10),
+                Size = UDim2.new(1, 0, 0, 12),
+                ZIndex = 41
+            }, LockOverlay)
+        end
+    else
+        LockOverlay.BackgroundTransparency = isTab and 1 or 0.5
+        local icon = LockOverlay:FindFirstChild("LockIcon")
+        if icon then
+            icon.AnchorPoint = isTab and Vector2.new(1, 0.5) or Vector2.new(0.5, 0.5)
+            icon.Position = isTab and UDim2.new(1, -8, 0.5, 0) or UDim2.new(0.5, 0, 0.5, -6)
+        end
     end
     LockOverlay.Visible = true
+    
+    if isTab then
+        local lbl = ItemFrame:FindFirstChild("SubLabel")
+        if lbl then
+            if not lbl:GetAttribute("OriginalColor") then
+                lbl:SetAttribute("OriginalColor", lbl.TextColor3)
+            end
+            lbl.TextColor3 = Color3.fromRGB(100, 100, 110)
+        end
+    else
+        -- Hide all descendants for section to avoid showing titles/contents (blur/frost style)
+        for _, child in ipairs(ItemFrame:GetDescendants()) do
+            if child:IsA("GuiObject") and not child:IsDescendantOf(LockOverlay) and child ~= LockOverlay then
+                if child:GetAttribute("OriginalVisible") == nil then
+                    child:SetAttribute("OriginalVisible", child.Visible)
+                end
+                child.Visible = false
+            end
+        end
+    end
     
     for _, elem in ipairs(InteractiveElements) do
         if elem:IsA("TextButton") or elem:IsA("ImageButton") then
@@ -197,6 +240,31 @@ local function UnlockItem(ItemFrame, InteractiveElements)
     local LockOverlay = ItemFrame:FindFirstChild("LockOverlay")
     if LockOverlay then
         LockOverlay.Visible = false
+    end
+    
+    local isTab = (ItemFrame.Name == "SubTabBtn")
+    if isTab then
+        local lbl = ItemFrame:FindFirstChild("SubLabel")
+        if lbl then
+            local originalColor = lbl:GetAttribute("OriginalColor")
+            if originalColor then
+                lbl.TextColor3 = originalColor
+            else
+                lbl.TextColor3 = Color3.fromRGB(160, 160, 190)
+            end
+        end
+    else
+        -- Restore visibility of descendants for section
+        for _, child in ipairs(ItemFrame:GetDescendants()) do
+            if child:IsA("GuiObject") and not child:IsDescendantOf(LockOverlay) and child ~= LockOverlay then
+                local wasVisible = child:GetAttribute("OriginalVisible")
+                if wasVisible ~= nil then
+                    child.Visible = wasVisible
+                else
+                    child.Visible = true
+                end
+            end
+        end
     end
     
     for _, elem in ipairs(InteractiveElements) do
@@ -374,7 +442,7 @@ function Speed_Library:SetNotification(Config)
         TextWrapped=true
     })
 
-    TextLabel2.Size = UDim2.new(1,-20,0,13+(13*(TextLabel2.TextBounds.X//TextLabel2.AbsoluteSize.X)))
+    TextLabel2.Size = UDim2.new(1,-20,0,13+(13*math.floor(TextLabel2.TextBounds.X/TextLabel2.AbsoluteSize.X)))
 
     if TextLabel2.AbsoluteSize.Y < 27 then
         NotificationFrame.Size = UDim2.new(1,0,0,65)
@@ -589,7 +657,7 @@ function Speed_Library:CreateWindow(Config)
         Size = UDim2.new(0, 455, 0, 350),
         ZIndex = 0,
         Name = "DropShadowHolder",
-        Position = UDim2.new(0, (SpeedHubXGui.AbsoluteSize.X // 2 - 455 // 2), 0, (SpeedHubXGui.AbsoluteSize.Y // 2 - 350 // 2))
+        Position = UDim2.new(0, (math.floor(SpeedHubXGui.AbsoluteSize.X / 2) - math.floor(455 / 2)), 0, (math.floor(SpeedHubXGui.AbsoluteSize.Y / 2) - math.floor(350 / 2)))
     }, SpeedHubXGui)
 
     local DropShadow = Custom:Create("ImageLabel", {
@@ -1488,6 +1556,7 @@ function Speed_Library:CreateWindow(Config)
     local CountTab = 0
     local CountDropdown = 0
     local _activeSubTabBtn = nil  -- currently selected sub-tab button
+    local isFirstSubTabOverall = true
 
     -- Helper: deselect all sub-tab buttons
     local function deselectAllSubTabs()
@@ -1617,12 +1686,12 @@ function Speed_Library:CreateWindow(Config)
         -- GROUP object returned to caller
         local GroupObj = {}
         local SubCountInGroup = 0
-        local isFirstSubTab = true
 
         function GroupObj:CreateTab(TabConfig)
             local TabName = TabConfig[1] or TabConfig.Name or ""
             local TabIcon = TabConfig[2] or TabConfig.Icon or ""
             local TabDescription = TabConfig[3] or TabConfig.Description or ""
+            local TabObj = {}
 
             SubCountInGroup += 1
             local subOrder = SubCountInGroup
@@ -1722,8 +1791,8 @@ function Speed_Library:CreateWindow(Config)
             }, SubTabBtn)
 
             -- Auto-select first sub-tab
-            if isFirstSubTab then
-                isFirstSubTab = false
+            if isFirstSubTabOverall then
+                isFirstSubTabOverall = false
                 selectSubTabBtn(SubTabBtn)
                 switchSubTab(ScrolLayers, ScrolLayersRight)
                 NameTab.Text = TabName
@@ -1741,8 +1810,7 @@ function Speed_Library:CreateWindow(Config)
 
             refreshGroupSize()
 
-            -- TAB object
-            local TabObj = {}
+            -- TAB object (already declared at top of CreateTab)
             local Sections, CountSection = {}, 0
             local CountSectionRight = 0
 
@@ -2209,7 +2277,20 @@ function Item:AddToggle(Config)
 
     function Funcs_Toggle:Set(Value, Instant)
         Callback(Value)
+        if self.ChangedCallback then
+            task.spawn(function()
+                local ok, err = pcall(self.ChangedCallback, Value)
+                if not ok then
+                    warn("Error in toggle OnChanged: " .. tostring(err))
+                end
+            end)
+        end
         Animate(Value, Instant)
+    end
+
+    function Funcs_Toggle:OnChanged(ChangedCallback)
+        self.ChangedCallback = ChangedCallback
+        return self
     end
 
     function Funcs_Toggle:Lock()
@@ -2372,6 +2453,19 @@ end
           TextBox.Text = tostring(Value)
             
           TweenService:Create(SliderDraggable, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale((Value - Min) / (Max - Min), 1) }):Play()
+          if self.ChangedCallback then
+              task.spawn(function()
+                  local ok, err = pcall(self.ChangedCallback, Value)
+                  if not ok then
+                      warn("Error in slider OnChanged: " .. tostring(err))
+                  end
+              end)
+          end
+        end
+
+        function Funcs_Slider:OnChanged(ChangedCallback)
+            self.ChangedCallback = ChangedCallback
+            return self
         end
         
         SliderFrame.InputBegan:Connect(function(Input)
@@ -2557,7 +2651,20 @@ end
 					InputTextBox.Text = Value
 					Funcs_Input.Value = Value
 					Callback(Value)
+					if self.ChangedCallback then
+						task.spawn(function()
+							local ok, err = pcall(self.ChangedCallback, Value)
+							if not ok then
+								warn("Error in input OnChanged: " .. tostring(err))
+							end
+						end)
+					end
 				end
+
+        function Funcs_Input:OnChanged(ChangedCallback)
+            self.ChangedCallback = ChangedCallback
+            return self
+        end
 
         InputTextBox.FocusLost:Connect(function()
             if Funcs_Input.Locked then return end
@@ -2811,6 +2918,11 @@ function Item:AddDropdown(Config)
     end
     
     function Funcs_Dropdown:Set(Value)
+        if type(Value) == "string" then
+            Value = {Value}
+        elseif Value ~= nil and type(Value) ~= "table" then
+            Value = {tostring(Value)}
+        end
         Funcs_Dropdown.Value = Value or Funcs_Dropdown.Value
 
         for _, Drop in pairs(ScrollSelect:GetChildren()) do
@@ -2843,9 +2955,31 @@ function Item:AddDropdown(Config)
         -- For single selection, pass the first value as string, for multi pass the table
         if Multi then
             Callback(Funcs_Dropdown.Value)
+            if self.ChangedCallback then
+                task.spawn(function()
+                    local ok, err = pcall(self.ChangedCallback, Funcs_Dropdown.Value)
+                    if not ok then
+                        warn("Error in dropdown OnChanged: " .. tostring(err))
+                    end
+                end)
+            end
         else
-            Callback(Funcs_Dropdown.Value[1] or "")
+            local val = Funcs_Dropdown.Value[1] or ""
+            Callback(val)
+            if self.ChangedCallback then
+                task.spawn(function()
+                    local ok, err = pcall(self.ChangedCallback, val)
+                    if not ok then
+                        warn("Error in dropdown OnChanged: " .. tostring(err))
+                    end
+                end)
+            end
         end
+    end
+
+    function Funcs_Dropdown:OnChanged(ChangedCallback)
+        self.ChangedCallback = ChangedCallback
+        return self
     end
 
     function Funcs_Dropdown:AddOption(OptionName)
@@ -3036,6 +3170,8 @@ end
           Item:Lock()
       end
 
+      Item.Frame = Section
+
       return Item
             end  -- end TabObj:AddSection
 
@@ -3049,12 +3185,16 @@ end
                 UnlockItem(SubTabBtn, {SubClickBtn})
             end
 
+            TabObj.ScrolLayers = ScrolLayers
+            TabObj.ScrolLayersRight = ScrolLayersRight
+            TabObj.SubTabBtn = SubTabBtn
+
             if TabConfig.Locked or TabConfig.Lock then
                 TabObj:Lock()
             end
 
             return TabObj
-        end  -- end GroupObj:CreateTab
+        end -- end GroupObj:CreateTab
 
         return GroupObj
     end  -- end Tabs:CreateGroup
