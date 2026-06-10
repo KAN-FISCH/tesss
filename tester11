@@ -1623,6 +1623,7 @@ function Speed_Library:CreateWindow(Config)
             local TabName = TabConfig[1] or TabConfig.Name or ""
             local TabIcon = TabConfig[2] or TabConfig.Icon or ""
             local TabDescription = TabConfig[3] or TabConfig.Description or ""
+            local TabObj = {}
 
             SubCountInGroup += 1
             local subOrder = SubCountInGroup
@@ -1741,8 +1742,7 @@ function Speed_Library:CreateWindow(Config)
 
             refreshGroupSize()
 
-            -- TAB object
-            local TabObj = {}
+            -- TAB object (already declared at top of CreateTab)
             local Sections, CountSection = {}, 0
             local CountSectionRight = 0
 
