@@ -1512,6 +1512,7 @@ function Speed_Library:CreateWindow(Config)
     local CountTab = 0
     local CountDropdown = 0
     local _activeSubTabBtn = nil  -- currently selected sub-tab button
+    local isFirstSubTabOverall = true
 
     -- Helper: deselect all sub-tab buttons
     local function deselectAllSubTabs()
@@ -1641,7 +1642,6 @@ function Speed_Library:CreateWindow(Config)
         -- GROUP object returned to caller
         local GroupObj = {}
         local SubCountInGroup = 0
-        local isFirstSubTab = true
 
         function GroupObj:CreateTab(TabConfig)
             local TabName = TabConfig[1] or TabConfig.Name or ""
@@ -1747,8 +1747,8 @@ function Speed_Library:CreateWindow(Config)
             }, SubTabBtn)
 
             -- Auto-select first sub-tab
-            if isFirstSubTab then
-                isFirstSubTab = false
+            if isFirstSubTabOverall then
+                isFirstSubTabOverall = false
                 selectSubTabBtn(SubTabBtn)
                 switchSubTab(ScrolLayers, ScrolLayersRight)
                 NameTab.Text = TabName
