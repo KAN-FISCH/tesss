@@ -153,6 +153,62 @@ function CircleClick(Button, X, Y)
     end)
 end
 
+local function LockItem(ItemFrame, InteractiveElements)
+    local LockOverlay = ItemFrame:FindFirstChild("LockOverlay")
+    if not LockOverlay then
+        LockOverlay = Custom:Create("Frame", {
+            Name = "LockOverlay",
+            Size = UDim2.new(1, 0, 1, 0),
+            Position = UDim2.new(0, 0, 0, 0),
+            BackgroundColor3 = Color3.fromRGB(15, 15, 20),
+            BackgroundTransparency = 0.5,
+            ZIndex = 40,
+            Active = true
+        }, ItemFrame)
+        
+        Custom:Create("UICorner", {
+            CornerRadius = UDim.new(0, 4)
+        }, LockOverlay)
+        
+        local LockIcon = Custom:Create("ImageLabel", {
+            Name = "LockIcon",
+            Image = "rbxassetid://6031087270",
+            ImageColor3 = Color3.fromRGB(220, 220, 220),
+            BackgroundTransparency = 1,
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            Size = UDim2.new(0, 16, 0, 16),
+            ZIndex = 41
+        }, LockOverlay)
+    end
+    LockOverlay.Visible = true
+    
+    for _, elem in ipairs(InteractiveElements) do
+        if elem:IsA("TextButton") or elem:IsA("ImageButton") then
+            elem.Active = false
+        elseif elem:IsA("TextBox") then
+            elem.Active = false
+            elem.TextEditable = false
+        end
+    end
+end
+
+local function UnlockItem(ItemFrame, InteractiveElements)
+    local LockOverlay = ItemFrame:FindFirstChild("LockOverlay")
+    if LockOverlay then
+        LockOverlay.Visible = false
+    end
+    
+    for _, elem in ipairs(InteractiveElements) do
+        if elem:IsA("TextButton") or elem:IsA("ImageButton") then
+            elem.Active = true
+        elseif elem:IsA("TextBox") then
+            elem.Active = true
+            elem.TextEditable = true
+        end
+    end
+end
+
 local Speed_Library, Notification = {}, {}
 Speed_Library.Unloaded = false
 
@@ -351,6 +407,7 @@ function Speed_Library:CreateWindow(Config)
     local Description = Config[2] or Config.Description or ""
     local TabWidth = Config[3] or Config["Tab Width"] or 120
     local SizeUi = Config[4] or Config.SizeUi or UDim2.fromOffset(750, 350)
+    local LoadMode = Config[5] or Config.LoadMode or "fast" -- "slow" = task.wait() antar dropdown item, "fast" = langsung semua
 
     local Funcs = {}
     local Templates = {}
@@ -1674,6 +1731,7 @@ function Speed_Library:CreateWindow(Config)
             end
 
             SubClickBtn.Activated:Connect(function()
+                if TabObj.Locked then return end
                 CircleClick(SubClickBtn, Player:GetMouse().X, Player:GetMouse().Y)
                 selectSubTabBtn(SubTabBtn)
                 switchSubTab(ScrolLayers, ScrolLayersRight)
@@ -1688,10 +1746,11 @@ function Speed_Library:CreateWindow(Config)
             local Sections, CountSection = {}, 0
             local CountSectionRight = 0
 
-            function TabObj:AddSection(Title, OpenSection, Side)
+            function TabObj:AddSection(Title, OpenSection, Side, Locked)
                 local Title = Title or ""
                 local OpenSection = (OpenSection == nil) and true or OpenSection
                 local Side = Side or "Left"
+                local Locked = Locked or false
                 local TargetScrol = (Side == "Right") and ScrolLayersRight or ScrolLayers
                 local currentOrder = (Side == "Right") and CountSectionRight or CountSection
     
@@ -1853,7 +1912,8 @@ function Speed_Library:CreateWindow(Config)
           UpdateSizeSection()
       end)
 
-      local function ToggleSection()
+       local function ToggleSection()
+        if Locked then return end
         CircleClick(SectionButton, Player:GetMouse().X, Player:GetMouse().Y)
     
         if OpenSection then
@@ -2053,12 +2113,27 @@ end
         FeatureImg.Image = Icon
 
         ButtonButton.Activated:Connect(function()
-					CircleClick(ButtonButton, Player:GetMouse().X, Player:GetMouse().Y)
-					Callback()
-				end)
+            if Funcs_Button.Locked then return end
+            CircleClick(ButtonButton, Player:GetMouse().X, Player:GetMouse().Y)
+            Callback()
+        end)
+
+        function Funcs_Button:Lock()
+            self.Locked = true
+            LockItem(Button, {ButtonButton})
+        end
+
+        function Funcs_Button:Unlock()
+            self.Locked = false
+            UnlockItem(Button, {ButtonButton})
+        end
+
+        if Config.Locked or Config.Lock then
+            Funcs_Button:Lock()
+        end
 
         ItemCount += 1
-				return Funcs_Button
+        return Funcs_Button
       end
 
 function Item:AddToggle(Config)
@@ -2127,6 +2202,7 @@ function Item:AddToggle(Config)
     end
 
     ToggleButton.Activated:Connect(function()
+        if Funcs_Toggle.Locked then return end
         Funcs_Toggle.Value = not Funcs_Toggle.Value
         Funcs_Toggle:Set(Funcs_Toggle.Value)
     end)
@@ -2136,7 +2212,22 @@ function Item:AddToggle(Config)
         Animate(Value, Instant)
     end
 
+    function Funcs_Toggle:Lock()
+        self.Locked = true
+        LockItem(Toggle, {ToggleButton})
+    end
+
+    function Funcs_Toggle:Unlock()
+        self.Locked = false
+        UnlockItem(Toggle, {ToggleButton})
+    end
+
     Funcs_Toggle:Set(Default, true)
+
+    if Config.Locked or Config.Lock then
+        Funcs_Toggle:Lock()
+    end
+
     ItemCount += 1
     return Funcs_Toggle
 end
@@ -2284,12 +2375,14 @@ end
         end
         
         SliderFrame.InputBegan:Connect(function(Input)
+          if Funcs_Slider.Locked then return end
           if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
             Dragging = true
           end
         end)
       
         SliderFrame.InputEnded:Connect(function(Input)
+          if Funcs_Slider.Locked then return end
           if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
             Dragging = false
             Callback(Funcs_Slider.Value)
@@ -2320,6 +2413,7 @@ end
         end)
         
         TextBox.FocusLost:Connect(function()
+          if Funcs_Slider.Locked then return end
           if TextBox.Text ~= "" then
             Funcs_Slider:Set(tonumber(TextBox.Text))
             Callback(Funcs_Slider.Value)
@@ -2329,11 +2423,25 @@ end
           end
         end)
         
+        function Funcs_Slider:Lock()
+            self.Locked = true
+            LockItem(Slider, {TextBox})
+        end
+
+        function Funcs_Slider:Unlock()
+            self.Locked = false
+            UnlockItem(Slider, {TextBox})
+        end
+
         Funcs_Slider:Set(tonumber(Default))
         Callback(Funcs_Slider.Value)
 
+        if Config.Locked or Config.Lock then
+            Funcs_Slider:Lock()
+        end
+
         ItemCount += 1
-				return Funcs_Slider
+        return Funcs_Slider
       end
 
       function Item:AddInput(Config)
@@ -2451,14 +2559,29 @@ end
 					Callback(Value)
 				end
 
-				InputTextBox.FocusLost:Connect(function()
-					Funcs_Input:Set(InputTextBox.Text)
-				end)
+        InputTextBox.FocusLost:Connect(function()
+            if Funcs_Input.Locked then return end
+            Funcs_Input:Set(InputTextBox.Text)
+        end)
 
-				Funcs_Input:Set(Default)
+        function Funcs_Input:Lock()
+            self.Locked = true
+            LockItem(Input, {InputTextBox})
+        end
+
+        function Funcs_Input:Unlock()
+            self.Locked = false
+            UnlockItem(Input, {InputTextBox})
+        end
+
+        Funcs_Input:Set(Default)
+
+        if Config.Locked or Config.Lock then
+            Funcs_Input:Lock()
+        end
 
         ItemCount += 1
-				return Funcs_Input
+        return Funcs_Input
       end
 
 function Item:AddDropdown(Config)
@@ -2558,6 +2681,7 @@ function Item:AddDropdown(Config)
     }, SelectOptionsFrame)
 
     DropdownButton.Activated:Connect(function()
+        if Funcs_Dropdown.Locked then return end
         if not MoreBlur.Visible then
             MoreBlur.Visible = true
             
@@ -2842,19 +2966,49 @@ function Item:AddDropdown(Config)
     function Funcs_Dropdown:Refresh(RefreshList, Selecting)
         RefreshList = RefreshList or {}
         Selecting = Selecting or {}
-        
-        Funcs_Dropdown:Clear()
-        
-        for _, Drop in ipairs(RefreshList) do
-            Funcs_Dropdown:AddOption(Drop)
-        end
 
-        Funcs_Dropdown.Options = RefreshList
-        Funcs_Dropdown:Set(Selecting)
+        table.sort(RefreshList, function(a, b)
+            return tostring(a):lower() < tostring(b):lower()
+        end)
+
+        Funcs_Dropdown:Clear()
+
+        if LoadMode == "slow" then
+            -- Slow: load satu-satu dengan task.wait() antar item
+            task.spawn(function()
+                for _, Drop in ipairs(RefreshList) do
+                    Funcs_Dropdown:AddOption(Drop)
+                    task.wait()
+                end
+                Funcs_Dropdown.Options = RefreshList
+                Funcs_Dropdown:Set(Selecting)
+            end)
+        else
+            -- Fast: langsung load semua tanpa delay
+            for _, Drop in ipairs(RefreshList) do
+                Funcs_Dropdown:AddOption(Drop)
+            end
+            Funcs_Dropdown.Options = RefreshList
+            Funcs_Dropdown:Set(Selecting)
+        end
     end
 
     -- Initialize with options
     Funcs_Dropdown:Refresh(Funcs_Dropdown.Options, Funcs_Dropdown.Value)
+
+    function Funcs_Dropdown:Lock()
+        self.Locked = true
+        LockItem(Dropdown, {DropdownButton})
+    end
+
+    function Funcs_Dropdown:Unlock()
+        self.Locked = false
+        UnlockItem(Dropdown, {DropdownButton})
+    end
+
+    if Config.Locked or Config.Lock then
+        Funcs_Dropdown:Lock()
+    end
 
     ItemCount += 1
     CountDropdown += 1
@@ -2867,8 +3021,37 @@ end
       else
           CountSection += 1
       end
+
+      function Item:Lock()
+          self.Locked = true
+          LockItem(Section, {SectionButton})
+      end
+      
+      function Item:Unlock()
+          self.Locked = false
+          UnlockItem(Section, {SectionButton})
+      end
+
+      if Locked then
+          Item:Lock()
+      end
+
       return Item
             end  -- end TabObj:AddSection
+
+            function TabObj:Lock()
+                self.Locked = true
+                LockItem(SubTabBtn, {SubClickBtn})
+            end
+            
+            function TabObj:Unlock()
+                self.Locked = false
+                UnlockItem(SubTabBtn, {SubClickBtn})
+            end
+
+            if TabConfig.Locked or TabConfig.Lock then
+                TabObj:Lock()
+            end
 
             return TabObj
         end  -- end GroupObj:CreateTab
