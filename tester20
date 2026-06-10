@@ -154,6 +154,7 @@ function CircleClick(Button, X, Y)
 end
 
 local function LockItem(ItemFrame, InteractiveElements)
+    local isTab = (ItemFrame.Name == "SubTabBtn")
     local LockOverlay = ItemFrame:FindFirstChild("LockOverlay")
     if not LockOverlay then
         LockOverlay = Custom:Create("Frame", {
@@ -161,7 +162,7 @@ local function LockItem(ItemFrame, InteractiveElements)
             Size = UDim2.new(1, 0, 1, 0),
             Position = UDim2.new(0, 0, 0, 0),
             BackgroundColor3 = Color3.fromRGB(15, 15, 20),
-            BackgroundTransparency = 0.86,
+            BackgroundTransparency = isTab and 1 or 0.5,
             ZIndex = 40,
             Active = true
         }, ItemFrame)
@@ -172,25 +173,56 @@ local function LockItem(ItemFrame, InteractiveElements)
         
         local LockIcon = Custom:Create("ImageLabel", {
             Name = "LockIcon",
-            Image = "rbxassetid://7733992528",
+            Image = "http://www.roblox.com/asset/?id=7733992528",
             ImageColor3 = Color3.fromRGB(220, 220, 220),
             BackgroundTransparency = 1,
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Position = UDim2.new(0.5, 0, 0.5, 0),
-            Size = UDim2.new(0, 16, 0, 16),
+            AnchorPoint = isTab and Vector2.new(1, 0.5) or Vector2.new(0.5, 0.5),
+            Position = isTab and UDim2.new(1, -8, 0.5, 0) or UDim2.new(0.5, 0, 0.5, -6),
+            Size = UDim2.new(0, 14, 0, 14),
             ZIndex = 41
         }, LockOverlay)
+
+        if not isTab then
+            Custom:Create("TextLabel", {
+                Name = "LockText",
+                Font = Enum.Font.GothamBold,
+                Text = "Premium Feature Locked",
+                TextColor3 = Color3.fromRGB(180, 180, 190),
+                TextSize = 8,
+                BackgroundTransparency = 1,
+                AnchorPoint = Vector2.new(0.5, 0),
+                Position = UDim2.new(0.5, 0, 0.5, 10),
+                Size = UDim2.new(1, 0, 0, 12),
+                ZIndex = 41
+            }, LockOverlay)
+        end
+    else
+        LockOverlay.BackgroundTransparency = isTab and 1 or 0.5
+        local icon = LockOverlay:FindFirstChild("LockIcon")
+        if icon then
+            icon.AnchorPoint = isTab and Vector2.new(1, 0.5) or Vector2.new(0.5, 0.5)
+            icon.Position = isTab and UDim2.new(1, -8, 0.5, 0) or UDim2.new(0.5, 0, 0.5, -6)
+        end
     end
     LockOverlay.Visible = true
     
-    -- Dim all TextLabels to make them faintly visible (frosted style)
-    for _, child in ipairs(ItemFrame:GetDescendants()) do
-        if child:IsA("TextLabel") and not child:IsDescendantOf(LockOverlay) then
-            if not child:GetAttribute("OriginalTextTransparency") then
-                child:SetAttribute("OriginalTextTransparency", child.TextTransparency)
+    if isTab then
+        local lbl = ItemFrame:FindFirstChild("SubLabel")
+        if lbl then
+            if not lbl:GetAttribute("OriginalColor") then
+                lbl:SetAttribute("OriginalColor", lbl.TextColor3)
             end
-            child.TextTransparency = 0.8
-            child.Visible = true
+            lbl.TextColor3 = Color3.fromRGB(100, 100, 110)
+        end
+    else
+        -- Hide all descendants for section to avoid showing titles/contents (blur/frost style)
+        for _, child in ipairs(ItemFrame:GetDescendants()) do
+            if child:IsA("GuiObject") and not child:IsDescendantOf(LockOverlay) and child ~= LockOverlay then
+                if child:GetAttribute("OriginalVisible") == nil then
+                    child:SetAttribute("OriginalVisible", child.Visible)
+                end
+                child.Visible = false
+            end
         end
     end
     
@@ -210,16 +242,28 @@ local function UnlockItem(ItemFrame, InteractiveElements)
         LockOverlay.Visible = false
     end
     
-    -- Restore original TextTransparency values
-    for _, child in ipairs(ItemFrame:GetDescendants()) do
-        if child:IsA("TextLabel") and not child:IsDescendantOf(LockOverlay) then
-            local original = child:GetAttribute("OriginalTextTransparency")
-            if original then
-                child.TextTransparency = original
+    local isTab = (ItemFrame.Name == "SubTabBtn")
+    if isTab then
+        local lbl = ItemFrame:FindFirstChild("SubLabel")
+        if lbl then
+            local originalColor = lbl:GetAttribute("OriginalColor")
+            if originalColor then
+                lbl.TextColor3 = originalColor
             else
-                child.TextTransparency = 0
+                lbl.TextColor3 = Color3.fromRGB(160, 160, 190)
             end
-            child.Visible = true
+        end
+    else
+        -- Restore visibility of descendants for section
+        for _, child in ipairs(ItemFrame:GetDescendants()) do
+            if child:IsA("GuiObject") and not child:IsDescendantOf(LockOverlay) and child ~= LockOverlay then
+                local wasVisible = child:GetAttribute("OriginalVisible")
+                if wasVisible ~= nil then
+                    child.Visible = wasVisible
+                else
+                    child.Visible = true
+                end
+            end
         end
     end
     
@@ -3126,6 +3170,8 @@ end
           Item:Lock()
       end
 
+      Item.Frame = Section
+
       return Item
             end  -- end TabObj:AddSection
 
@@ -3139,12 +3185,16 @@ end
                 UnlockItem(SubTabBtn, {SubClickBtn})
             end
 
+            TabObj.ScrolLayers = ScrolLayers
+            TabObj.ScrolLayersRight = ScrolLayersRight
+            TabObj.SubTabBtn = SubTabBtn
+
             if TabConfig.Locked or TabConfig.Lock then
                 TabObj:Lock()
             end
 
             return TabObj
-        end  -- end GroupObj:CreateTab
+        end -- end GroupObj:CreateTab
 
         return GroupObj
     end  -- end Tabs:CreateGroup
