@@ -485,75 +485,77 @@ function Speed_Library:CreateWindow(Config)
       local Toggle = Custom:Create("Frame", {
           Name = "Toggle",
           BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-          BackgroundTransparency = 0.935,
+          BackgroundTransparency = 0.95,
           BorderSizePixel = 0,
-          Size = UDim2.new(1, 0, 0, 38),
+          Size = UDim2.new(1, 0, 0, 44),
           AutomaticSize = Enum.AutomaticSize.Y
       })
-      Custom:Create("UICorner", { CornerRadius = UDim.new(0, 5) }, Toggle)
-      Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 10)}, Toggle)
+      Custom:Create("UICorner", { CornerRadius = UDim.new(0, 4) }, Toggle)
+      Custom:Create("UIPadding", {PaddingBottom = UDim.new(0, 7)}, Toggle)
 
+      -- Title (bold white)
       Custom:Create("TextLabel", {
           Name = "ToggleTitle",
           Font = Enum.Font.GothamBold,
           Text = "Title",
           TextSize = 13,
-          TextColor3 = Color3.fromRGB(240, 240, 245),
+          TextColor3 = Color3.fromRGB(235, 235, 240),
           TextXAlignment = Enum.TextXAlignment.Left,
           TextYAlignment = Enum.TextYAlignment.Top,
           BackgroundTransparency = 1,
-          Position = UDim2.new(0, 12, 0, 10),
-          Size = UDim2.new(1, -65, 0, 13)
+          Position = UDim2.new(0, 12, 0, 9),
+          Size = UDim2.new(1, -58, 0, 14)
       }, Toggle)
 
+      -- Description (gray, below title)
       Custom:Create("TextLabel", {
           Name = "ToggleContent",
           Font = Enum.Font.Gotham,
-          Text = "Content",
+          Text = "",
           TextSize = 11,
-          TextColor3 = Color3.fromRGB(160, 155, 170),
+          TextColor3 = Color3.fromRGB(145, 140, 155),
           TextXAlignment = Enum.TextXAlignment.Left,
           TextYAlignment = Enum.TextYAlignment.Top,
           BackgroundTransparency = 1,
-          Position = UDim2.new(0, 12, 0, 24),
-          Size = UDim2.new(1, -65, 0, 0),
+          Position = UDim2.new(0, 12, 0, 25),
+          Size = UDim2.new(1, -58, 0, 0),
           AutomaticSize = Enum.AutomaticSize.Y,
           TextWrapped = true
       }, Toggle)
 
+      -- Invisible click button
       Custom:Create("TextButton", {
           Name = "ToggleButton",
-          Font = Enum.Font.SourceSans,
           Text = "",
           BackgroundTransparency = 1,
           Size = UDim2.new(1, 0, 1, 0)
       }, Toggle)
 
-      -- Pill-shaped toggle switch (36x20)
+      -- Pill-shaped toggle switch (32x16), anchored top-right
       local FeatureFrame = Custom:Create("Frame", {
           Name = "FeatureFrame",
-          AnchorPoint = Vector2.new(1, 0.5),
+          AnchorPoint = Vector2.new(1, 0),
           BackgroundColor3 = Color3.fromRGB(255, 255, 255),
           BackgroundTransparency = 0.88,
           BorderSizePixel = 0,
-          Position = UDim2.new(1, -14, 0.5, 0),
-          Size = UDim2.new(0, 36, 0, 20)
+          Position = UDim2.new(1, -12, 0, 12),
+          Size = UDim2.new(0, 32, 0, 16)
       }, Toggle)
       Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, FeatureFrame)
 
       Custom:Create("UIStroke", {
           Name = "UIStroke",
           Color = Color3.fromRGB(255, 255, 255),
-          Thickness = 1.5,
-          Transparency = 0.88
+          Thickness = 1.2,
+          Transparency = 0.85
       }, FeatureFrame)
 
-      -- Circle indicator
+      -- Circle inside pill
       local ToggleCircle = Custom:Create("Frame", {
           Name = "ToggleCircle",
-          BackgroundColor3 = Color3.fromRGB(220, 220, 225),
+          BackgroundColor3 = Color3.fromRGB(215, 215, 220),
           BorderSizePixel = 0,
-          Size = UDim2.new(0, 16, 0, 16),
+          Size = UDim2.new(0, 12, 0, 12),
           Position = UDim2.new(0, 2, 0, 2)
       }, FeatureFrame)
       Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, ToggleCircle)
@@ -1912,8 +1914,21 @@ function Speed_Library:CreateWindow(Config)
                 Name = "SectionTitle"
             }, SectionReal)
 
-    
-  
+            -- Tampilkan icon tab di sebelah kiri judul section
+            if TabIcon and TabIcon ~= "" then
+                Custom:Create("ImageLabel", {
+                    Name = "SectionTabIcon",
+                    Image = TabIcon,
+                    ImageColor3 = Custom.ColorRGB,
+                    BackgroundTransparency = 1,
+                    AnchorPoint = Vector2.new(0, 0.5),
+                    Position = UDim2.new(0, 16, 0.5, 0),
+                    Size = UDim2.new(0, 14, 0, 14),
+                }, SectionReal)
+                -- Geser judul supaya tidak tumpang tindih dengan icon
+                SectionTitle.Position = UDim2.new(0, 34, 0, 0)
+            end
+
       local SectionDecideFrame = Custom:Create("Frame", {
         BackgroundColor3 = Custom.ColorRGB,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -2228,13 +2243,13 @@ function Item:AddToggle(Config)
 
     local function Animate(Value, Instant)
         if Mode == "Toggle" then
-            local TitleColor = Value and Custom.ColorRGB or Color3.fromRGB(240, 240, 245)
-            -- Circle at right (ON=17px) or left (OFF=2px) within 36px pill
+            local TitleColor = Value and Custom.ColorRGB or Color3.fromRGB(235, 235, 240)
+            -- Circle at right (ON: 32-12-2=18) or left (OFF: 2) in 32px pill
             local CirclePosition = Value and UDim2.new(0, 18, 0, 2) or UDim2.new(0, 2, 0, 2)
             local StrokeColor = Value and Custom.ColorRGB or Color3.fromRGB(255, 255, 255)
-            local StrokeTransparency = Value and 0.7 or 0.88
+            local StrokeTransparency = Value and 0.6 or 0.85
             local FrameColor = Value and Custom.ColorRGB or Color3.fromRGB(255, 255, 255)
-            local FrameTransparency = Value and 0.1 or 0.88
+            local FrameTransparency = Value and 0.08 or 0.88
 
             if Instant then
                 ToggleTitle.TextColor3 = TitleColor
