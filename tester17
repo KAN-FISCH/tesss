@@ -161,7 +161,7 @@ local function LockItem(ItemFrame, InteractiveElements)
             Size = UDim2.new(1, 0, 1, 0),
             Position = UDim2.new(0, 0, 0, 0),
             BackgroundColor3 = Color3.fromRGB(15, 15, 20),
-            BackgroundTransparency = 0.15,
+            BackgroundTransparency = 0.7,
             ZIndex = 40,
             Active = true
         }, ItemFrame)
@@ -183,10 +183,14 @@ local function LockItem(ItemFrame, InteractiveElements)
     end
     LockOverlay.Visible = true
     
-    -- Hide all TextLabels in the item to hide titles/labels when locked
+    -- Dim all TextLabels to make them faintly visible (frosted style)
     for _, child in ipairs(ItemFrame:GetDescendants()) do
         if child:IsA("TextLabel") and not child:IsDescendantOf(LockOverlay) then
-            child.Visible = false
+            if not child:GetAttribute("OriginalTextTransparency") then
+                child:SetAttribute("OriginalTextTransparency", child.TextTransparency)
+            end
+            child.TextTransparency = 0.8
+            child.Visible = true
         end
     end
     
@@ -206,9 +210,15 @@ local function UnlockItem(ItemFrame, InteractiveElements)
         LockOverlay.Visible = false
     end
     
-    -- Restore visibility of all TextLabels
+    -- Restore original TextTransparency values
     for _, child in ipairs(ItemFrame:GetDescendants()) do
         if child:IsA("TextLabel") and not child:IsDescendantOf(LockOverlay) then
+            local original = child:GetAttribute("OriginalTextTransparency")
+            if original then
+                child.TextTransparency = original
+            else
+                child.TextTransparency = 0
+            end
             child.Visible = true
         end
     end
