@@ -8,11 +8,11 @@ local placeScriptsPremium = {
     [130342654546662] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/sambungkata.lua",
     [77747658251236] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/SailorPiece",
     [93978595733734] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/vd.lua",
-    [133438856880402] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/GAG2",
+    [97598239454123] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/GAG2",
 }
 
 local placeScriptsFree = {
-    [133438856880402] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/GAG2",
+    [97598239454123] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/GAG2",
     [77747658251236] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/SailorPiece",
     [93978595733734] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/vd.lua",
     [130342654546662] = "https://raw.githubusercontent.com/KAN-FISCH/tesss/refs/heads/main/gunung/sambungkata.lua",
