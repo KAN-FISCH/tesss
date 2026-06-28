@@ -1,0 +1,71 @@
+// ==UserScript==
+// @name         Download HTML Page
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Menambahkan tombol untuk mengunduh HTML dari halaman saat ini
+// @author       You
+// @match        *://*/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Fungsi untuk mengunduh HTML
+    function downloadHTML() {
+        // Mengambil seluruh konten HTML dari halaman
+        const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        
+        // Membuat Blob dari konten HTML
+        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        
+        // Membuat elemen <a> sementara untuk memicu unduhan
+        const a = document.createElement('a');
+        a.href = url;
+        
+        // Menentukan nama file berdasarkan judul halaman (atau nama default jika judul kosong)
+        let filename = document.title ? document.title.replace(/[\\/:*?"<>|]/g, "_") : 'page_source';
+        a.download = filename + '.html';
+        
+        // Menyisipkan, mengklik, dan menghapus elemen <a>
+        document.body.appendChild(a);
+        a.click();
+        
+        // Membersihkan URL object setelah unduhan dimulai
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    }
+
+    // Membuat tombol mengambang di pojok kanan bawah
+    const btn = document.createElement('button');
+    btn.textContent = '📥 Download HTML';
+    btn.style.position = 'fixed';
+    btn.style.bottom = '20px';
+    btn.style.right = '20px';
+    btn.style.zIndex = '99999999';
+    btn.style.padding = '10px 15px';
+    btn.style.backgroundColor = '#28a745';
+    btn.style.color = '#ffffff';
+    btn.style.border = 'none';
+    btn.style.borderRadius = '5px';
+    btn.style.cursor = 'pointer';
+    btn.style.fontFamily = 'sans-serif';
+    btn.style.fontSize = '14px';
+    btn.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3)';
+    
+    // Menambahkan efek hover sederhana
+    btn.addEventListener('mouseover', () => { btn.style.backgroundColor = '#218838'; });
+    btn.addEventListener('mouseout', () => { btn.style.backgroundColor = '#28a745'; });
+
+    // Memanggil fungsi download saat tombol diklik
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        downloadHTML();
+    });
+    
+    // Menyisipkan tombol ke dalam body halaman
+    document.body.appendChild(btn);
+})();
