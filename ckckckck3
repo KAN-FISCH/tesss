@@ -1,0 +1,62 @@
+// ==UserScript==
+// @name         Bypass Tombol Cetak UAS BY ShieldTeam (V8)
+// @namespace    http://tampermonkey.net/
+// @version      8.0
+// @description  Intercept klik di level Capture Phase, mengalahkan AJAX SIAKAD di HP
+// @author       You
+// @match        *://*.siakadcloud.com/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    var injectScript = document.createElement('script');
+    injectScript.textContent = `
+        // Pasang jebakan klik di level dokumen tertinggi (Capture Phase)
+        // Ini memastikan script kita jalan LEBIH DULU dari script bawaan SIAKAD
+        document.addEventListener('click', function(e) {
+            
+            let target = e.target;
+            let text = target.textContent || "";
+            
+            // Terkadang klik mengenai ikon di dalam tombol, mari baca teks pembungkusnya
+            if (!text && target.parentElement) {
+                text = target.parentElement.textContent || "";
+            }
+
+            // Jika yang diklik adalah "Cetak Kartu UAS"
+            if (text.trim().toLowerCase() === 'cetak kartu uas') {
+                
+                // 1. BLOKIR TOTAL fungsi bawaan website!
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log("Klik Cetak UAS dicegat oleh ShieldTeam Bypass!");
+
+                // 2. Ambil form_repputs yang MASIH UTUH (karena sistem belum sempat menghapusnya)
+                let existingForm = document.getElementById('form_repputs');
+
+                if (existingForm) {
+                    // Set Jenis Ujian ke A (UAS)
+                    let inputJenis = document.getElementById('jenisujian');
+                    if (inputJenis) {
+                        inputJenis.value = 'A';
+                    } else {
+                        let nameJenis = existingForm.querySelector('input[name="jenisujian"]');
+                        if (nameJenis) nameJenis.value = 'A';
+                    }
+
+                    // Tembak ke URL ujian dan buka di tab baru
+                    existingForm.action = '/siakad/rep_kartuujian';
+                    existingForm.target = "_blank";
+                    existingForm.submit();
+                } else {
+                    alert("ShieldTeam Bypass Gagal: Data memang disembunyikan oleh server di versi HP. Solusi: Nyalakan 'Situs Desktop' di menu Lemur Browser.");
+                }
+            }
+        }, true); // PENTING: 'true' adalah kunci agar script kita menang duluan
+    `;
+    
+    (document.head || document.documentElement).appendChild(injectScript);
+})();
