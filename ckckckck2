@@ -1,0 +1,63 @@
+// ==UserScript==
+// @name         Bypass Fungsi BY ShieldTeam V7
+// @namespace    http://tampermonkey.net/
+// @version      7.0
+// @description  FUCK U (Aggressive Form Finder)
+// @author       You
+// @match        *://*.siakadcloud.com/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    var injectScript = document.createElement('script');
+    injectScript.textContent = `
+        window.goError = function() {
+            console.log("Fungsi goError telah diblokir dan dialihkan!");
+            
+            let existingForm = document.getElementById('form_repputs');
+
+            // Jika form_repputs tidak ada, cari form apa saja yang action-nya rep_krs
+            if (!existingForm) {
+                let allForms = document.querySelectorAll('form');
+                for (let i = 0; i < allForms.length; i++) {
+                    if (allForms[i].action && allForms[i].action.includes('rep_krs')) {
+                        existingForm = allForms[i];
+                        break;
+                    }
+                }
+            }
+
+            // Jika masih tidak ketemu, kita cari input name='nim' lalu pakai form pembungkusnya
+            if (!existingForm) {
+                let nimInput = document.querySelector('input[name="nim"]');
+                if (nimInput && nimInput.form) {
+                    existingForm = nimInput.form;
+                }
+            }
+
+            // Eksekusi jika berhasil menemukan data form
+            if (existingForm) {
+                let inputJenis = existingForm.querySelector('input[name="jenisujian"]') || document.getElementById('jenisujian');
+                
+                // Jika input jenisujian tidak ada di form HP, kita ciptakan sendiri
+                if (!inputJenis) {
+                    inputJenis = document.createElement('input');
+                    inputJenis.type = 'hidden';
+                    inputJenis.name = 'jenisujian';
+                    existingForm.appendChild(inputJenis);
+                }
+
+                inputJenis.value = 'A';
+                existingForm.action = '/siakad/rep_kartuujian';
+                existingForm.target = "_blank";
+                existingForm.submit();
+            } else {
+                alert("Gagal: SIAKAD versi HP benar-benar menghapus data. Solusi: Aktifkan 'Desktop Site' di browser Anda!");
+            }
+        };
+    `;
+    
+    (document.head || document.documentElement).appendChild(injectScript);
+})();
