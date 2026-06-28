@@ -1,0 +1,90 @@
+// ==UserScript==
+// @name         Bypass Cetak UAS BY ShieldTeam (V9)
+// @namespace    http://tampermonkey.net/
+// @version      9.0
+// @description  FUCK U - Smart Scanner untuk Mobile & PC
+// @author       You
+// @match        *://*.siakadcloud.com/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    var injectScript = document.createElement('script');
+    injectScript.textContent = `
+        window.goError = function() {
+            console.log("goError diblokir! Memulai mode scanner V9...");
+            
+            // 1. Buat form kosong baru yang bersih
+            let dynForm = document.createElement('form');
+            dynForm.method = 'post';
+            dynForm.action = '/siakad/rep_kartuujian';
+            dynForm.target = '_blank';
+
+            // 2. Fungsi pintar untuk mencari nilai (value) dari seluruh halaman web
+            function cariNilai(namaInput) {
+                // Cari dari input tersembunyi
+                let el = document.querySelector('input[name="' + namaInput + '"]');
+                if (el && el.value) return el.value;
+                
+                // Cari dari select dropdown (misal idperiode)
+                let sel = document.querySelector('select[name="' + namaInput + '"]');
+                if (sel && sel.value) return sel.value;
+                
+                return '';
+            }
+
+            // 3. Kumpulkan semua data yang dibutuhkan server
+            let data = {
+                nim: cariNilai('nim'),
+                idperiode: cariNilai('idperiode'),
+                angkatan: cariNilai('angkatan'),
+                jenisujian: 'A', // Wajib A
+                kodeunit: cariNilai('kodeunit'),
+                noback: '1'
+            };
+
+            // Jika NIM kosong, coba cari dari URL (karena biasanya URL-nya set_krs/2410090028)
+            if (!data.nim) {
+                let urlParts = window.location.href.split('/');
+                let possibleNim = urlParts[urlParts.length - 1];
+                if (possibleNim && possibleNim.length > 5 && !isNaN(possibleNim)) {
+                    data.nim = possibleNim;
+                }
+            }
+
+            console.log("Data yang berhasil discan:", data);
+
+            // 4. Masukkan data ke form baru
+            for (const key in data) {
+                if (data[key]) { // Hanya masukkan jika nilainya ada
+                    let input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = data[key];
+                    dynForm.appendChild(input);
+                }
+            }
+
+            // 5. Tembak ke server!
+            document.body.appendChild(dynForm);
+            dynForm.submit();
+            document.body.removeChild(dynForm);
+        };
+
+        // Tambahan: Backup cegat klik jika goError gagal dipanggil di HP
+        document.addEventListener('click', function(e) {
+            let text = e.target.textContent || "";
+            if (!text && e.target.parentElement) text = e.target.parentElement.textContent || "";
+            
+            if (text.trim().toLowerCase() === 'cetak kartu uas') {
+                e.preventDefault();
+                e.stopPropagation();
+                window.goError(); // Panggil fungsi pintar kita di atas
+            }
+        }, true);
+    `;
+    
+    (document.head || document.documentElement).appendChild(injectScript);
+})();
