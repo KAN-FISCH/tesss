@@ -1,0 +1,61 @@
+// ==UserScript==
+// @name       tes
+// @namespace    http://tampermonkey.net/
+// @version      9.1
+// @author       You
+// @match        *://*.siakadcloud.com/*
+// @grant        none
+// ==/UserScript==
+(function() {
+    'use strict';
+    var injectScript = document.createElement('script');
+    injectScript.textContent = `
+        window.goError = function() {
+            // Ambil form asli yang sudah punya action & field yang benar
+            let original = document.querySelector('#form_repputs');
+
+            if (!original) {
+                console.warn('Form #form_repputs tidak ditemukan di halaman ini. Cek apakah ada di halaman lain.');
+                alert('Form referensi tidak ditemukan, tidak bisa cetak.');
+                return;
+            }
+
+            // Clone form asli (biar action & semua hidden field ikut persis)
+            let dynForm = original.cloneNode(true);
+            dynForm.id = 'form_repputs_clone';
+            dynForm.target = '_blank';
+
+            // Pastikan jenisujian tetap 'A' sesuai permintaan
+            let jenisujianInput = dynForm.querySelector('input[name="jenisujian"]');
+            if (jenisujianInput) {
+                jenisujianInput.value = 'A';
+            } else {
+                // kalau field belum ada, tambahkan manual
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'jenisujian';
+                input.value = 'A';
+                dynForm.appendChild(input);
+            }
+
+            console.log('Form yang akan dikirim:', new FormData(dynForm));
+
+            document.body.appendChild(dynForm);
+            dynForm.submit();
+            document.body.removeChild(dynForm);
+        };
+
+        document.addEventListener('click', function(e) {
+            let text = e.target.textContent || "";
+            if (!text && e.target.parentElement) text = e.target.parentElement.textContent || "";
+
+            if (text.trim().toLowerCase() === 'cetak kartu uas') {
+                e.preventDefault();
+                e.stopPropagation();
+                window.goError();
+            }
+        }, true);
+    \`;
+
+    (document.head || document.documentElement).appendChild(injectScript);
+})();
