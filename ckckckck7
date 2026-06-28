@@ -1,0 +1,71 @@
+// ==UserScript==
+// @name       tes
+// @namespace    http://tampermonkey.net/
+// @version      9.2
+// @author       You
+// @match        *://*.siakadcloud.com/*
+// @grant        none
+// ==/UserScript==
+(function() {
+    'use strict';
+    var injectScript = document.createElement('script');
+    injectScript.textContent = `
+        window.goError = async function() {
+            let original = document.querySelector('#form_repputs');
+
+            if (!original) {
+                console.warn('Form #form_repputs tidak ditemukan di halaman ini.');
+                alert('Form referensi tidak ditemukan, tidak bisa cetak.');
+                return;
+            }
+
+            // Ambil semua field dari form asli
+            let formData = new FormData(original);
+
+            // Paksa jenisujian = 'A'
+            formData.set('jenisujian', 'A');
+
+            console.log('Mengirim POST ke', original.action);
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ':', pair[1]);
+            }
+
+            try {
+                let response = await fetch(original.action, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include' // penting, biar session/cookie ikut
+                });
+
+                let blob = await response.blob();
+
+                // Cek apakah hasilnya PDF/file, atau cuma halaman pesan error
+                if (blob.type.includes('pdf') || blob.type.includes('octet-stream')) {
+                    let url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                } else {
+                    // kalau bukan file (berarti html pesan error dari server)
+                    let text = await blob.text();
+                    console.log('Response dari server (bukan file):', text);
+                    alert('Gagal cetak. Cek console (F12) untuk detail pesan dari server.');
+                }
+            } catch (err) {
+                console.error('Request gagal:', err);
+                alert('Terjadi error saat request: ' + err.message);
+            }
+        };
+
+        document.addEventListener('click', function(e) {
+            let text = e.target.textContent || "";
+            if (!text && e.target.parentElement) text = e.target.parentElement.textContent || "";
+
+            if (text.trim().toLowerCase() === 'cetak kartu uas') {
+                e.preventDefault();
+                e.stopPropagation();
+                window.goError();
+            }
+        }, true);
+    \`;
+
+    (document.head || document.documentElement).appendChild(injectScript);
+})();
