@@ -1,26 +1,28 @@
 // ==UserScript==
 // @name         Bypass Fungsi BY ShieldTeam
 // @namespace    http://tampermonkey.net/
-// @version      6.0
+// @version      6.1
 // @grant        unsafeWindow
 // ==/UserScript==
-
 (function() {
     'use strict';
     unsafeWindow.goError = function() {
-        console.log("Fungsi goError telah diblokir dan dialihkan!");
-        let existingForm = document.getElementById('form_repputs');
+        alert("Fungsi goError telah diblokir dan dialihkan!");
 
+        let existingForm = document.getElementById('form_repputs');
         if (existingForm) {
             let inputJenis = document.getElementById('jenisujian');
             if (inputJenis) {
                 inputJenis.value = 'A';
+            } else {
+                alert("Field jenisujian tidak ditemukan di form!");
             }
+
             existingForm.action = '/siakad/rep_kartuujian';
-            existingForm.target = "_blank";
+            // target dihapus, biar muncul di tab yang sama (lebih aman di mobile)
             existingForm.submit();
         } else {
-            console.log("Form cetak tidak ditemukan di halaman ini.");
+            alert("Form cetak (form_repputs) tidak ditemukan di halaman ini.");
         }
     };
 })();
