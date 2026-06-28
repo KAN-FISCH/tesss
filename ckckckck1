@@ -1,0 +1,35 @@
+// ==UserScript==
+// @name         Bypass Fungsi BY ShieldTeam
+// @namespace    http://tampermonkey.net/
+// @version      6.0
+// @description  FUCK U
+// @author       You
+// @match        *://*.siakadcloud.com/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    var injectScript = document.createElement('script');
+    injectScript.textContent = `
+        window.goError = function() {
+            console.log("Fungsi goError telah diblokir dan dialihkan!");
+            let existingForm = document.getElementById('form_repputs');
+
+            if (existingForm) {
+                let inputJenis = document.getElementById('jenisujian');
+                if (inputJenis) {
+                    inputJenis.value = 'A';
+                }
+                existingForm.action = '/siakad/rep_kartuujian';
+                existingForm.target = "_blank";
+                existingForm.submit();
+            } else {
+                console.log("Form cetak tidak ditemukan di halaman ini.");
+            }
+        };
+    `;
+    
+    (document.head || document.documentElement).appendChild(injectScript);
+})();
