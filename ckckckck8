@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name       tes
 // @namespace    http://tampermonkey.net/
-// @version      9.2
+// @version      9.4
 // @author       You
 // @match        *://*.siakadcloud.com/*
 // @grant        none
@@ -19,10 +19,7 @@
                 return;
             }
 
-            // Ambil semua field dari form asli
             let formData = new FormData(original);
-
-            // Paksa jenisujian = 'A'
             formData.set('jenisujian', 'A');
 
             console.log('Mengirim POST ke', original.action);
@@ -34,24 +31,26 @@
                 let response = await fetch(original.action, {
                     method: 'POST',
                     body: formData,
-                    credentials: 'include' // penting, biar session/cookie ikut
+                    credentials: 'include'
                 });
 
                 let blob = await response.blob();
 
-                // Cek apakah hasilnya PDF/file, atau cuma halaman pesan error
                 if (blob.type.includes('pdf') || blob.type.includes('octet-stream')) {
                     let url = URL.createObjectURL(blob);
-                    window.open(url, '_blank');
+                    // langsung pindah di tab yang sama, lebih aman di browser mobile
+                    window.location.href = url;
                 } else {
-                    // kalau bukan file (berarti html pesan error dari server)
                     let text = await blob.text();
                     console.log('Response dari server (bukan file):', text);
-                    alert('Gagal cetak. Cek console (F12) untuk detail pesan dari server.');
+                    // tampilkan pesan error langsung di halaman saat ini
+                    document.body.innerHTML = '<pre style="font-family:sans-serif;padding:20px;white-space:pre-wrap;">' +
+                        text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>' +
+                        '<button onclick="history.back()" style="margin:20px;padding:10px 20px;">Kembali</button>';
                 }
             } catch (err) {
                 console.error('Request gagal:', err);
-                alert('Terjadi error saat request: ' + err.message);
+                alert('Terjadi error: ' + err.message);
             }
         };
 
