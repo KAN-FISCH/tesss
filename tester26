@@ -83,6 +83,9 @@ local function MakeDraggable(topbarObject, object)
     local targetPos = object.Position
     local smoothness = 0.15
     local releaseTweenTime = 0.25
+    local dragConnection = nil
+    local changedConnection = nil
+    local inputChangedConnection = nil
 
     local function UpdateTarget(input)
         local delta = input.Position - dragStart
@@ -98,32 +101,64 @@ local function MakeDraggable(topbarObject, object)
             dragStart = input.Position
             startPos = object.Position
 
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-
-                    local tween = TweenService:Create(object, TweenInfo.new(releaseTweenTime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = targetPos})
-                    tween:Play()
+            if dragConnection then
+                dragConnection:Disconnect()
+                dragConnection = nil
+            end
+            
+            dragConnection = RunService.RenderStepped:Connect(function()
+                if dragging then
+                    object.Position = object.Position:Lerp(targetPos, smoothness)
+                else
+                    if dragConnection then
+                        dragConnection:Disconnect()
+                        dragConnection = nil
+                    end
                 end
             end)
+
+            if changedConnection then
+                changedConnection:Disconnect()
+                changedConnection = nil
+            end
+
+            changedConnection = input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                    if dragConnection then
+                        dragConnection:Disconnect()
+                        dragConnection = nil
+                    end
+                    if inputChangedConnection then
+                        inputChangedConnection:Disconnect()
+                        inputChangedConnection = nil
+                    end
+                    local tween = TweenService:Create(object, TweenInfo.new(releaseTweenTime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = targetPos})
+                    tween:Play()
+                    if changedConnection then
+                        changedConnection:Disconnect()
+                        changedConnection = nil
+                    end
+                end
+            end)
+
+            if not isMobile then
+                if inputChangedConnection then
+                    inputChangedConnection:Disconnect()
+                    inputChangedConnection = nil
+                end
+                inputChangedConnection = UserInputService.InputChanged:Connect(function(moveInput)
+                    if dragging and moveInput.UserInputType == Enum.UserInputType.MouseMovement then
+                        UpdateTarget(moveInput)
+                    end
+                end)
+            end
         end
     end)
 
     topbarObject.InputChanged:Connect(function(input)
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             UpdateTarget(input)
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            UpdateTarget(input)
-        end
-    end)
-
-    RunService.RenderStepped:Connect(function()
-        if dragging then
-            object.Position = object.Position:Lerp(targetPos, smoothness)
         end
     end)
 end
@@ -280,6 +315,9 @@ end
 local Speed_Library, Notification = {}, {}
 Speed_Library.Unloaded = false
 
+local GlobalNotificationGui = nil
+local GlobalNotificationLayout = nil
+
 function Speed_Library:SetNotification(Config)
     local Title = Config[1] or Config.Title or ""
     local Description = Config[2] or Config.Description or ""
@@ -287,29 +325,34 @@ function Speed_Library:SetNotification(Config)
     local Time = Config[5] or Config.Time or 0.5
     local Delay = Config[6] or Config.Delay or 5
 
-    local NotificationGui = Custom:Create("ScreenGui", {
-        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-        Name = "NotificationGui"
-    })
-    ProtectGui(NotificationGui)
-    local NotificationLayout = Custom:Create("Frame", {
-        AnchorPoint = Vector2.new(1,1),
-        BackgroundTransparency = 0.999,
-        Position = UDim2.new(1,-30,1,-30),
-        Size = UDim2.new(0,320,1,0),
-        Name = "NotificationLayout"
-    }, NotificationGui)
+    if not GlobalNotificationGui or not GlobalNotificationGui.Parent then
+        GlobalNotificationGui = Custom:Create("ScreenGui", {
+            ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+            Name = "NotificationGui"
+        }, RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui"))
+        ProtectGui(GlobalNotificationGui)
+        
+        GlobalNotificationLayout = Custom:Create("Frame", {
+            AnchorPoint = Vector2.new(1,1),
+            BackgroundTransparency = 0.999,
+            Position = UDim2.new(1,-30,1,-30),
+            Size = UDim2.new(0,320,1,0),
+            Name = "NotificationLayout"
+        }, GlobalNotificationGui)
 
-    local Count = 0
-    NotificationLayout.ChildRemoved:Connect(function()
-        Count = 0
-        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-        for _, v in ipairs(NotificationLayout:GetChildren()) do
-            local NewPOS = UDim2.new(0,0,1,-((v.Size.Y.Offset + 12) * Count))
-            TweenService:Create(v,tweenInfo,{Position=NewPOS}):Play()
-            Count = Count + 1
-        end
-    end)
+        local Count = 0
+        GlobalNotificationLayout.ChildRemoved:Connect(function()
+            Count = 0
+            local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+            for _, v in ipairs(GlobalNotificationLayout:GetChildren()) do
+                local NewPOS = UDim2.new(0,0,1,-((v.Size.Y.Offset + 12) * Count))
+                TweenService:Create(v,tweenInfo,{Position=NewPOS}):Play()
+                Count = Count + 1
+            end
+        end)
+    end
+
+    local NotificationLayout = GlobalNotificationLayout
 
     local _Count = 0
     for _, v in ipairs(NotificationLayout:GetChildren()) do
@@ -1010,6 +1053,11 @@ function Speed_Library:CreateWindow(Config)
         if SpeedHubXGui then 
             SpeedHubXGui:Destroy() 
         end
+        if GlobalNotificationGui then
+            GlobalNotificationGui:Destroy()
+            GlobalNotificationGui = nil
+            GlobalNotificationLayout = nil
+        end
         if not Speed_Library.Unloaded then 
             Speed_Library.Unloaded = true 
         end
@@ -1354,10 +1402,21 @@ function Speed_Library:CreateWindow(Config)
         GlobalUIScale.Scale = scaleRatio
     end
 
+    local resizeMoveConn = nil
+    local resizeEndConn = nil
+
     local function onResizeEnd()
         if resizing then
             resizing = false
             _activeResizeInput = nil
+            if resizeMoveConn then
+                resizeMoveConn:Disconnect()
+                resizeMoveConn = nil
+            end
+            if resizeEndConn then
+                resizeEndConn:Disconnect()
+                resizeEndConn = nil
+            end
             -- Restore handle appearance
             TweenService:Create(ResizeHandle, TweenInfo.new(0.15), {
                 BackgroundTransparency = isMobile and 0.3 or 0.5,
@@ -1384,35 +1443,51 @@ function Speed_Library:CreateWindow(Config)
             }):Play()
 
             -- MOBILE: Track langsung dari objek input ini (bukan InputChanged global)
-            -- Ini cara yang benar untuk multi-touch: hanya ikuti jari yang tap handle
-            input.Changed:Connect(function()
+            local changedConnection
+            changedConnection = input.Changed:Connect(function()
                 if resizing and _activeResizeInput == input then
                     if input.UserInputState == Enum.UserInputState.Change then
                         local delta = input.Position - resizeStart
                         applyResize(resizeStartSize.W + delta.X, resizeStartSize.H + delta.Y)
                     elseif input.UserInputState == Enum.UserInputState.End then
                         onResizeEnd()
+                        if changedConnection then
+                            changedConnection:Disconnect()
+                            changedConnection = nil
+                        end
+                    end
+                else
+                    if changedConnection then
+                        changedConnection:Disconnect()
+                        changedConnection = nil
                     end
                 end
             end)
+
+            if not isMobile then
+                if resizeMoveConn then
+                    resizeMoveConn:Disconnect()
+                    resizeMoveConn = nil
+                end
+                resizeMoveConn = UserInputService.InputChanged:Connect(function(moveInput)
+                    if resizing and moveInput.UserInputType == Enum.UserInputType.MouseMovement then
+                        local delta = moveInput.Position - resizeStart
+                        applyResize(resizeStartSize.W + delta.X, resizeStartSize.H + delta.Y)
+                    end
+                end)
+
+                if resizeEndConn then
+                    resizeEndConn:Disconnect()
+                    resizeEndConn = nil
+                end
+                resizeEndConn = UserInputService.InputEnded:Connect(function(endInput)
+                    if endInput.UserInputType == Enum.UserInputType.MouseButton1 then
+                        onResizeEnd()
+                    end
+                end)
+            end
         end
     end)
-
-    -- PC: Juga pakai InputChanged global (fallback untuk mouse movement)
-    if not isMobile then
-        UserInputService.InputChanged:Connect(function(input)
-            if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
-                local delta = input.Position - resizeStart
-                applyResize(resizeStartSize.W + delta.X, resizeStartSize.H + delta.Y)
-            end
-        end)
-
-        UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                onResizeEnd()
-            end
-        end)
-    end
 
     -- ---- Restore ukuran dari JSON saat startup ----
     task.defer(function()
@@ -1589,7 +1664,7 @@ function Speed_Library:CreateWindow(Config)
         local isExpanded = true
 
         local GroupOrder = CountTab
-        CountTab += 1
+        CountTab = CountTab + 1
 
         -- GROUP HEADER
         local GroupHeader = Custom:Create("Frame", {
@@ -1688,7 +1763,7 @@ function Speed_Library:CreateWindow(Config)
             local TabDescription = TabConfig[3] or TabConfig.Description or ""
             local TabObj = {}
 
-            SubCountInGroup += 1
+            SubCountInGroup = SubCountInGroup + 1
             local subOrder = SubCountInGroup
 
             -- Create LEFT scroll frame
@@ -2132,7 +2207,7 @@ function Item:AddSeperator(Config)
           SeperatorTitle.Text = Title
         end
 
-        ItemCount += 1
+        ItemCount = ItemCount + 1
         return Sep_Funcs
       end
 
@@ -2148,7 +2223,7 @@ function Item:AddSeperator(Config)
           Name = "Line",
         }, SectionAdd)
     
-        ItemCount += 1
+        ItemCount = ItemCount + 1
         return LineFuncs
      end
 
@@ -2207,7 +2282,7 @@ function Item:AddSeperator(Config)
             Funcs_Button:Lock()
         end
 
-        ItemCount += 1
+        ItemCount = ItemCount + 1
         return Funcs_Button
       end
 
@@ -2331,7 +2406,7 @@ function Item:AddToggle(Config)
         Funcs_Toggle:Lock()
     end
 
-    ItemCount += 1
+    ItemCount = ItemCount + 1
     return Funcs_Toggle
 end
 
@@ -2495,10 +2570,34 @@ end
             return self
         end
         
+        local dragInputConn = nil
+        local _LastX = nil
+
         SliderFrame.InputBegan:Connect(function(Input)
           if Funcs_Slider.Locked then return end
           if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
             Dragging = true
+
+            if dragInputConn then
+              dragInputConn:Disconnect()
+              dragInputConn = nil
+            end
+
+            dragInputConn = UserInputService.InputChanged:Connect(function(moveInput)
+              if Dragging then
+                local CurrPosX = moveInput.Position.X
+                if CurrPosX ~= _LastX then
+                  _LastX = CurrPosX
+                  local SizeScale = math.clamp((CurrPosX - SliderFrame.AbsolutePosition.X) / SliderFrame.AbsoluteSize.X, 0, 1)
+                  Funcs_Slider:Set(Min + ((Max - Min) * SizeScale))
+                end
+              else
+                if dragInputConn then
+                  dragInputConn:Disconnect()
+                  dragInputConn = nil
+                end
+              end
+            end)
           end
         end)
       
@@ -2506,20 +2605,11 @@ end
           if Funcs_Slider.Locked then return end
           if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
             Dragging = false
-            Callback(Funcs_Slider.Value)
-          end
-        end)
-      
-        local _LastX = nil
-        UserInputService.InputChanged:Connect(function(Input)
-          if Dragging then
-            local CurrPosX = Input.Position.X
-            if CurrPosX ~= _LastX then
-              _LastX = CurrPosX
-      
-              local SizeScale = math.clamp((CurrPosX - SliderFrame.AbsolutePosition.X) / SliderFrame.AbsoluteSize.X, 0, 1)
-              Funcs_Slider:Set(Min + ((Max - Min) * SizeScale))
+            if dragInputConn then
+              dragInputConn:Disconnect()
+              dragInputConn = nil
             end
+            Callback(Funcs_Slider.Value)
           end
         end)
         
@@ -2561,7 +2651,7 @@ end
             Funcs_Slider:Lock()
         end
 
-        ItemCount += 1
+        ItemCount = ItemCount + 1
         return Funcs_Slider
       end
 
@@ -2719,7 +2809,7 @@ end
             Funcs_Input:Lock()
         end
 
-        ItemCount += 1
+        ItemCount = ItemCount + 1
         return Funcs_Input
       end
 
@@ -3143,7 +3233,7 @@ function Item:AddDropdown(Config)
         end
     
         UpdateCanvasSize()
-        DropCount += 1
+        DropCount = DropCount + 1
     end
 
     function Funcs_Dropdown:Refresh(RefreshList, Selecting)
@@ -3193,16 +3283,16 @@ function Item:AddDropdown(Config)
         Funcs_Dropdown:Lock()
     end
 
-    ItemCount += 1
-    CountDropdown += 1
+    ItemCount = ItemCount + 1
+    CountDropdown = CountDropdown + 1
     return Funcs_Dropdown
 end
 
-      ItemCount += 1
+      ItemCount = ItemCount + 1
       if Side == "Right" then
-          CountSectionRight += 1
+          CountSectionRight = CountSectionRight + 1
       else
-          CountSection += 1
+          CountSection = CountSection + 1
       end
 
       function Item:Lock()
