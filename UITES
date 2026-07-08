@@ -1,3 +1,9 @@
+if getgenv().__NewFish5_Loaded then
+    warn("[NewFish5] Already loaded! Skipping re-execution.")
+    return
+end
+getgenv().__NewFish5_Loaded = true
+
 local BaseURL = "https://key.shieldteam.asia/raw/Fisch/"
 local FallbackBaseURL = "https://raw.githubusercontent.com/KAN-FISCH/Fisch/refs/heads/main/"
 
