@@ -1,4 +1,37 @@
 local BaseURL = "https://key.shieldteam.asia/raw/Fisch/"
+local FallbackBaseURL = "https://raw.githubusercontent.com/KAN-FISCH/Fisch/refs/heads/main/"
+
+local function httpGetWithTimeout(url, timeout)
+    local result = nil
+    local success = false
+    local completed = false
+    
+    local thread = coroutine.running()
+    
+    task.spawn(function()
+        local ok, res = pcall(function()
+            return game:HttpGet(url)
+        end)
+        if not completed then
+            completed = true
+            success = ok
+            result = res
+            task.spawn(thread)
+        end
+    end)
+    
+    task.delay(timeout or 5, function()
+        if not completed then
+            completed = true
+            success = false
+            result = "Timeout"
+            task.spawn(thread)
+        end
+    end)
+    
+    coroutine.yield()
+    return success, result
+end
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
@@ -292,7 +325,8 @@ local function InstallToRS()
             while true do
                 attempt = attempt + 1
                 statusText.Text = string.format("⬇ <font color='#ffffff'>Downloading: </font><font color='#b070ff'>%s [%d%%]</font> (Attempt %d)", fileData.Name, percentage, attempt)
-                success, res = pcall(function() return game:HttpGet(BaseURL .. fileData.Path) end)
+                 local targetURL = (attempt % 2 == 1) and BaseURL or FallbackBaseURL
+                success, res = httpGetWithTimeout(targetURL .. fileData.Path, 5)
                 local isHtml = success and res and (res:sub(1, 15):lower():match("<!doctype html") or res:sub(1, 10):lower():match("<html"))
                 if success and res and not isHtml then
                     break
@@ -304,6 +338,8 @@ local function InstallToRS()
                         reason = "Rate Limit (429)"
                     elseif errMessage:match("404") then
                         reason = "Not Found (404)"
+                    elseif errMessage == "Timeout" then
+                        reason = "Request Timeout (5s)"
                     end
                     statusText.Text = string.format("⚠ <font color='#ff5050'>%s: </font><font color='#ffffff'>Retrying in %ds...</font> (Attempt %d)", reason, delayTime, attempt)
                     task.wait(delayTime)
