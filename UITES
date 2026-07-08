@@ -305,7 +305,18 @@ local function InstallToRS()
     local successCount = 0
     local totalFiles = #FilesToInstall
 
-    task.wait(1)
+    statusText.Text = "⚡ <font color='#ffffff'>Checking connection status...</font>"
+    local activeBaseURL = BaseURL
+    local checkSuccess, checkRes = httpGetWithTimeout(BaseURL .. "Config.lua", 3)
+    local isHtml = checkSuccess and checkRes and (checkRes:sub(1, 15):lower():match("<!doctype html") or checkRes:sub(1, 10):lower():match("<html"))
+    
+    if not checkSuccess or isHtml then
+        statusText.Text = "⚠ <font color='#ffffff'>Connection check failed. Using Fallback URL...</font>"
+        activeBaseURL = FallbackBaseURL
+        task.wait(1.5)
+    end
+
+    task.wait(0.5)
 
     for i, fileData in ipairs(FilesToInstall) do
         
@@ -325,7 +336,10 @@ local function InstallToRS()
             while true do
                 attempt = attempt + 1
                 statusText.Text = string.format("⬇ <font color='#ffffff'>Downloading: </font><font color='#b070ff'>%s [%d%%]</font> (Attempt %d)", fileData.Name, percentage, attempt)
-                 local targetURL = (attempt % 2 == 1) and BaseURL or FallbackBaseURL
+                local targetURL = activeBaseURL
+                if attempt > 1 then
+                    targetURL = (attempt % 2 == 1) and activeBaseURL or ((activeBaseURL == BaseURL) and FallbackBaseURL or BaseURL)
+                end
                 success, res = httpGetWithTimeout(targetURL .. fileData.Path, 5)
                 local isHtml = success and res and (res:sub(1, 15):lower():match("<!doctype html") or res:sub(1, 10):lower():match("<html"))
                 if success and res and not isHtml then
